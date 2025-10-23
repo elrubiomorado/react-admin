@@ -9,9 +9,16 @@ import {
     TrashIcon,
     ClockIcon,
     BellAlertIcon,
+    UserCircleIcon,
 } from '@heroicons/react/24/solid';
 import { Head, router } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
+
+interface Usuario {
+    id: number;
+    name: string;
+    email: string;
+}
 
 interface Cronometro {
     id: number;
@@ -23,6 +30,7 @@ interface Cronometro {
     creado_por: number;
     created_at: string;
     updated_at: string;
+    usuario: Usuario;
 }
 
 interface CronometroConTiempo extends Cronometro {
@@ -35,15 +43,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // CONFIGURACIÓN NORMAL (PARA PRODUCCIÓN)
-const HORAS_ALERTA = [4, 6, 8]; // Alertas a las 4, 6 y 8 horas
+const HORAS_ALERTA = [4, 6, 8];
 const MENSAJE_ALERTA = '¡Hora de escalar!';
 
 // CONFIGURACIÓN DE PRUEBA (CAMBIAR A false PARA PRODUCCIÓN)
 const MODO_PRUEBA = false;
 
-// Configuración para pruebas (solo se usa si MODO_PRUEBA es true)
 const configuracionPrueba = {
-    segundosAlerta: [5, 10, 15], // Alertas a los 5, 10 y 15 segundos
+    segundosAlerta: [5, 10, 15],
     mensajeAlerta: '[PRUEBA] ¡Hora de escalar!'
 };
 
@@ -60,7 +67,6 @@ export default function Index({
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const notificacionesMostradas = useRef<Set<number>>(new Set());
 
-    // Configuración actual basada en el modo
     const configuracionActual = MODO_PRUEBA ? {
         tipo: 'segundos',
         valores: configuracionPrueba.segundosAlerta,
@@ -80,7 +86,6 @@ export default function Index({
         }
     };
 
-    // Verificar permiso de notificaciones al cargar
     useEffect(() => {
         if ('Notification' in window) {
             setPermisoNotificaciones(Notification.permission);
@@ -90,7 +95,6 @@ export default function Index({
         }
     }, []);
 
-    // Sincronizar cronómetros cada segundo
     useEffect(() => {
         const sincronizar = () => {
             setCronometros(prev => prev.map(cron => {
@@ -118,7 +122,6 @@ export default function Index({
         };
     }, []);
 
-    // Verificar notificaciones cada segundo
     useEffect(() => {
         const verificarNotificaciones = () => {
             cronometros.forEach(cron => {
@@ -127,11 +130,9 @@ export default function Index({
                     let key: number;
 
                     if (MODO_PRUEBA) {
-                        // Modo prueba: usar segundos
                         tiempoActual = Math.floor(cron.tiempoTranscurrido / 1000);
                         key = cron.id * 100 + tiempoActual;
                     } else {
-                        // Modo normal: usar horas
                         tiempoActual = Math.floor(cron.tiempoTranscurrido / (1000 * 60 * 60));
                         key = cron.id * 100 + tiempoActual;
                     }
@@ -147,7 +148,6 @@ export default function Index({
                         notificacionesMostradas.current.add(key);
                     }
 
-                    // Debug solo en modo prueba
                     if (MODO_PRUEBA && tiempoActual % 5 === 0 && !notificacionesMostradas.current.has(tiempoActual + 1000)) {
                         agregarDebug(`Tiempo actual: ${cron.titulo} - ${tiempoActual}s`);
                         notificacionesMostradas.current.add(tiempoActual + 1000);
@@ -163,7 +163,6 @@ export default function Index({
         };
     }, [cronometros, MODO_PRUEBA]);
 
-    // Inicializar cronómetros con tiempo transcurrido
     useEffect(() => {
         const ahora = new Date().getTime();
         
@@ -193,7 +192,6 @@ export default function Index({
     const mostrarNotificacion = (titulo: string, mensaje: string) => {
         agregarDebug(`Intentando mostrar: ${titulo}`);
         
-        // 1. Intentar con notificaciones del navegador
         if ('Notification' in window && Notification.permission === 'granted') {
             agregarDebug('Creando notificación del navegador');
             const notificacion = new Notification(titulo, {
@@ -213,19 +211,14 @@ export default function Index({
                 notificacion.close();
             }, 10000);
 
-        } 
-        // 2. Si no hay permiso, usar alerta de navegador
-        else if ('Notification' in window && Notification.permission !== 'granted') {
+        } else if ('Notification' in window && Notification.permission !== 'granted') {
             agregarDebug('Usando alert() como fallback');
             alert(`🔔 ${titulo}\n${mensaje}`);
-        }
-        // 3. Si no hay soporte para notificaciones
-        else {
+        } else {
             agregarDebug('Usando alert() - Notificaciones no soportadas');
             alert(`🔔 ${titulo}\n${mensaje}`);
         }
 
-        // 4. También mostrar en la página (fallback visual)
         mostrarAlertaEnPagina(titulo, mensaje);
     };
 
@@ -337,6 +330,16 @@ export default function Index({
         } else {
             return `Alertas configuradas a las: ${HORAS_ALERTA.join(', ')} horas`;
         }
+    };
+
+    // Función para obtener las iniciales del usuario
+    const getInicialesUsuario = (nombre: string) => {
+        return nombre
+            .split(' ')
+            .map(word => word.charAt(0))
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
     };
 
     return (
@@ -464,20 +467,28 @@ export default function Index({
                             key={cronometro.id}
                             className="bg-white rounded-lg border border-gray-200 shadow p-4"
                         >
+                            {/* Header con título y usuario */}
                             <div className="flex justify-between items-start mb-3">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                    {cronometro.titulo}
-                                </h3>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                                        {cronometro.titulo}
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                                        <UserCircleIcon className="h-4 w-4" />
+                                        <span>Creado por: {cronometro.usuario.name}</span>
+                                    </div>
+                                </div>
                                 <Button
                                     onClick={() => eliminarCronometro(cronometro.id)}
                                     variant="outline"
                                     size="sm"
-                                    className="text-red-600 hover:text-red-800"
+                                    className="text-red-600 hover:text-red-800 flex-shrink-0"
                                 >
                                     <TrashIcon className="h-4 w-4" />
                                 </Button>
                             </div>
 
+                            {/* Display del tiempo */}
                             <div className="text-center mb-4">
                                 <div className="text-3xl font-mono font-bold text-gray-900">
                                     {formatearTiempo(cronometro.tiempoTranscurrido)}
@@ -492,6 +503,7 @@ export default function Index({
                                 </div>
                             </div>
 
+                            {/* Controles */}
                             <div className="flex justify-center gap-2">
                                 {cronometro.estado !== 'activo' && (
                                     <Button
@@ -527,6 +539,27 @@ export default function Index({
                                 )}
                             </div>
 
+                            {/* Información adicional */}
+                            <div className="mt-3 text-xs text-gray-500 space-y-1">
+                                <div className="flex justify-between">
+                                    <span>Creado:</span>
+                                    <span>{new Date(cronometro.created_at).toLocaleDateString()}</span>
+                                </div>
+                                {cronometro.hora_inicio && (
+                                    <div className="flex justify-between">
+                                        <span>Iniciado:</span>
+                                        <span>{new Date(cronometro.hora_inicio).toLocaleString()}</span>
+                                    </div>
+                                )}
+                                {cronometro.hora_final && (
+                                    <div className="flex justify-between">
+                                        <span>Finalizado:</span>
+                                        <span>{new Date(cronometro.hora_final).toLocaleString()}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Indicadores de alertas */}
                             {cronometro.estado === 'activo' && (
                                 <div className="mt-3">
                                     <p className="text-xs text-gray-500 mb-2">Próximas alertas:</p>

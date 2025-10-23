@@ -11,7 +11,7 @@ class CronometrosController extends Controller
 {
     public function index()
     {
-        $cronometros = Cronometro::with('usuario')
+        $cronometros = Cronometro::with('usuario:id,name,email')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -35,6 +35,7 @@ class CronometrosController extends Controller
         return redirect()->back()->with('success', 'Cronómetro creado correctamente.');
     }
 
+    // ... (los demás métodos permanecen igual)
     public function iniciar($id)
     {
         $cronometro = Cronometro::findOrFail($id);
