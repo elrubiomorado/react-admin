@@ -47,7 +47,16 @@ export default function Index({
 
     const handleDelete = (id: number) => {
         if (confirm('¿Estás seguro de eliminar esta homologación?')) {
-            router.delete(`/homologaciones/${id}`);
+            router.delete(`/homologaciones/${id}`, {
+                onSuccess: () => {
+                    // Recargar la página para actualizar la lista
+                    router.reload();
+                },
+                onError: (errors) => {
+                    console.error('Error al eliminar:', errors);
+                    alert('Error al eliminar la homologación');
+                }
+            });
         }
     };
 
@@ -64,11 +73,9 @@ export default function Index({
                 <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
                     <thead className="bg-gray-50">
                         <tr>
-                            {/* Nombre con un pequeño margen izquierdo */}
                             <th className="px-6 py-4 text-left text-gray-700">
                                 <div className="ml-2">Nombre</div>
                             </th>
-                            {/* Acciones con menos padding horizontal, centrado */}
                             <th className="px-3 py-4 text-center text-gray-700">
                                 Acciones
                             </th>
@@ -76,7 +83,7 @@ export default function Index({
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {homologaciones.length > 0 ? (
-                            homologaciones.map((h, index) => (
+                            homologaciones.map((h) => (
                                 <Fragment key={h.id}>
                                     <tr className="transition hover:bg-gray-50">
                                         <td className="px-6 py-4 font-medium">
@@ -86,20 +93,20 @@ export default function Index({
                                             <button
                                                 onClick={() =>
                                                     setOpenId(
-                                                        openId === index
+                                                        openId === h.id
                                                             ? null
-                                                            : index,
+                                                            : h.id,
                                                     )
                                                 }
                                                 className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
                                                 title={
-                                                    openId === index
+                                                    openId === h.id
                                                         ? 'Cerrar formulario'
                                                         : 'Usar homologación'
                                                 }
                                             >
                                                 <ClipboardIcon className="h-5 w-5" />
-                                                {openId === index
+                                                {openId === h.id
                                                     ? 'Cerrar'
                                                     : 'Usar'}
                                             </button>
@@ -112,9 +119,7 @@ export default function Index({
                                                 Editar
                                             </Link>
                                             <button
-                                                onClick={() =>
-                                                    handleDelete(h.id)
-                                                }
+                                                onClick={() => handleDelete(h.id)}
                                                 className="flex items-center gap-1 text-red-600 hover:text-red-800"
                                                 title="Eliminar"
                                             >
@@ -124,7 +129,7 @@ export default function Index({
                                         </td>
                                     </tr>
 
-                                    {openId === index && (
+                                    {openId === h.id && (
                                         <tr>
                                             <td
                                                 colSpan={2}

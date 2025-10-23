@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Escalas',
-        href: '/escalas',
+        href: '/cronometros',
         icon: AlarmClock,
     },
     {

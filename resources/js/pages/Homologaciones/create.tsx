@@ -10,28 +10,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Create() {
-    const [name, setName] = useState('');
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
+    const [form, setForm] = useState({
+        name: '',
+        title_base: '',
+        body: ''
+    });
     const [infoOpen, setInfoOpen] = useState(false);
+
+    const handleChange = (field: string, value: string) => {
+        setForm(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        router.post('/homologaciones', {
-            name,
-            title_base: title,
-            body,
-        }, {
+        router.post('/homologaciones', form, {
             onSuccess: () => {
-                // Limpiar campos
-                setName('');
-                setTitle('');
-                setBody('');
+                // Los campos se limpiarán automáticamente al redirigir
             },
-            onError: (errors) => {
-                console.error(errors);
-            }
         });
     };
 
@@ -79,8 +78,8 @@ export default function Create() {
                         <input
                             type="text"
                             placeholder="Nombre de la homologación"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={form.name}
+                            onChange={(e) => handleChange('name', e.target.value)}
                             className="border rounded w-full px-3 py-2"
                             required
                         />
@@ -88,16 +87,16 @@ export default function Create() {
                         <input
                             type="text"
                             placeholder="Title base (puede contener {variables})"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            value={form.title_base}
+                            onChange={(e) => handleChange('title_base', e.target.value)}
                             className="border rounded w-full px-3 py-2"
                             required
                         />
 
                         <textarea
                             placeholder="Body (puede contener {variables})"
-                            value={body}
-                            onChange={(e) => setBody(e.target.value)}
+                            value={form.body}
+                            onChange={(e) => handleChange('body', e.target.value)}
                             className="border rounded w-full px-3 py-2"
                             rows={6}
                             required
