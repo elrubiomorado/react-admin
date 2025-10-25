@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import FormularioHomologacion, { type Homologacion } from "./FormularioHomologacion";
 import {
     ClipboardIcon,
     PencilIcon,
@@ -9,29 +10,29 @@ import {
 import { Head, Link, router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
 
-interface Homologacion {
-    id: number;
-    name: string;
-    title_base: string;
-    body: string;
-}
-
+// Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Homologaciones', href: '/homologaciones' },
 ];
 
+// Componente principal que muestra la lista de homologaciones
 export default function Index({
     homologaciones,
 }: {
     homologaciones: Homologacion[];
 }) {
+    // Estado para controlar qué homologación está expandida
     const [openId, setOpenId] = useState<number | null>(null);
+
+    // Estado para almacenar los valores de las variables ingresadas por el usuario
     const [valores, setValores] = useState<Record<string, string>>({});
 
+    // Maneja cambios en los inputs de variables
     const handleChange = (key: string, value: string) => {
         setValores((prev) => ({ ...prev, [key]: value }));
     };
 
+    // Reemplaza variables {variable} en el texto con los valores actuales
     const renderTexto = (texto: string) => {
         let resultado = texto;
         Object.keys(valores).forEach((key) => {
@@ -40,22 +41,23 @@ export default function Index({
         return resultado;
     };
 
+    // Extrae todas las variables únicas de un texto
     const getVariables = (texto: string) => {
         const matches = texto.match(/{(.*?)}/g);
         return matches ? matches.map((v) => v.replace(/[{}]/g, '')) : [];
     };
 
+    // Elimina una homologación con confirmación
     const handleDelete = (id: number) => {
         if (confirm('¿Estás seguro de eliminar esta homologación?')) {
             router.delete(`/homologaciones/${id}`, {
                 onSuccess: () => {
-                    // Recargar la página para actualizar la lista
-                    router.reload();
+                    router.reload(); // Recarga la página para actualizar la lista
                 },
                 onError: (errors) => {
                     console.error('Error al eliminar:', errors);
                     alert('Error al eliminar la homologación');
-                }
+                },
             });
         }
     };
@@ -64,12 +66,14 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Homologaciones" />
             <div className="flex flex-col gap-4 p-4">
+                {/* Botón para crear nueva homologación */}
                 <Link href="/homologaciones/create">
                     <Button className="flex items-center gap-2 bg-green-600 text-white hover:bg-green-700">
                         Crear Homologación
                     </Button>
                 </Link>
 
+                {/* Tabla principal de homologaciones */}
                 <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
                     <thead className="bg-gray-50">
                         <tr>
@@ -82,14 +86,17 @@ export default function Index({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                        {/* Si hay homologaciones, las muestra */}
                         {homologaciones.length > 0 ? (
                             homologaciones.map((h) => (
                                 <Fragment key={h.id}>
+                                    {/* Fila principal de cada homologación */}
                                     <tr className="transition hover:bg-gray-50">
                                         <td className="px-6 py-4 font-medium">
                                             {h.name}
                                         </td>
                                         <td className="flex justify-center gap-3 px-3 py-4">
+                                            {/* Botón para expandir/contraer el formulario */}
                                             <button
                                                 onClick={() =>
                                                     setOpenId(
@@ -110,6 +117,8 @@ export default function Index({
                                                     ? 'Cerrar'
                                                     : 'Usar'}
                                             </button>
+
+                                            {/* Enlace para editar la homologación */}
                                             <Link
                                                 href={`/homologaciones/${h.id}/edit`}
                                                 className="flex items-center gap-1 text-green-600 hover:text-green-800"
@@ -118,8 +127,12 @@ export default function Index({
                                                 <PencilIcon className="h-5 w-5" />
                                                 Editar
                                             </Link>
+
+                                            {/* Botón para eliminar la homologación */}
                                             <button
-                                                onClick={() => handleDelete(h.id)}
+                                                onClick={() =>
+                                                    handleDelete(h.id)
+                                                }
                                                 className="flex items-center gap-1 text-red-600 hover:text-red-800"
                                                 title="Eliminar"
                                             >
@@ -129,6 +142,7 @@ export default function Index({
                                         </td>
                                     </tr>
 
+                                    {/* Fila expandible con el formulario de variables */}
                                     {openId === h.id && (
                                         <tr>
                                             <td
@@ -148,6 +162,7 @@ export default function Index({
                                 </Fragment>
                             ))
                         ) : (
+                            // Mensaje cuando no hay homologaciones
                             <tr>
                                 <td
                                     colSpan={2}
@@ -161,91 +176,5 @@ export default function Index({
                 </table>
             </div>
         </AppLayout>
-    );
-}
-
-interface FormularioHomologacionProps {
-    homologacion: Homologacion;
-    valores: Record<string, string>;
-    onChange: (key: string, value: string) => void;
-    renderTexto: (texto: string) => string;
-    getVariables: (texto: string) => string[];
-}
-
-function FormularioHomologacion({
-    homologacion,
-    valores,
-    onChange,
-    renderTexto,
-    getVariables,
-}: FormularioHomologacionProps) {
-    const variables = Array.from(
-        new Set([
-            ...getVariables(homologacion.title_base || ''),
-            ...getVariables(homologacion.body || ''),
-        ]),
-    );
-
-    const tituloFinal = renderTexto(homologacion.title_base || '');
-    const cuerpoFinal = renderTexto(homologacion.body || '');
-
-    return (
-        <div className="space-y-4">
-            <p className="font-semibold text-gray-700">
-                Completa los campos de la homologación:
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-                {variables.map((v) => (
-                    <div key={v}>
-                        <label className="mb-1 block text-sm text-gray-600">
-                            {v}
-                        </label>
-                        <input
-                            type="text"
-                            className="w-full rounded border px-3 py-2 focus:ring-1 focus:ring-blue-400 focus:outline-none"
-                            value={valores[v] || ''}
-                            onChange={(e) => onChange(v, e.target.value)}
-                        />
-                    </div>
-                ))}
-            </div>
-
-            <div className="space-y-2">
-                <p className="font-semibold text-gray-700">Título generado:</p>
-                <div className="flex gap-2">
-                    <input
-                        readOnly
-                        className="w-full rounded border bg-gray-100 p-2"
-                        value={tituloFinal}
-                    />
-                    <button
-                        onClick={() =>
-                            navigator.clipboard.writeText(tituloFinal)
-                        }
-                        className="flex items-center gap-1 rounded bg-blue-600 px-3 py-1 text-white"
-                    >
-                        <ClipboardIcon className="h-5 w-5" /> Copiar
-                    </button>
-                </div>
-
-                <p className="font-semibold text-gray-700">Cuerpo generado:</p>
-                <div className="flex gap-2">
-                    <textarea
-                        readOnly
-                        className="w-full rounded border bg-gray-100 p-2"
-                        rows={5}
-                        value={cuerpoFinal}
-                    />
-                    <button
-                        onClick={() =>
-                            navigator.clipboard.writeText(cuerpoFinal)
-                        }
-                        className="flex items-center gap-1 rounded bg-blue-600 px-3 py-1 text-white"
-                    >
-                        <ClipboardIcon className="h-5 w-5" /> Copiar
-                    </button>
-                </div>
-            </div>
-        </div>
     );
 }
