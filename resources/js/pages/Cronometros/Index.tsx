@@ -1,608 +1,378 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import {
-    PlayIcon,
-    PauseIcon,
-    StopIcon,
-    PlusIcon,
-    TrashIcon,
-    ClockIcon,
-    BellAlertIcon,
-    UserCircleIcon,
-} from '@heroicons/react/24/solid';
-import { Head, router } from '@inertiajs/react';
+import { BreadcrumbItem } from '@/types';
+import { TrashIcon, UserCircleIcon, TicketIcon, BellIcon } from '@heroicons/react/24/solid';
+import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { motion } from 'framer-motion';
 
 interface Usuario {
-    id: number;
-    name: string;
-    email: string;
+  id: number;
+  name: string;
 }
 
 interface Cronometro {
-    id: number;
-    titulo: string;
-    hora_inicio: string;
-    hora_final: string | null;
-    tiempo_pausado: number;
-    estado: 'activo' | 'pausado' | 'detenido';
-    creado_por: number;
-    created_at: string;
-    updated_at: string;
-    usuario: Usuario;
+  id: number;
+  titulo: string;
+  ticketId: string;
+  tipoAlarma: string;
+  prioridad: string;
+  estado: 'activo' | 'en_espera';
+  creado_por: number;
+  created_at: string;
+  updated_at: string;
+  usuario: Usuario;
+  notificado: boolean;
 }
 
 interface CronometroConTiempo extends Cronometro {
-    tiempoTranscurrido: number;
-    tiempoActivo: number;
+  tiempoTranscurrido: number;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Cronómetros', href: '/cronometros' },
+  { title: 'Cronómetros', href: '/cronometros/testcard' },
 ];
 
-// CONFIGURACIÓN NORMAL (PARA PRODUCCIÓN)
-const HORAS_ALERTA = [4, 6, 8];
-const MENSAJE_ALERTA = '¡Hora de escalar!';
-
-// CONFIGURACIÓN DE PRUEBA (CAMBIAR A false PARA PRODUCCIÓN)
 const MODO_PRUEBA = false;
+const ALERTAS = MODO_PRUEBA ? [10, 20, 30] : [4, 6, 8];
 
-const configuracionPrueba = {
-    segundosAlerta: [5, 10, 15],
-    mensajeAlerta: '[PRUEBA] ¡Hora de escalar!'
-};
+export default function Index({ cronometros: initialCronometros }: { cronometros: Cronometro[] }) {
+  const [cronometros, setCronometros] = useState<CronometroConTiempo[]>([]);
+  const [nuevoTitulo, setNuevoTitulo] = useState('');
+  const [ticketId, setTicketId] = useState('');
+  const [tipoAlarma, setTipoAlarma] = useState('');
+  const [prioridad, setPrioridad] = useState('');
+  const [mostrarPrioridad, setMostrarPrioridad] = useState(false);
+  const [notificacionesPermitidas, setNotificacionesPermitidas] = useState(false);
+  const [openTipo, setOpenTipo] = useState(false);
+  const [openPrioridad, setOpenPrioridad] = useState(false);
 
-export default function Index({
-    cronometros: initialCronometros,
-}: {
-    cronometros: Cronometro[];
-}) {
-    const [cronometros, setCronometros] = useState<CronometroConTiempo[]>([]);
-    const [nuevoTitulo, setNuevoTitulo] = useState('');
-    const [mostrarForm, setMostrarForm] = useState(false);
-    const [permisoNotificaciones, setPermisoNotificaciones] = useState<string>('default');
-    const [debugLog, setDebugLog] = useState<string[]>([]);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    const notificacionesMostradas = useRef<Set<number>>(new Set());
+  const intervalRef = useRef<number | null>(null);
+  const alertasMostradasRef = useRef<{ [key: number]: number[] }>({});
 
-    const configuracionActual = MODO_PRUEBA ? {
-        tipo: 'segundos',
-        valores: configuracionPrueba.segundosAlerta,
-        mensaje: configuracionPrueba.mensajeAlerta,
-        unidad: 's'
-    } : {
-        tipo: 'horas',
-        valores: HORAS_ALERTA,
-        mensaje: MENSAJE_ALERTA,
-        unidad: 'h'
-    };
+  const MS_PER_SEC = 1000;
+  const MS_PER_HOUR = 1000 * 60 * 60;
+  const msPerUnit = MODO_PRUEBA ? MS_PER_SEC : MS_PER_HOUR;
+  const msToUnits = (ms: number) => ms / msPerUnit;
 
-    const agregarDebug = (mensaje: string) => {
-        if (MODO_PRUEBA) {
-            console.log(`[DEBUG] ${mensaje}`);
-            setDebugLog(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()}: ${mensaje}`]);
-        }
-    };
+  // 🔔 FUNCIÓN DE NOTIFICACIÓN
+  const mostrarAlarma = () => {
+    toast("🔔 ¡Tienes una nueva alarma!", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
+  };
 
-    useEffect(() => {
-        if ('Notification' in window) {
-            setPermisoNotificaciones(Notification.permission);
-            agregarDebug(`Permiso inicial: ${Notification.permission}`);
-        } else {
-            agregarDebug('Notificaciones NO soportadas en este navegador');
-        }
-    }, []);
+  const pedirPermisoNotificacion = async () => {
+    if (!('Notification' in window)) {
+      alert('Este navegador no soporta notificaciones.');
+      return;
+    }
+    const permiso = await Notification.requestPermission();
+    if (permiso === 'granted') {
+      setNotificacionesPermitidas(true);
+      new Notification('✅ Notificaciones activadas correctamente.');
+    } else {
+      alert('Permiso de notificaciones denegado.');
+    }
+  };
 
-    useEffect(() => {
-        const sincronizar = () => {
-            setCronometros(prev => prev.map(cron => {
-                if (cron.estado === 'activo') {
-                    const ahora = new Date().getTime();
-                    const inicio = new Date(cron.hora_inicio).getTime();
-                    const tiempoTranscurrido = ahora - inicio - cron.tiempo_pausado;
-                    
-                    return {
-                        ...cron,
-                        tiempoTranscurrido,
-                        tiempoActivo: tiempoTranscurrido - cron.tiempo_pausado
-                    };
+  useEffect(() => {
+    const ahora = Date.now();
+    const cronConTiempo = initialCronometros.map(cron => ({
+      ...cron,
+      tiempoTranscurrido: cron.estado === 'activo' ? ahora - new Date(cron.created_at).getTime() : 0,
+    }));
+    setCronometros(cronConTiempo);
+    alertasMostradasRef.current = {};
+    cronConTiempo.forEach(cron => {
+      alertasMostradasRef.current[cron.id] = [];
+    });
+  }, [initialCronometros]);
+
+  const mostrarAlertaEmergente = (cron: CronometroConTiempo, marca: number) => {
+    const unidad = MODO_PRUEBA ? 'segundos' : 'horas';
+    toast.info(`⚠️ Escala el Ticket #${cron.ticketId} alcanzó ${marca} ${unidad}.`, {
+      position: "bottom-right",
+      autoClose: 6000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    });
+  };
+
+  useEffect(() => {
+    intervalRef.current = window.setInterval(() => {
+      setCronometros(prev =>
+        prev.map(cron => {
+          if (cron.estado !== 'activo') return cron;
+
+          const nuevoTiempo = cron.tiempoTranscurrido + 1000;
+          const unidades = msToUnits(nuevoTiempo);
+
+          ALERTAS.forEach(marca => {
+            if (Math.abs(unidades - marca) < 0.1) {
+              if (!alertasMostradasRef.current[cron.id]?.includes(marca)) {
+                mostrarAlertaEmergente(cron, marca);
+                if (notificacionesPermitidas) {
+                  new Notification(`⚠️ Escala el Ticket #${cron.ticketId} alcanzó la marca de ${marca}${MODO_PRUEBA ? ' segundos' : ' horas'}.`);
                 }
-                return cron;
-            }));
-        };
-
-        intervalRef.current = setInterval(sincronizar, 1000);
-
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        const verificarNotificaciones = () => {
-            cronometros.forEach(cron => {
-                if (cron.estado === 'activo') {
-                    let tiempoActual: number;
-                    let key: number;
-
-                    if (MODO_PRUEBA) {
-                        tiempoActual = Math.floor(cron.tiempoTranscurrido / 1000);
-                        key = cron.id * 100 + tiempoActual;
-                    } else {
-                        tiempoActual = Math.floor(cron.tiempoTranscurrido / (1000 * 60 * 60));
-                        key = cron.id * 100 + tiempoActual;
-                    }
-
-                    if (configuracionActual.valores.includes(tiempoActual) && !notificacionesMostradas.current.has(key)) {
-                        const unidad = MODO_PRUEBA ? 'segundos' : 'horas';
-                        agregarDebug(`⏰ Alerta disparada: ${cron.titulo} a ${tiempoActual} ${unidad}`);
-                        
-                        mostrarNotificacion(
-                            MODO_PRUEBA ? `[PRUEBA] Cronómetro: ${cron.titulo}` : `Cronómetro: ${cron.titulo}`, 
-                            `Ha alcanzado ${tiempoActual} ${configuracionActual.unidad} - ${configuracionActual.mensaje}`
-                        );
-                        notificacionesMostradas.current.add(key);
-                    }
-
-                    if (MODO_PRUEBA && tiempoActual % 5 === 0 && !notificacionesMostradas.current.has(tiempoActual + 1000)) {
-                        agregarDebug(`Tiempo actual: ${cron.titulo} - ${tiempoActual}s`);
-                        notificacionesMostradas.current.add(tiempoActual + 1000);
-                    }
+                if (!alertasMostradasRef.current[cron.id]) {
+                  alertasMostradasRef.current[cron.id] = [];
                 }
-            });
-        };
-
-        const notificacionInterval = setInterval(verificarNotificaciones, 1000);
-
-        return () => {
-            clearInterval(notificacionInterval);
-        };
-    }, [cronometros, MODO_PRUEBA]);
-
-    useEffect(() => {
-        const ahora = new Date().getTime();
-        
-        const cronometrosConTiempo = initialCronometros.map(cron => {
-            if (cron.estado === 'activo' && cron.hora_inicio) {
-                const inicio = new Date(cron.hora_inicio).getTime();
-                const tiempoTranscurrido = ahora - inicio - cron.tiempo_pausado;
-                
-                return {
-                    ...cron,
-                    tiempoTranscurrido,
-                    tiempoActivo: tiempoTranscurrido - cron.tiempo_pausado
-                };
+                alertasMostradasRef.current[cron.id].push(marca);
+              }
             }
-            
-            return {
-                ...cron,
-                tiempoTranscurrido: 0,
-                tiempoActivo: 0
-            };
-        });
+          });
 
-        setCronometros(cronometrosConTiempo);
-        agregarDebug(`Cronómetros cargados: ${cronometrosConTiempo.length}`);
-    }, [initialCronometros]);
+          return { ...cron, tiempoTranscurrido: nuevoTiempo };
+        })
+      );
+    }, 1000);
 
-    const mostrarNotificacion = (titulo: string, mensaje: string) => {
-        agregarDebug(`Intentando mostrar: ${titulo}`);
-        
-        if ('Notification' in window && Notification.permission === 'granted') {
-            agregarDebug('Creando notificación del navegador');
-            const notificacion = new Notification(titulo, {
-                body: mensaje,
-                icon: '/favicon.ico',
-                badge: '/favicon.ico',
-                tag: 'cronometro-alerta',
-                requireInteraction: true
-            });
+    return () => intervalRef.current && window.clearInterval(intervalRef.current);
+  }, [notificacionesPermitidas]);
 
-            notificacion.onclick = () => {
-                window.focus();
-                notificacion.close();
-            };
+  const handleTipoChange = (val: string) => {
+    setTipoAlarma(val);
+    setOpenTipo(false);
+    if (val === 'Enlaces') {
+      setPrioridad('1');
+      setMostrarPrioridad(false);
+    } else {
+      setMostrarPrioridad(true);
+    }
+  };
 
-            setTimeout(() => {
-                notificacion.close();
-            }, 10000);
+  const handlePrioridadChange = (val: string) => {
+    setPrioridad(val);
+    setOpenPrioridad(false);
+  };
 
-        } else if ('Notification' in window && Notification.permission !== 'granted') {
-            agregarDebug('Usando alert() como fallback');
-            alert(`🔔 ${titulo}\n${mensaje}`);
-        } else {
-            agregarDebug('Usando alert() - Notificaciones no soportadas');
-            alert(`🔔 ${titulo}\n${mensaje}`);
-        }
-
-        mostrarAlertaEnPagina(titulo, mensaje);
+  // 🔔 Muestra una notificación al crear un cronómetro
+  const crearCronometro = () => {
+    if (!nuevoTitulo.trim() || !ticketId.trim() || !tipoAlarma) return;
+    const ahora = new Date();
+    const nuevoId = Date.now();
+    const nuevo: CronometroConTiempo = {
+      id: nuevoId,
+      titulo: nuevoTitulo,
+      ticketId,
+      tipoAlarma,
+      prioridad: tipoAlarma === 'Enlaces' ? '1' : prioridad || '1',
+      estado: 'activo',
+      creado_por: 1,
+      created_at: ahora.toISOString(),
+      updated_at: ahora.toISOString(),
+      usuario: { id: 1, name: 'Nataly Lopez' },
+      tiempoTranscurrido: 0,
+      notificado: false,
     };
+    alertasMostradasRef.current[nuevoId] = [];
+    setCronometros(prev => [nuevo, ...prev]);
+    setNuevoTitulo('');
+    setTicketId('');
+    setTipoAlarma('');
+    setPrioridad('');
+    setMostrarPrioridad(false);
 
-    const mostrarAlertaEnPagina = (titulo: string, mensaje: string) => {
-        const alerta = document.createElement('div');
-        alerta.className = 'fixed top-4 right-4 bg-yellow-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-sm';
-        alerta.innerHTML = `
-            <div class="flex items-center gap-2">
-                <BellAlertIcon class="h-6 w-6" />
-                <strong>${titulo}</strong>
-            </div>
-            <div class="mt-2">${mensaje}</div>
-            <button onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-white">×</button>
-        `;
-        
-        document.body.appendChild(alerta);
+    toast.success('🕒 Cronómetro creado correctamente.');
+    mostrarAlarma(); // 🔔 Alerta automática al crear
+  };
 
-        setTimeout(() => {
-            if (alerta.parentElement) {
-                alerta.remove();
-            }
-        }, 5000);
-    };
+  const formatearTiempo = (ms: number) => {
+    const seg = Math.floor(ms / 1000);
+    const min = Math.floor(seg / 60);
+    const hr = Math.floor(min / 60);
+    return `${hr.toString().padStart(2, '0')}:${(min % 60).toString().padStart(2, '0')}:${(seg % 60).toString().padStart(2, '0')}`;
+  };
 
-    const solicitarPermisoNotificaciones = async () => {
-        if (!('Notification' in window)) {
-            alert('Tu navegador no soporta notificaciones');
-            return;
-        }
+  const toggleEstado = (id: number) => {
+    setCronometros(prev => prev.map(cron => (cron.id === id ? { ...cron, estado: cron.estado === 'activo' ? 'en_espera' : 'activo' } : cron)));
+  };
 
-        try {
-            const permiso = await Notification.requestPermission();
-            setPermisoNotificaciones(permiso);
-            agregarDebug(`Permiso actualizado: ${permiso}`);
+  const eliminarCronometro = (id: number) => {
+    if (confirm('¿Deseas eliminar este cronómetro?')) {
+      setCronometros(prev => prev.filter(c => c.id !== id));
+      delete alertasMostradasRef.current[id];
+    }
+  };
 
-            if (permiso === 'granted') {
-                alert('✅ Notificaciones permitidas. Recibirás alertas visuales y de sonido.');
-                mostrarNotificacion(
-                    'Prueba de Notificaciones', 
-                    '¡Las notificaciones están funcionando correctamente!'
-                );
-            } else if (permiso === 'denied') {
-                alert('❌ Notificaciones bloqueadas. Usa alertas de navegador.');
-            }
-        } catch (error) {
-            agregarDebug(`Error al solicitar permiso: ${error}`);
-        }
-    };
+  const escalarCronometro = (id: number) => {
+    setCronometros(prev => prev.map(cron => (cron.id === id ? { ...cron, notificado: true } : cron)));
+  };
 
-    const crearCronometro = () => {
-        if (!nuevoTitulo.trim()) return;
+  const getColorTarjeta = (ms: number, notificado: boolean) => {
+    const unidades = msToUnits(ms);
+    if (notificado) return 'bg-emerald-500';
+    if (unidades < ALERTAS[0] - 0.25) return 'bg-gray-100';
+    if (unidades < ALERTAS[0]) return 'bg-orange-500';
+    if (unidades >= ALERTAS[0] && unidades < ALERTAS[1] - 0.25) return 'bg-red-500';
+    if (unidades >= ALERTAS[1] && unidades < ALERTAS[2] - 0.25) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
 
-        router.post('/cronometros', {
-            titulo: nuevoTitulo
-        }, {
-            onSuccess: () => {
-                setNuevoTitulo('');
-                setMostrarForm(false);
-                router.reload();
-            }
-        });
-    };
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Cronómetros" />
+      <div className="p-6 flex flex-col gap-6">
 
-    const iniciarCronometro = (id: number) => {
-        agregarDebug(`Iniciando cronómetro ${id}`);
-        router.put(`/cronometros/${id}/iniciar`, {}, {
-            onSuccess: () => router.reload()
-        });
-    };
+        {/* 🔔 Botón para activar notificaciones */}
+        <div className="flex items-center gap-3 mb-2">
+          <Button onClick={pedirPermisoNotificacion} className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
+            <BellIcon className="h-4 w-4" /> Activar Notificaciones
+          </Button>
+          <Button onClick={mostrarAlarma} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded">
+            Activar Alarma
+          </Button>
+          {notificacionesPermitidas && <span className="text-green-600 font-semibold">✅ Activadas</span>}
+        </div>
 
-    const pausarCronometro = (id: number) => {
-        router.put(`/cronometros/${id}/pausar`, {}, {
-            onSuccess: () => router.reload()
-        });
-    };
+        <div className="bg-yellow-100 border border-yellow-400 rounded p-3 mb-4">
+          <p className="text-yellow-800 font-semibold">
+            {MODO_PRUEBA ? '🔧 Modo Prueba: Alertas a los 10, 20 y 30 segundos' : '⏰ Modo Producción: Alertas a las 4, 6 y 8 horas'}
+          </p>
+        </div>
 
-    const detenerCronometro = (id: number) => {
-        router.put(`/cronometros/${id}/detener`, {}, {
-            onSuccess: () => router.reload()
-        });
-    };
 
-    const eliminarCronometro = (id: number) => {
-        if (confirm('¿Estás seguro de eliminar este cronómetro?')) {
-            router.delete(`/cronometros/${id}`, {
-                onSuccess: () => router.reload()
-            });
-        }
-    };
 
-    const formatearTiempo = (milisegundos: number) => {
-        const segundos = Math.floor(milisegundos / 1000);
-        const minutos = Math.floor(segundos / 60);
-        const horas = Math.floor(minutos / 60);
-        
-        return `${horas.toString().padStart(2, '0')}:${(minutos % 60).toString().padStart(2, '0')}:${(segundos % 60).toString().padStart(2, '0')}`;
-    };
+        {/* Formulario */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <input type="text" placeholder="Título" value={nuevoTitulo} onChange={e => setNuevoTitulo(e.target.value)} className="border rounded px-3 py-2" />
+          <input type="text" placeholder="ID Ticket" value={ticketId} onChange={e => setTicketId(e.target.value)} className="border rounded px-3 py-2" />
 
-    const probarNotificacionManual = () => {
-        mostrarNotificacion(
-            'Prueba de Notificación',
-            'Esta es una notificación de prueba para verificar el funcionamiento.'
-        );
-    };
+          {/* Dropdown personalizado */}
+          <div className="relative w-full">
+            <button
+              onClick={() => setOpenTipo(!openTipo)}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+            >
+              {tipoAlarma || 'Tipo de Alarma'}
+            </button>
+            {openTipo && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow">
+                {['Enlaces', 'Energía'].map(opcion => (
+                  <div
+                    key={opcion}
+                    onClick={() => handleTipoChange(opcion)}
+                    className="px-3 py-2 hover:bg-blue-500 hover:text-white cursor-pointer transition"
+                  >
+                    {opcion}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-    const getTextoConfiguracion = () => {
-        if (MODO_PRUEBA) {
-            return `Alertas de prueba a los: ${configuracionPrueba.segundosAlerta.join(', ')} segundos`;
-        } else {
-            return `Alertas configuradas a las: ${HORAS_ALERTA.join(', ')} horas`;
-        }
-    };
-
-    // Función para obtener las iniciales del usuario
-    const getInicialesUsuario = (nombre: string) => {
-        return nombre
-            .split(' ')
-            .map(word => word.charAt(0))
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
-    };
-
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Cronómetros Sincronizados" />
-
-            <div className="flex flex-col gap-6 p-6">
-                {/* Header */}
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-2xl font-bold">
-                            Cronómetros Sincronizados 
-                            {MODO_PRUEBA && <span className="ml-2 text-sm bg-yellow-500 text-white px-2 py-1 rounded">MODO PRUEBA</span>}
-                        </h1>
-                        <p className="text-sm text-gray-600 mt-1">
-                            {getTextoConfiguracion()}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                            Permiso de notificaciones: 
-                            <span className={`ml-1 ${
-                                permisoNotificaciones === 'granted' ? 'text-green-600' :
-                                permisoNotificaciones === 'denied' ? 'text-red-600' : 'text-yellow-600'
-                            }`}>
-                                {permisoNotificaciones === 'granted' ? '✅ Permitido' :
-                                 permisoNotificaciones === 'denied' ? '❌ Bloqueado' : '⏳ Pendiente'}
-                            </span>
-                        </p>
+          {mostrarPrioridad && (
+            <div className="relative w-full">
+              <button
+                onClick={() => setOpenPrioridad(!openPrioridad)}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+              >
+                {prioridad || 'Prioridad'}
+              </button>
+              {openPrioridad && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow">
+                  {['1', '2'].map(opcion => (
+                    <div
+                      key={opcion}
+                      onClick={() => handlePrioridadChange(opcion)}
+                      className="px-3 py-2 hover:bg-blue-500 hover:text-white cursor-pointer transition"
+                    >
+                      {opcion}
                     </div>
-                    <div className="flex gap-2">
-                        <Button
-                            onClick={solicitarPermisoNotificaciones}
-                            variant="outline"
-                            className="flex items-center gap-2"
-                        >
-                            <BellAlertIcon className="h-4 w-4" />
-                            {permisoNotificaciones === 'granted' ? 'Permitido' : 'Permitir Notificaciones'}
-                        </Button>
-                        <Button
-                            onClick={probarNotificacionManual}
-                            variant="outline"
-                            className="flex items-center gap-2"
-                        >
-                            <BellAlertIcon className="h-4 w-4" />
-                            Probar Notificación
-                        </Button>
-                        <Button
-                            onClick={() => setMostrarForm(!mostrarForm)}
-                            className="flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                            <PlusIcon className="h-5 w-5" />
-                            Nuevo Cronómetro
-                        </Button>
-                    </div>
+                  ))}
                 </div>
-
-                {/* Debug Panel (solo en modo prueba) */}
-                {MODO_PRUEBA && (
-                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="font-semibold text-yellow-800">Debug Console (Modo Prueba)</h3>
-                            <Button
-                                onClick={() => setDebugLog([])}
-                                size="sm"
-                                variant="outline"
-                            >
-                                Limpiar
-                            </Button>
-                        </div>
-                        <div className="bg-black text-green-400 p-3 rounded text-xs font-mono h-32 overflow-y-auto">
-                            {debugLog.length === 0 ? (
-                                <div>Esperando eventos... Crea un cronómetro y inícialo para ver el debug.</div>
-                            ) : (
-                                debugLog.map((log, index) => (
-                                    <div key={index}>{log}</div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Formulario para nuevo cronómetro */}
-                {mostrarForm && (
-                    <div className="bg-white p-4 rounded-lg border border-gray-200 shadow">
-                        <h3 className="text-lg font-semibold mb-3">
-                            {MODO_PRUEBA ? 'Crear Cronómetro de Prueba' : 'Crear Nuevo Cronómetro'}
-                        </h3>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                placeholder="Título del cronómetro"
-                                value={nuevoTitulo}
-                                onChange={(e) => setNuevoTitulo(e.target.value)}
-                                className="flex-1 border rounded px-3 py-2"
-                                onKeyPress={(e) => e.key === 'Enter' && crearCronometro()}
-                            />
-                            <Button
-                                onClick={crearCronometro}
-                                className="bg-green-600 hover:bg-green-700"
-                            >
-                                Crear
-                            </Button>
-                            <Button
-                                onClick={() => setMostrarForm(false)}
-                                variant="outline"
-                            >
-                                Cancelar
-                            </Button>
-                        </div>
-                        {MODO_PRUEBA ? (
-                            <p className="text-sm text-yellow-600 mt-2">
-                                💡 Las alertas se activarán a los {configuracionPrueba.segundosAlerta.join(', ')} segundos
-                            </p>
-                        ) : (
-                            <p className="text-sm text-blue-600 mt-2">
-                                💡 Las alertas se activarán a las {HORAS_ALERTA.join(', ')} horas
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {/* Grid de cronómetros */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {cronometros.map((cronometro) => (
-                        <div
-                            key={cronometro.id}
-                            className="bg-white rounded-lg border border-gray-200 shadow p-4"
-                        >
-                            {/* Header con título y usuario */}
-                            <div className="flex justify-between items-start mb-3">
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                                        {cronometro.titulo}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                                        <UserCircleIcon className="h-4 w-4" />
-                                        <span>Creado por: {cronometro.usuario.name}</span>
-                                    </div>
-                                </div>
-                                <Button
-                                    onClick={() => eliminarCronometro(cronometro.id)}
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-red-600 hover:text-red-800 flex-shrink-0"
-                                >
-                                    <TrashIcon className="h-4 w-4" />
-                                </Button>
-                            </div>
-
-                            {/* Display del tiempo */}
-                            <div className="text-center mb-4">
-                                <div className="text-3xl font-mono font-bold text-gray-900">
-                                    {formatearTiempo(cronometro.tiempoTranscurrido)}
-                                </div>
-                                <div className="text-sm text-gray-500 mt-1">
-                                    {MODO_PRUEBA && (
-                                        <div>Segundos: {Math.floor(cronometro.tiempoTranscurrido / 1000)}</div>
-                                    )}
-                                    {cronometro.estado === 'activo' && '⏵ En ejecución'}
-                                    {cronometro.estado === 'pausado' && '⏸ Pausado'}
-                                    {cronometro.estado === 'detenido' && '⏹ Detenido'}
-                                </div>
-                            </div>
-
-                            {/* Controles */}
-                            <div className="flex justify-center gap-2">
-                                {cronometro.estado !== 'activo' && (
-                                    <Button
-                                        onClick={() => iniciarCronometro(cronometro.id)}
-                                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
-                                        size="sm"
-                                    >
-                                        <PlayIcon className="h-4 w-4" />
-                                        Iniciar
-                                    </Button>
-                                )}
-                                
-                                {cronometro.estado === 'activo' && (
-                                    <Button
-                                        onClick={() => pausarCronometro(cronometro.id)}
-                                        className="flex items-center gap-1 bg-yellow-600 hover:bg-yellow-700"
-                                        size="sm"
-                                    >
-                                        <PauseIcon className="h-4 w-4" />
-                                        Pausar
-                                    </Button>
-                                )}
-                                
-                                {cronometro.estado !== 'detenido' && (
-                                    <Button
-                                        onClick={() => detenerCronometro(cronometro.id)}
-                                        className="flex items-center gap-1 bg-red-600 hover:bg-red-700"
-                                        size="sm"
-                                    >
-                                        <StopIcon className="h-4 w-4" />
-                                        Detener
-                                    </Button>
-                                )}
-                            </div>
-
-                            {/* Información adicional */}
-                            <div className="mt-3 text-xs text-gray-500 space-y-1">
-                                <div className="flex justify-between">
-                                    <span>Creado:</span>
-                                    <span>{new Date(cronometro.created_at).toLocaleDateString()}</span>
-                                </div>
-                                {cronometro.hora_inicio && (
-                                    <div className="flex justify-between">
-                                        <span>Iniciado:</span>
-                                        <span>{new Date(cronometro.hora_inicio).toLocaleString()}</span>
-                                    </div>
-                                )}
-                                {cronometro.hora_final && (
-                                    <div className="flex justify-between">
-                                        <span>Finalizado:</span>
-                                        <span>{new Date(cronometro.hora_final).toLocaleString()}</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Indicadores de alertas */}
-                            {cronometro.estado === 'activo' && (
-                                <div className="mt-3">
-                                    <p className="text-xs text-gray-500 mb-2">Próximas alertas:</p>
-                                    <div className="flex justify-between text-xs">
-                                        {configuracionActual.valores.map((valor) => {
-                                            const tiempoActual = MODO_PRUEBA 
-                                                ? Math.floor(cronometro.tiempoTranscurrido / 1000)
-                                                : Math.floor(cronometro.tiempoTranscurrido / (1000 * 60 * 60));
-                                            const alcanzado = tiempoActual >= valor;
-                                            
-                                            return (
-                                                <div
-                                                    key={valor}
-                                                    className={`px-2 py-1 rounded ${
-                                                        alcanzado
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : 'bg-gray-100 text-gray-600'
-                                                    }`}
-                                                >
-                                                    {valor}{configuracionActual.unidad}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-
-                {cronometros.length === 0 && (
-                    <div className="text-center py-12 text-gray-500">
-                        <ClockIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                        <p className="text-lg">No hay cronómetros activos</p>
-                        <p className="text-sm">
-                            {MODO_PRUEBA 
-                                ? 'Crea un cronómetro de prueba para ver las alertas en acción'
-                                : 'Crea tu primer cronómetro para comenzar'
-                            }
-                        </p>
-                    </div>
-                )}
+              )}
             </div>
-        </AppLayout>
-    );
+          )}
+        </div>
+
+        <Button onClick={crearCronometro} className="bg-blue-600 hover:bg-blue-700 text-white mt-2">
+          Crear Cronómetro
+        </Button>
+
+        {/* Tarjetas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {cronometros.map(cron => (
+            <div key={cron.id} className={`rounded-lg border p-4 shadow ${getColorTarjeta(cron.tiempoTranscurrido, cron.notificado)} text-black`}>
+              <div className="flex justify-between mb-2 text-black">
+                <div>
+                  <div className="flex items-center text-sm gap-1 font-bold text-xl">
+                    <TicketIcon className="h-4 w-4" /> {cron.ticketId} - {cron.titulo}
+                  </div>
+                  <div className="flex items-center text-sm gap-1 mt-1">
+                    <UserCircleIcon className="h-4 w-4" /> {cron.usuario.name}
+                  </div>
+                  <div className="text-sm mt-1 font-semibold">Prioridad: {cron.prioridad}</div>
+                  <div className="text-xs mt-1">Iniciado: {new Date(cron.created_at).toLocaleString()}</div>
+                </div>
+                <Button onClick={() => eliminarCronometro(cron.id)} size="sm" className="text-gray-950 bg-transparent hover:text-black-300">
+                  <TrashIcon className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="text-center mb-2">
+                <div className="text-3xl font-mono font-bold">{formatearTiempo(cron.tiempoTranscurrido)}</div>
+                <div className="text-sm">{cron.estado === 'activo' ? 'En proceso' : 'En espera'}</div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col md:flex-row gap-2 items-center"
+              >
+                <Button
+                  onClick={() => escalarCronometro(cron.id)}
+                  className={`w-full md:flex-1 ${cron.notificado ? 'bg-green-700' : 'bg-blue-900 hover:bg-blue-950'} text-white`}
+                >
+                  Escalar
+                </Button>
+
+                <Button
+                  onClick={() => toggleEstado(cron.id)}
+                  className={`w-full md:flex-1 ${cron.estado === 'activo' ? 'bg-gray-500' : 'bg-gray-500 hover:bg-sky-600'} text-white`}
+                >
+                  {cron.estado === 'activo' ? 'Poner en espera' : 'Poner en proceso'}
+                </Button>
+              </motion.div>
+
+              {/* Barra de progreso */}
+              <div className="mt-3">
+                <div className="text-xs text-black mb-1">Próxima escalación ({MODO_PRUEBA ? 'seg' : 'hrs'}):</div>
+                <div className="flex h-3 rounded overflow-hidden bg-gray-300">
+                  {ALERTAS.map((h, idx) => {
+                    const progress = Math.min(1, cron.tiempoTranscurrido / (msPerUnit * h));
+                    return <div key={idx} className={`${progress >= 1 ? 'bg-gray-100' : 'bg-gray-900'} flex-1 mr-1 last:mr-0`} />;
+                  })}
+                </div>
+                <div className="flex justify-between text-xs text-black mt-1">
+                  {ALERTAS.map(h => (
+                    <span key={h}>{h}{MODO_PRUEBA ? 's' : 'h'}</span>
+                  ))}
+                </div>
+                <div className={`text-xs mt-2 font-semibold ${cron.notificado ? 'text-green-300' : 'text-yellow-200'}`}>
+                  {cron.notificado ? '✅ Notificado' : '⚠️ No notificado'}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+             <ToastContainer />
+
+    </AppLayout>
+  );
 }

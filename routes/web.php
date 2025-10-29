@@ -5,6 +5,11 @@ use App\Http\Controllers\EscalasController;
 use App\Http\Controllers\HomologacionesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Cronometro;
+
+
+
+
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -12,7 +17,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $cronometros = Cronometro::all();
+        return Inertia::render('dashboard', compact('cronometros'));
     })->name('dashboard');
     Route::get('/escalas', [EscalasController::class, 'index'])->name('escalas.index');
 
@@ -23,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/homologaciones/{id}', [HomologacionesController::class, 'update'])->name('homologaciones.update');
     Route::delete('/homologaciones/{id}', [HomologacionesController::class, 'destroy'])->name('homologaciones.destroy');
     Route::get('/cronometros', [CronometrosController::class, 'index'])->name('cronometros.index');
+    Route::get('/cronometros/testcard', function () { return Inertia::render('Cronometros/TestCard'); });
     Route::post('/cronometros', [CronometrosController::class, 'store'])->name('cronometros.store');
     Route::put('/cronometros/{id}/iniciar', [CronometrosController::class, 'iniciar'])->name('cronometros.iniciar');
     Route::put('/cronometros/{id}/pausar', [CronometrosController::class, 'pausar'])->name('cronometros.pausar');
