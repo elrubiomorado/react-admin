@@ -10,6 +10,7 @@ import {
 import { Head, Link, router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
 
+
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Homologaciones', href: '/homologaciones' },
