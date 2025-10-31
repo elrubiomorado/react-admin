@@ -17,8 +17,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        $cronometros = Cronometro::all();
-        return Inertia::render('dashboard', compact('cronometros'));
+        $cronometrosActivos = Cronometro::all();
+        return Inertia::render('dashboard', compact('cronometrosActivos'));
     })->name('dashboard');
     Route::get('/escalas', [EscalasController::class, 'index'])->name('escalas.index');
 

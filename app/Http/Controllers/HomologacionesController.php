@@ -64,7 +64,7 @@ class HomologacionesController extends Controller
     {
         $homologacion = Homologacion::findOrFail($id);
         $homologacion->delete();
-        
+
         return redirect()->route('homologaciones.index')
                          ->with('success', 'Homologación eliminada correctamente.');
     }

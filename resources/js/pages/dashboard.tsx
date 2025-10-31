@@ -5,7 +5,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ClockIcon, ChartPieIcon} from '@heroicons/react/24/solid';
 import { GoAlertFill } from "react-icons/go";
-import Migajerito from '/public/images/Megajerito.jpeg';
+
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -15,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ cronometrosActivos }: { cronometrosActivos: any[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -26,7 +26,7 @@ export default function Dashboard() {
                         <PlaceholderPattern className="absolute inset-0 w-full h-full stroke-white-20" />
                         <ChartPieIcon className="w-12 h-12 z-10 mb-2" />
                         <h2 className="text-lg font-bold z-10 text-center">Cronómetros creados</h2>
-                        <p className="text-9xl font-bold mt-2 z-10">12</p>
+                        <p className="text-9xl font-bold mt-2 z-10">{cronometrosActivos.length}</p>
                     </div>
 
                     <div className="shadow-xl relative flex flex-col items-center justify-center aspect-video rounded-xl bg-green-00 text-slate-900 p-6">
@@ -142,18 +142,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-         <footer className="bg-black text-white py-3 mt-auto">
-             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-                 <p className="text-center md:text-left mb-2 md:mb-0">
-                     Created by <strong>Ingenieros en desarrollo</strong> Nataly, Edgar y Jesús.
-                 </p>
-              <img
-                 src={Migajerito}
-                 alt="Logo migajeros"
-                 className="h-10 rounded-md"
-                 />
-            </div>
-        </footer>
+
 
         </AppLayout>
     );

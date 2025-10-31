@@ -226,22 +226,12 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
       <Head title="Cronómetros" />
       <div className="p-6 flex flex-col gap-6">
 
-        {/* 🔔 Botón para activar notificaciones */}
-        <div className="flex items-center gap-3 mb-2">
-          <Button onClick={pedirPermisoNotificacion} className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
-            <BellIcon className="h-4 w-4" /> Activar Notificaciones
-          </Button>
-          <Button onClick={mostrarAlarma} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded">
-            Activar Alarma
-          </Button>
-          {notificacionesPermitidas && <span className="text-green-600 font-semibold">✅ Activadas</span>}
-        </div>
-
+        {/*
         <div className="bg-yellow-100 border border-yellow-400 rounded p-3 mb-4">
           <p className="text-yellow-800 font-semibold">
             {MODO_PRUEBA ? '🔧 Modo Prueba: Alertas a los 10, 20 y 30 segundos' : '⏰ Modo Producción: Alertas a las 4, 6 y 8 horas'}
           </p>
-        </div>
+        </div> */}
 
 
 
@@ -303,7 +293,7 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
         </Button>
 
         {/* Tarjetas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {cronometros.map(cron => (
             <div key={cron.id} className={`rounded-lg border p-4 shadow ${getColorTarjeta(cron.tiempoTranscurrido, cron.notificado)} text-black`}>
               <div className="flex justify-between mb-2 text-black">
