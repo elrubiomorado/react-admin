@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PlaceSeeder::class,
             TeamSeeder::class,
             JobTitleSeeder::class,
+            StatusSeeder::class
         ]);
         User::firstOrCreate(
             ['email' => 'avilaedgar2001@gmail.com'],
