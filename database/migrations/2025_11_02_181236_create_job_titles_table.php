@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            //adf
         });
     }
 
