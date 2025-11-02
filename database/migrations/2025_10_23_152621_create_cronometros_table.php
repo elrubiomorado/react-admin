@@ -10,7 +10,9 @@ return new class extends Migration
     {
         Schema::create('cronometros', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo');
+            $table->string('name');
+            $table->integer('ticket');
+            $table->integer('phone')->nullable();
             $table->timestamp('hora_inicio')->nullable();
             $table->timestamp('hora_final')->nullable();
             $table->bigInteger('tiempo_pausado')->default(0); // en milisegundos

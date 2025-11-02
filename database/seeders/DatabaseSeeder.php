@@ -13,13 +13,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        //llamamos los seeders de los modelos
+        $this->call([
+            ZoneSeeder::class,
+            PlaceSeeder::class,
+            TeamSeeder::class,
+            JobTitleSeeder::class,
+        ]);
         User::firstOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'avilaedgar2001@gmail.com'],
             [
-                'name' => 'Test User',
-                'password' => 'password',
+                'name' => 'Edgar Avila Gonzalez',
+                'password' => '12345678',
                 'email_verified_at' => now(),
             ]
         );
