@@ -17,4 +17,8 @@ class Place extends Model
     {
         return $this->belongsTo(Zone::class);
     }
+
+    public function engineers(){
+        return $this->hasMany(Enginner::class);
+    }
 }
