@@ -17,7 +17,7 @@ class EngineerSeeder extends Seeder
     {
         $engineers = [
             ['name' => 'Edgar Avila Gonzalez', 'teams_user' => 'edavilago', 'email' => 'edavilago@megacable.com.mx','job_title_title' => 'Ingeniero en Desarrollo', 'place_name' => 'Guadalajara'],
-            ['name' => 'Nataly Lopez Figeroa', 'job_title_title' => 'Ingeniero en Desarrollo', 'teams_user' => 'nalopezfi', 'place_name' => 'Guadalajara', 'email' => 'nalopezfi@megacable.com.mx'],
+            ['name' => 'Nataly Lopez Figueroa', 'job_title_title' => 'Ingeniero en Desarrollo', 'teams_user' => 'nalopezfi', 'place_name' => 'Guadalajara', 'email' => 'nalopezfi@megacable.com.mx'],
             ['name' => 'Manuel De Jesus Toledo Avando', 'job_title_title' => 'Ingeniero en Desarrollo', 'teams_user' => 'mtoledoa', 'place_name' => 'Guadalajara', 'email' => 'mtoledoa@megacable.com.mx'],
         ];
 

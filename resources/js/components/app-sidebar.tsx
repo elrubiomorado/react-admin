@@ -32,6 +32,11 @@ const mainNavItems: NavItem[] = [
         href: '/homologaciones',
         icon: NotepadText,
     },
+    {
+        title: 'Utilities',
+        href: '/utilities',
+        icon: Folder,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

@@ -15,11 +15,10 @@ class ZoneSeeder extends Seeder
     {
         //Creamos las 5 zonas que componen los lugares de mega
         $zones = [
-            'Occidente',
-            'Norte',
-            'Bajio-Golfo',
-            'Centro',
-            'Sur'
+            'OCCIDENTE',
+            'NORTE',
+            'BAJIO-GOLFO',
+            'CENTRO',
         ];
 
         foreach ($zones as $name) {

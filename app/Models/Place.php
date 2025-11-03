@@ -10,12 +10,12 @@ class Place extends Model
     protected $fillable = [
         'name',
         'short_name',
-        'zone_id',
+        'state_id',
     ];
 
-    public function zone()
+    public function state()
     {
-        return $this->belongsTo(Zone::class);
+        return $this->belongsTo(State::class);
     }
 
     public function engineers(){

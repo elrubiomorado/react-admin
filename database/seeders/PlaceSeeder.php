@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Place;
-use App\Models\Zone;
+use App\Models\State;
 
 class PlaceSeeder extends Seeder
 {
@@ -17,20 +17,20 @@ class PlaceSeeder extends Seeder
         //Seeder de prueba de lugares
         // Ejemplo: crear lugares y asignarlos a zonas existentes
         $places = [
-            ['name' => 'Guadalajara', 'short_name' => 'GDL', 'zone' => 'Occidente'],
-            ['name' => 'Monterrey', 'short_name' => 'MTY','zone' => 'Norte'],
-            ['name' => 'CDMX', 'short_name' => 'CDMX','zone' => 'Centro'],
+            ['name' => 'GUADALAJARA', 'short_name' => 'GDL', 'state' => 'JALISCO'],
+            ['name' => 'MONTERREY', 'short_name' => 'MTY','state' => 'MONTERREY'],
+            ['name' => 'CDMX', 'short_name' => 'CDMX','state' => 'CIUDAD DE MEXICO'],
         ];
 
         foreach ($places as $data) {
-            $zone = Zone::where('name', $data['zone'])->first(); // busca la zona por nombre
+            $state = State::where('name', $data['state'])->first(); // busca la zona por nombre
 
-            if ($zone) {
+            if ($state) {
                 Place::firstOrCreate(
                     [
                         'name' => $data['name'],
                         'short_name' => $data['short_name'],
-                        'zone_id' => $zone->id,
+                        'state_id' => $state->id,
                     ]
                 );
             }

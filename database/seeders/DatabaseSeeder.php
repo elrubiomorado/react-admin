@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         //llamamos los seeders de los modelos
         $this->call([
             ZoneSeeder::class,
+            StateSeeder::class,
             PlaceSeeder::class,
             TeamSeeder::class,
             JobTitleSeeder::class,
