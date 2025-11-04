@@ -6,6 +6,7 @@ use App\Http\Controllers\HomologacionesController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\UtilitiesController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\EngineerController;
 use App\Models\Cronometro;
 
 
@@ -66,6 +67,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/utilities/teams/{id}', [TeamController::class, 'destroy'])->name('utilities.teams.destroy');
     Route::get('/utilities/teams/{id}/edit', [TeamController::class, 'edit'])->name('utilities.teams.edit');
     Route::put('/utilities/teams/{id}', [TeamController::class, 'update'])->name('utilities.teams.update');
+
+    //Inges
+    Route::get('/engineers', [EngineerController::class, 'index'])->name('engineers.index');
+    Route::get('/engineers/create', [EngineerController::class, 'create'])->name('engineers.create');
+    Route::post('/engineers', [EngineerController::class, 'store'])->name('engineers.store');
+    Route::get('/engineers/{id}/edit', [EngineerController::class, 'edit'])->name('engineers.edit');
+    Route::put('/engineers/{id}', [EngineerController::class, 'update'])->name('engineers.update');
+    Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
+
+
+
+
+
 
 
 

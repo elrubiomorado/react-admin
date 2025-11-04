@@ -19,6 +19,6 @@ class Place extends Model
     }
 
     public function engineers(){
-        return $this->hasMany(Enginner::class);
+        return $this->hasMany(Engineer::class);
     }
 }

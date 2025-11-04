@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, AlarmClock, NotepadText } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, AlarmClock, NotepadText, Contact } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
         title: 'Homologaciones',
         href: '/homologaciones',
         icon: NotepadText,
+    },
+    {
+        title: 'Contactos',
+        href: '/engineers',
+        icon: Contact,
     },
     {
         title: 'Utilities',

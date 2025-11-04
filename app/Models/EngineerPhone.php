@@ -12,7 +12,7 @@ class EngineerPhone extends Model
         'engineer_id'
     ];
 
-    public function Engineer(){
+    public function engineer(){
         return $this->belongsTo(Engineer::class);
     }
 

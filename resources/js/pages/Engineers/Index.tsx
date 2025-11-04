@@ -1,0 +1,201 @@
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { Head, Link, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/' },
+    { title: 'Engineers', href: '/engineers' },
+];
+
+interface Engineer {
+    id: number;
+    name: string;
+    email?: string;
+    teams_user?: string;
+    place?: { name: string };
+    job_title?: {
+        title: string;
+        team?: { name: string };
+    };
+    phones?: { phone: string }[]; // 👈 corregido
+}
+
+interface Props {
+    engineers: Engineer[];
+    search?: string;
+}
+
+export default function Index({
+    search: initialSearch = '',
+    engineers,
+}: Props) {
+    const [searchText, setSearchText] = useState(initialSearch ?? '');
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            router.get(
+                '/engineers',
+                { search: searchText },
+                { preserveState: true, replace: true },
+            );
+        }, 300);
+        return () => clearTimeout(timeout);
+    }, [searchText]);
+
+    const handleDelete = (id: number) => {
+        if (confirm('¿Estás seguro de eliminar este ingeniero?')) {
+            router.delete(`/engineers/${id}`, {
+                onSuccess: () => router.reload(),
+                onError: (errors) => {
+                    console.error('Error al eliminar:', errors);
+                    alert('Error al eliminar al ingeniero');
+                },
+            });
+        }
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Engineers" />
+
+            <div className="flex flex-col gap-4 p-4">
+                <h1 className="text-3xl font-bold text-gray-800">
+                    Lista de ingenieros
+                </h1>
+
+                <div className="flex justify-start">
+                    <Link href="/engineers/create">
+                        <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
+                            Add New Inge
+                        </Button>
+                    </Link>
+                </div>
+
+                {/* Filtro de búsqueda */}
+                <div className="mt-2 flex gap-2">
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre, team, puesto, etc."
+                        value={searchText ?? ''}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        className="flex-1 rounded border px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    />
+                </div>
+            </div>
+
+            {/* Tabla */}
+            <div className="p-4">
+                <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Nombre
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Teléfonos
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Email
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Usuario Teams
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Puesto
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Team
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Plaza
+                            </th>
+                            <th className="px-3 py-4 text-center text-gray-700">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {engineers.length > 0 ? (
+                            engineers.map((engineer) => (
+                                <tr
+                                    key={engineer.id}
+                                    className="transition hover:bg-gray-50"
+                                >
+                                    <td className="px-6 py-4 font-medium text-gray-800">
+                                        {engineer.name}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-gray-700">
+                                        {engineer.phones?.length ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {engineer.phones.map((p, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700"
+                                                    >
+                                                        {p.phone}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            '—'
+                                        )}
+                                    </td>
+
+                                    <td className="px-6 py-4">
+                                        {engineer.email ?? '—'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {engineer.teams_user ?? '—'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {engineer.job_title?.title ?? '—'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {engineer.job_title?.team?.name ?? '—'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {engineer.place?.name ?? '—'}
+                                    </td>
+
+                                    <td className="flex justify-center gap-3 px-3 py-4">
+                                        <Link
+                                            href={`/engineers/${engineer.id}/edit`}
+                                            className="flex items-center gap-1 text-green-600 hover:text-green-800"
+                                            title="Editar"
+                                        >
+                                            <PencilIcon className="h-5 w-5" />
+                                            Editar
+                                        </Link>
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(engineer.id)
+                                            }
+                                            className="flex items-center gap-1 text-red-600 hover:text-red-800"
+                                            title="Eliminar"
+                                        >
+                                            <TrashIcon className="h-5 w-5" />
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan={7}
+                                    className="px-6 py-6 text-center text-gray-500"
+                                >
+                                    No hay ingenieros registrados
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </AppLayout>
+    );
+}
