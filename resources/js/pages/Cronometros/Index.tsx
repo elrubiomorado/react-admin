@@ -35,7 +35,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Cronómetros', href: '/cronometros/testcard' },
 ];
 
-const MODO_PRUEBA = false;
+const MODO_PRUEBA = true;
 const ALERTAS = MODO_PRUEBA ? [10, 20, 30] : [4, 6, 8];
 
 export default function Index({ cronometros: initialCronometros }: { cronometros: Cronometro[] }) {
@@ -213,7 +213,7 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
 
   const getColorTarjeta = (ms: number, notificado: boolean) => {
     const unidades = msToUnits(ms);
-    if (notificado) return 'bg-emerald-500';
+    if (notificado) return 'bg-green-200';
     if (unidades < ALERTAS[0] - 0.25) return 'bg-gray-100';
     if (unidades < ALERTAS[0]) return 'bg-orange-500';
     if (unidades >= ALERTAS[0] && unidades < ALERTAS[1] - 0.25) return 'bg-red-500';
@@ -325,7 +325,7 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
               >
                 <Button
                   onClick={() => escalarCronometro(cron.id)}
-                  className={`w-full md:flex-1 ${cron.notificado ? 'bg-green-700' : 'bg-blue-900 hover:bg-blue-950'} text-white`}
+                  className={`w-full md:flex-1 ${cron.notificado ? 'bg-emerald-300' : 'bg-blue-400 hover:bg-blue-600'} text-black`}
                 >
                   Escalar
                 </Button>
