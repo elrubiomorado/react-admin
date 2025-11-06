@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -88,13 +87,19 @@ export default function Edit({ states, place }: Props) {
                     </div>
 
                     {/* Formulario */}
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="grid grid-cols-1 gap-4"
+                    >
                         <input
                             type="text"
                             placeholder="Nombre de la plaza"
                             value={form.name}
                             onChange={(e) =>
-                                handleChange('name', e.target.value.toUpperCase())
+                                handleChange(
+                                    'name',
+                                    e.target.value.toUpperCase(),
+                                )
                             }
                             className="w-full rounded border px-3 py-2"
                             required
@@ -105,7 +110,10 @@ export default function Edit({ states, place }: Props) {
                             placeholder="Nombre corto"
                             value={form.short_name}
                             onChange={(e) =>
-                                handleChange('short_name', e.target.value.toUpperCase())
+                                handleChange(
+                                    'short_name',
+                                    e.target.value.toUpperCase(),
+                                )
                             }
                             className="w-full rounded border px-3 py-2"
                             required

@@ -7,8 +7,8 @@ import React, { useState } from 'react'; // useState para manejar el estado del 
 // Definición de las migas de pan para esta página
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Utilities', href: '/utilities/' },
-    { title: 'Teams', href: '/utilities/teams' },       // Página de listado
-    { title: 'Create', href: '/utilities/teams/create' } // Página actual (crear)
+    { title: 'Teams', href: '/utilities/teams' }, // Página de listado
+    { title: 'Create', href: '/utilities/teams/create' }, // Página actual (crear)
 ];
 
 // Componente principal para crear una plaza
@@ -16,8 +16,7 @@ export default function Create() {
     // --- Estado del formulario ---
     // "form" contiene todos los campos que se van a enviar al backend
     const [form, setForm] = useState({
-        name: '',     // Nombre de la plaza
-
+        name: '', // Nombre de la plaza
     });
 
     // Estado para mostrar/ocultar la sección de información explicativa
@@ -81,8 +80,8 @@ export default function Create() {
                         {infoOpen && (
                             <div className="mt-2 rounded border-l-4 border-blue-500 bg-gray-50 p-4 text-sm text-gray-700">
                                 <p className="mb-2">
-                                    Aquí puedes anadir nuevos teams a la base
-                                    de datos
+                                    Aquí puedes anadir nuevos teams a la base de
+                                    datos
                                 </p>
                             </div>
                         )}
@@ -98,8 +97,12 @@ export default function Create() {
                             type="text"
                             placeholder="Nombre del team"
                             value={form.name} // Valor controlado desde el estado
-                            onChange={(e) =>
-                                handleChange('name', e.target.value.toUpperCase()) // Actualiza estado
+                            onChange={
+                                (e) =>
+                                    handleChange(
+                                        'name',
+                                        e.target.value.toUpperCase(),
+                                    ) // Actualiza estado
                             }
                             className="w-full rounded border px-3 py-2"
                             required

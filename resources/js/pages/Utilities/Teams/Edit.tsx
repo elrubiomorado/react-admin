@@ -18,7 +18,7 @@ interface Props {
     };
 }
 
-export default function Edit({team}: Props) {
+export default function Edit({ team }: Props) {
     // Estado inicial del formulario con valores por defecto para evitar inputs no controlados
     const [form, setForm] = useState({
         name: team.name || '',
@@ -81,13 +81,19 @@ export default function Edit({team}: Props) {
                     </div>
 
                     {/* Formulario */}
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="grid grid-cols-1 gap-4"
+                    >
                         <input
                             type="text"
                             placeholder="Nombre del team"
                             value={form.name}
                             onChange={(e) =>
-                                handleChange('name', e.target.value.toUpperCase())
+                                handleChange(
+                                    'name',
+                                    e.target.value.toUpperCase(),
+                                )
                             }
                             className="w-full rounded border px-3 py-2"
                             required
@@ -105,7 +111,6 @@ export default function Edit({team}: Props) {
                             required
                         /> */}
 
-
                         <Button type="submit">Update Team</Button>
                     </form>
                 </div>
@@ -113,4 +118,3 @@ export default function Edit({team}: Props) {
         </AppLayout>
     );
 }
-

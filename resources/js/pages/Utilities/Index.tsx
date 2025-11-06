@@ -1,7 +1,6 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { GiMexico } from "react-icons/gi";
 import { Head, Link } from '@inertiajs/react';
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [

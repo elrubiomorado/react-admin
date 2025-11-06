@@ -32,9 +32,7 @@ export default function Index({ teams }: Props) {
 
             <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Teams
-                    </h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Teams</h1>
 
                     <Link href="/utilities/teams/create">
                         <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
@@ -49,15 +47,24 @@ export default function Index({ teams }: Props) {
                 <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-4 text-left text-gray-700">Nombre</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Unidad de negocio</th>
-                            <th className="px-3 py-4 text-center text-gray-700">Acciones</th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Nombre
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Unidad de negocio
+                            </th>
+                            <th className="px-3 py-4 text-center text-gray-700">
+                                Acciones
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {teams.length > 0 ? (
                             teams.map((team) => (
-                                <tr key={team.id} className="transition hover:bg-gray-50">
+                                <tr
+                                    key={team.id}
+                                    className="transition hover:bg-gray-50"
+                                >
                                     <td className="px-6 py-4">{team.name}</td>
                                     <td className="px-6 py-4">Negocio</td>
                                     <td className="flex justify-center gap-3 px-3 py-4">
@@ -70,7 +77,9 @@ export default function Index({ teams }: Props) {
                                             Editar
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(team.id)}
+                                            onClick={() =>
+                                                handleDelete(team.id)
+                                            }
                                             className="flex items-center gap-1 text-red-600 hover:text-red-800"
                                             title="Eliminar"
                                         >
@@ -82,7 +91,10 @@ export default function Index({ teams }: Props) {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-6 text-center text-gray-500">
+                                <td
+                                    colSpan={5}
+                                    className="px-6 py-6 text-center text-gray-500"
+                                >
                                     No hay equipos registrados
                                 </td>
                             </tr>

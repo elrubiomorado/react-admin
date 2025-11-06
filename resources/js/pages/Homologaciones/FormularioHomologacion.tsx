@@ -3,9 +3,9 @@ import { ClipboardIcon } from '@heroicons/react/24/solid';
 // Interfaz que define la estructura de una homologación
 export interface Homologacion {
     id: number;
-    name: string;           // Nombre identificador
-    title_base: string;     // Plantilla del título con variables {variable}
-    body: string;          // Plantilla del cuerpo con variables {variable}
+    name: string; // Nombre identificador
+    title_base: string; // Plantilla del título con variables {variable}
+    body: string; // Plantilla del cuerpo con variables {variable}
 }
 
 // Props para el componente FormularioHomologacion

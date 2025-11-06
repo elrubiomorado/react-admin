@@ -1,22 +1,15 @@
 //Eliminar todo lo del Test card solo es paa poner como quedaria el index de cronometros pero sin borrar el original
 
-
-
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import {
-    PlayIcon,
-    PauseIcon,
-    StopIcon,
-    PlusIcon,
-    TrashIcon,
     ClockIcon,
-    BellAlertIcon,
+    TrashIcon,
     UserCircleIcon,
 } from '@heroicons/react/24/solid';
 import { Head, router } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Usuario {
     id: number;
@@ -51,34 +44,44 @@ const MENSAJE_ALERTA = '¡Hora de escalar!';
 const MODO_PRUEBA = false;
 const configuracionPrueba = {
     segundosAlerta: [5, 10, 15],
-    mensajeAlerta: '[PRUEBA] ¡Hora de escalar!'
+    mensajeAlerta: '[PRUEBA] ¡Hora de escalar!',
 };
 
-export default function Index({ cronometros: initialCronometros }: { cronometros: Cronometro[] }) {
+export default function Index({
+    cronometros: initialCronometros,
+}: {
+    cronometros: Cronometro[];
+}) {
     const [cronometros, setCronometros] = useState<CronometroConTiempo[]>([]);
     const [nuevoTitulo, setNuevoTitulo] = useState('');
     const [mostrarForm, setMostrarForm] = useState(false);
-    const [permisoNotificaciones, setPermisoNotificaciones] = useState<string>('default');
+    const [permisoNotificaciones, setPermisoNotificaciones] =
+        useState<string>('default');
     const [debugLog, setDebugLog] = useState<string[]>([]);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const notificacionesMostradas = useRef<Set<number>>(new Set());
 
-    const configuracionActual = MODO_PRUEBA ? {
-        tipo: 'segundos',
-        valores: configuracionPrueba.segundosAlerta,
-        mensaje: configuracionPrueba.mensajeAlerta,
-        unidad: 's'
-    } : {
-        tipo: 'horas',
-        valores: HORAS_ALERTA,
-        mensaje: MENSAJE_ALERTA,
-        unidad: 'h'
-    };
+    const configuracionActual = MODO_PRUEBA
+        ? {
+              tipo: 'segundos',
+              valores: configuracionPrueba.segundosAlerta,
+              mensaje: configuracionPrueba.mensajeAlerta,
+              unidad: 's',
+          }
+        : {
+              tipo: 'horas',
+              valores: HORAS_ALERTA,
+              mensaje: MENSAJE_ALERTA,
+              unidad: 'h',
+          };
 
     const agregarDebug = (mensaje: string) => {
         if (MODO_PRUEBA) {
             console.log(`[DEBUG] ${mensaje}`);
-            setDebugLog(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()}: ${mensaje}`]);
+            setDebugLog((prev) => [
+                ...prev.slice(-9),
+                `${new Date().toLocaleTimeString()}: ${mensaje}`,
+            ]);
         }
     };
 
@@ -93,27 +96,41 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
 
     useEffect(() => {
         const sincronizar = () => {
-            setCronometros(prev => prev.map(cron => {
-                if (cron.estado === 'activo') {
-                    const ahora = new Date().getTime();
-                    const inicio = new Date(cron.hora_inicio).getTime();
-                    const tiempoTranscurrido = ahora - inicio - cron.tiempo_pausado;
-                    return { ...cron, tiempoTranscurrido, tiempoActivo: tiempoTranscurrido - cron.tiempo_pausado };
-                }
-                return cron;
-            }));
+            setCronometros((prev) =>
+                prev.map((cron) => {
+                    if (cron.estado === 'activo') {
+                        const ahora = new Date().getTime();
+                        const inicio = new Date(cron.hora_inicio).getTime();
+                        const tiempoTranscurrido =
+                            ahora - inicio - cron.tiempo_pausado;
+                        return {
+                            ...cron,
+                            tiempoTranscurrido,
+                            tiempoActivo:
+                                tiempoTranscurrido - cron.tiempo_pausado,
+                        };
+                    }
+                    return cron;
+                }),
+            );
         };
         intervalRef.current = setInterval(sincronizar, 1000);
-        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
     }, []);
 
     useEffect(() => {
         const ahora = new Date().getTime();
-        const cronometrosConTiempo = initialCronometros.map(cron => {
+        const cronometrosConTiempo = initialCronometros.map((cron) => {
             if (cron.estado === 'activo' && cron.hora_inicio) {
                 const inicio = new Date(cron.hora_inicio).getTime();
                 const tiempoTranscurrido = ahora - inicio - cron.tiempo_pausado;
-                return { ...cron, tiempoTranscurrido, tiempoActivo: tiempoTranscurrido - cron.tiempo_pausado };
+                return {
+                    ...cron,
+                    tiempoTranscurrido,
+                    tiempoActivo: tiempoTranscurrido - cron.tiempo_pausado,
+                };
             }
             return { ...cron, tiempoTranscurrido: 0, tiempoActivo: 0 };
         });
@@ -125,19 +142,27 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
         const segundos = Math.floor(milisegundos / 1000);
         const minutos = Math.floor(segundos / 60);
         const horas = Math.floor(minutos / 60);
-        return `${horas.toString().padStart(2,'0')}:${(minutos%60).toString().padStart(2,'0')}:${(segundos%60).toString().padStart(2,'0')}`;
+        return `${horas.toString().padStart(2, '0')}:${(minutos % 60).toString().padStart(2, '0')}:${(segundos % 60).toString().padStart(2, '0')}`;
     };
 
     const toggleEstado = (id: number) => {
-        setCronometros(prev => prev.map(c => c.id === id
-            ? { ...c, estado: c.estado === 'activo' ? 'pausado' : 'activo' }
-            : c
-        ));
+        setCronometros((prev) =>
+            prev.map((c) =>
+                c.id === id
+                    ? {
+                          ...c,
+                          estado: c.estado === 'activo' ? 'pausado' : 'activo',
+                      }
+                    : c,
+            ),
+        );
     };
 
     const eliminarCronometro = (id: number) => {
         if (confirm('¿Estás seguro de eliminar este cronómetro?')) {
-            router.delete(`/cronometros/${id}`, { onSuccess: () => router.reload() });
+            router.delete(`/cronometros/${id}`, {
+                onSuccess: () => router.reload(),
+            });
         }
     };
 
@@ -148,7 +173,7 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
 
     const getColorTarjeta = (cron: CronometroConTiempo) => {
         if (cron.estado === 'pausado') return 'bg-blue-200';
-        const horas = cron.tiempoTranscurrido / (1000*60*60);
+        const horas = cron.tiempoTranscurrido / (1000 * 60 * 60);
         if (horas < 3.75) return 'bg-green-200';
         if (horas < 4) return 'bg-orange-300';
         return 'bg-red-400';
@@ -160,44 +185,85 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header y botones */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Cronómetros</h1>
-                    <Button onClick={() => setMostrarForm(!mostrarForm)}>Nuevo Cronómetro</Button>
+                    <Button onClick={() => setMostrarForm(!mostrarForm)}>
+                        Nuevo Cronómetro
+                    </Button>
                 </div>
 
                 {mostrarForm && (
-                    <div className="bg-white p-4 rounded-lg border border-gray-200 shadow">
+                    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow">
                         <input
                             type="text"
                             placeholder="Título del cronómetro"
                             value={nuevoTitulo}
-                            onChange={e => setNuevoTitulo(e.target.value)}
-                            className="border rounded px-3 py-2 mr-2"
+                            onChange={(e) => setNuevoTitulo(e.target.value)}
+                            className="mr-2 rounded border px-3 py-2"
                         />
-                        <Button onClick={() => router.post('/cronometros', { titulo: nuevoTitulo })}>Crear</Button>
+                        <Button
+                            onClick={() =>
+                                router.post('/cronometros', {
+                                    titulo: nuevoTitulo,
+                                })
+                            }
+                        >
+                            Crear
+                        </Button>
                     </div>
                 )}
 
                 {/* Grid de tarjetas */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {cronometros.map(cron => (
-                        <div key={cron.id} className={`rounded-2xl shadow-lg p-5 text-center text-gray-800 relative transition-all duration-500 ${getColorTarjeta(cron)}`}>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {cronometros.map((cron) => (
+                        <div
+                            key={cron.id}
+                            className={`relative rounded-2xl p-5 text-center text-gray-800 shadow-lg transition-all duration-500 ${getColorTarjeta(cron)}`}
+                        >
                             <div className="absolute top-2 right-2 flex gap-2">
-                                <Button size="sm" onClick={() => eliminarCronometro(cron.id)} className="text-red-600"><TrashIcon className="h-4 w-4"/></Button>
+                                <Button
+                                    size="sm"
+                                    onClick={() => eliminarCronometro(cron.id)}
+                                    className="text-red-600"
+                                >
+                                    <TrashIcon className="h-4 w-4" />
+                                </Button>
                             </div>
                             <h2 className="text-xl font-bold">{cron.titulo}</h2>
-                            <div className="flex justify-center gap-4 mt-2 text-sm text-gray-700">
-                                <div className="flex items-center gap-1"><ClockIcon className="h-4 w-4"/> {formatearTiempo(cron.tiempoTranscurrido)}</div>
-                                <div className="flex items-center gap-1"><UserCircleIcon className="h-4 w-4"/> {cron.usuario.name}</div>
+                            <div className="mt-2 flex justify-center gap-4 text-sm text-gray-700">
+                                <div className="flex items-center gap-1">
+                                    <ClockIcon className="h-4 w-4" />{' '}
+                                    {formatearTiempo(cron.tiempoTranscurrido)}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <UserCircleIcon className="h-4 w-4" />{' '}
+                                    {cron.usuario.name}
+                                </div>
                             </div>
-                            <p className="mt-2 font-semibold uppercase">{cron.estado === 'activo' ? 'En proceso' : 'En espera'}</p>
-                            <p className="text-xs mt-1 text-gray-700">Próxima escalación: 4h</p>
+                            <p className="mt-2 font-semibold uppercase">
+                                {cron.estado === 'activo'
+                                    ? 'En proceso'
+                                    : 'En espera'}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-700">
+                                Próxima escalación: 4h
+                            </p>
 
-                            <div className="mt-4 flex flex-col gap-2 items-center">
-                                <Button onClick={() => toggleEstado(cron.id)} className={`px-4 py-2 rounded-lg text-white font-semibold ${cron.estado==='activo' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
-                                    {cron.estado==='activo' ? 'Poner en espera' : 'Poner en proceso'}
+                            <div className="mt-4 flex flex-col items-center gap-2">
+                                <Button
+                                    onClick={() => toggleEstado(cron.id)}
+                                    className={`rounded-lg px-4 py-2 font-semibold text-white ${cron.estado === 'activo' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'}`}
+                                >
+                                    {cron.estado === 'activo'
+                                        ? 'Poner en espera'
+                                        : 'Poner en proceso'}
                                 </Button>
-                                <Button onClick={() => escalarCronometro(cron.id)} className="px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-semibold">Escalar</Button>
+                                <Button
+                                    onClick={() => escalarCronometro(cron.id)}
+                                    className="rounded-lg bg-purple-500 px-4 py-2 font-semibold text-white hover:bg-purple-600"
+                                >
+                                    Escalar
+                                </Button>
                             </div>
                         </div>
                     ))}

@@ -7,8 +7,8 @@ import React, { useState } from 'react'; // useState para manejar el estado del 
 // Definición de las migas de pan para esta página
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Utilities', href: '/utilities/' },
-    { title: 'Places', href: '/utilities/places' },       // Página de listado
-    { title: 'Create', href: '/utilities/places/create' } // Página actual (crear)
+    { title: 'Places', href: '/utilities/places' }, // Página de listado
+    { title: 'Create', href: '/utilities/places/create' }, // Página actual (crear)
 ];
 
 // Componente principal para crear una plaza
@@ -16,9 +16,9 @@ export default function Create({ states }: { states: any[] }) {
     // --- Estado del formulario ---
     // "form" contiene todos los campos que se van a enviar al backend
     const [form, setForm] = useState({
-        name: '',     // Nombre de la plaza
-        state_id: 0,    // Zona seleccionada por defecto (puede cambiarse)
-        short_name: ''
+        name: '', // Nombre de la plaza
+        state_id: 0, // Zona seleccionada por defecto (puede cambiarse)
+        short_name: '',
     });
 
     // Estado para mostrar/ocultar la sección de información explicativa
@@ -99,8 +99,12 @@ export default function Create({ states }: { states: any[] }) {
                             type="text"
                             placeholder="Nombre de la plaza"
                             value={form.name} // Valor controlado desde el estado
-                            onChange={(e) =>
-                                handleChange('name', e.target.value.toUpperCase()) // Actualiza estado
+                            onChange={
+                                (e) =>
+                                    handleChange(
+                                        'name',
+                                        e.target.value.toUpperCase(),
+                                    ) // Actualiza estado
                             }
                             className="w-full rounded border px-3 py-2"
                             required
@@ -109,8 +113,12 @@ export default function Create({ states }: { states: any[] }) {
                             type="text"
                             placeholder="Nombre corto"
                             value={form.short_name} // Valor controlado desde el estado
-                            onChange={(e) =>
-                                handleChange('short_name', e.target.value.toUpperCase()) // Actualiza estado
+                            onChange={
+                                (e) =>
+                                    handleChange(
+                                        'short_name',
+                                        e.target.value.toUpperCase(),
+                                    ) // Actualiza estado
                             }
                             className="w-full rounded border px-3 py-2"
                             required
@@ -118,8 +126,12 @@ export default function Create({ states }: { states: any[] }) {
                         {/* Select para elegir la zona */}
                         <select
                             value={form.state_id} // Valor controlado
-                            onChange={(e) =>
-                                handleChange('state_id', e.target.value.toUpperCase()) // Actualiza estado
+                            onChange={
+                                (e) =>
+                                    handleChange(
+                                        'state_id',
+                                        e.target.value.toUpperCase(),
+                                    ) // Actualiza estado
                             }
                             className="w-full rounded border px-3 py-2"
                             required

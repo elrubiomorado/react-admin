@@ -217,7 +217,6 @@ export default function Create({ job_titles, places }: Props) {
                                 handleChange('place_id', Number(e.target.value))
                             }
                             className="w-full rounded border px-3 py-2"
-
                         >
                             <option value="">Select a place</option>
                             {places.map((p: any) => (

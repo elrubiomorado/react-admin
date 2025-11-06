@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import FormularioHomologacion, { type Homologacion } from "./FormularioHomologacion";
 import {
     ClipboardIcon,
     PencilIcon,
@@ -9,7 +8,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { Head, Link, router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
-
+import FormularioHomologacion, {
+    type Homologacion,
+} from './FormularioHomologacion';
 
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
