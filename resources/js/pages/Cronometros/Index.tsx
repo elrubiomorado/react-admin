@@ -213,7 +213,7 @@ export default function Index({ cronometros: initialCronometros }: { cronometros
 
   const getColorTarjeta = (ms: number, notificado: boolean) => {
     const unidades = msToUnits(ms);
-    if (notificado) return 'bg-green-200';
+    if (notificado) return 'bg-green-500';
     if (unidades < ALERTAS[0] - 0.25) return 'bg-gray-100';
     if (unidades < ALERTAS[0]) return 'bg-orange-500';
     if (unidades >= ALERTAS[0] && unidades < ALERTAS[1] - 0.25) return 'bg-red-500';
