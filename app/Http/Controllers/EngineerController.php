@@ -128,5 +128,10 @@ class EngineerController extends Controller
     public function destroy(string $id)
     {
         //
+        $engineer = Engineer::findOrFail($id);
+        $engineer->delete();
+
+        return redirect()->route('engineers.index')
+                         ->with('success', 'Engineer eliminada correctamente.');
     }
 }

@@ -22,7 +22,10 @@ class DatabaseSeeder extends Seeder
             JobTitleSeeder::class,
             StatusSeeder::class,
             EngineerSeeder::class,
-            EngineerPhoneSeeder::class
+            EngineerPhoneSeeder::class,
+            PrioritySeeder::class,
+            TypeSeeder::class,
+            PriorityTypeSeeder::class
         ]);
         User::firstOrCreate(
             ['email' => 'avilaedgar2001@gmail.com'],

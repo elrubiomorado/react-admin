@@ -21,7 +21,7 @@ export default function Create({ job_titles, places }: Props) {
         place_id: '',
         teams_user: '',
         email: '',
-        phones: [''], // ahora es un array dinámico
+        engineer_phones: [''], // ahora es un array dinámico
     });
 
     const [infoOpen, setInfoOpen] = useState(false);
@@ -35,18 +35,18 @@ export default function Create({ job_titles, places }: Props) {
 
     // --- 📱 Manejo de teléfonos dinámicos ---
     const handlePhoneChange = (index: number, value: string) => {
-        const updatedPhones = [...form.phones];
+        const updatedPhones = [...form.engineer_phones];
         updatedPhones[index] = value;
-        setForm((prev) => ({ ...prev, phones: updatedPhones }));
+        setForm((prev) => ({ ...prev, engineer_phones: updatedPhones }));
     };
 
     const addPhone = () => {
-        setForm((prev) => ({ ...prev, phones: [...prev.phones, ''] }));
+        setForm((prev) => ({ ...prev, engineer_phones: [...prev.engineer_phones, ''] }));
     };
 
     const removePhone = (index: number) => {
-        const updated = form.phones.filter((_, i) => i !== index);
-        setForm((prev) => ({ ...prev, phones: updated }));
+        const updated = form.engineer_phones.filter((_, i) => i !== index);
+        setForm((prev) => ({ ...prev, engineer_phones: updated }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -54,14 +54,14 @@ export default function Create({ job_titles, places }: Props) {
 
         router.post('/engineers', form, {
             onSuccess: () => {
-                setForm({
-                    name: '',
-                    job_title_id: '',
-                    place_id: '',
-                    teams_user: '',
-                    email: '',
-                    phones: [''],
-                });
+                // setForm({
+                //     name: '',
+                //     job_title_id: '',
+                //     place_id: '',
+                //     teams_user: '',
+                //     email: '',
+                //     engineer_phones: [''],
+                // });
             },
         });
     };
@@ -131,7 +131,7 @@ export default function Create({ job_titles, places }: Props) {
                                 Teléfonos
                             </label>
 
-                            {form.phones.map((phone, index) => (
+                            {form.engineer_phones.map((phone, index) => (
                                 <div
                                     key={index}
                                     className="mb-2 flex items-center gap-2"
@@ -151,7 +151,7 @@ export default function Create({ job_titles, places }: Props) {
                                         className="flex-1 rounded border px-3 py-2"
                                         required
                                     />
-                                    {form.phones.length > 1 && (
+                                    {form.engineer_phones.length > 1 && (
                                         <Button
                                             type="button"
                                             variant="destructive"
@@ -167,7 +167,7 @@ export default function Create({ job_titles, places }: Props) {
                                 type="button"
                                 variant="secondary"
                                 onClick={addPhone}
-                                disabled={form.phones.length >= 3}
+                                disabled={form.engineer_phones.length >= 3}
                             >
                                 + Agregar teléfono
                             </Button>
