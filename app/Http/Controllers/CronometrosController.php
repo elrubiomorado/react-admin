@@ -3,77 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cronometro;
+use App\Models\Place;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Carbon\Carbon;
 
 class CronometrosController extends Controller
 {
     public function index()
     {
-        $cronometros = Cronometro::with('usuario:id,name,email')
+        // Obtener cronómetros ordenados
+        $cronometros = Cronometro::with([
+            'user:id,name',
+            'place:id,name,state_id',
+            'place.state:id,name,zone_id',
+            'place.state.zone:id,name',
+        ])
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Obtener prioridades y tipos
+        $types = Type::with('priorities')->get();
+        $places = Place::with(['state.zone'])->get();
+
         return Inertia::render('Cronometros/Index', [
-            'cronometros' => $cronometros
+            'cronometros' => $cronometros,
+            'places' => $places,
+            'types' => $types,
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255'
+            'title' => 'required|string|max:30',
+            'ticket' => 'required|integer|unique:cronometros,ticket',
+            'priority_id' => 'required|integer|exists:priorities,id',
+            'type_id' => 'required|integer|exists:types,id',
+            'place_id' => 'required|integer|exists:places,id',
         ]);
 
         Cronometro::create([
-            'titulo' => $request->titulo,
-            'estado' => 'detenido',
-            'creado_por' => auth()->id()
+            'title' => $request->title,
+            'ticket' => $request->ticket,
+            'start' => now(),
+            'priority_id' => $request->priority_id,
+            'type_id' => $request->type_id,
+            'status_id' => 1,
+            'place_id' => $request->place_id,
+            'user_id' => auth()->id(),
         ]);
 
         return redirect()->back()->with('success', 'Cronómetro creado correctamente.');
-    }
 
-    // ... (los demás métodos permanecen igual)
-    public function iniciar($id)
-    {
-        $cronometro = Cronometro::findOrFail($id);
-        
-        $cronometro->update([
-            'estado' => 'activo',
-            'hora_inicio' => $cronometro->hora_inicio ?: now(),
-            'hora_final' => null
-        ]);
-
-        return redirect()->back()->with('success', 'Cronómetro iniciado.');
-    }
-
-    public function pausar($id)
-    {
-        $cronometro = Cronometro::findOrFail($id);
-        
-        if ($cronometro->estado === 'activo') {
-            $tiempoTranscurrido = now()->diffInMilliseconds($cronometro->hora_inicio);
-            $cronometro->update([
-                'estado' => 'pausado',
-                'tiempo_pausado' => $cronometro->tiempo_pausado + $tiempoTranscurrido
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Cronómetro pausado.');
-    }
-
-    public function detener($id)
-    {
-        $cronometro = Cronometro::findOrFail($id);
-        
-        $cronometro->update([
-            'estado' => 'detenido',
-            'hora_final' => now()
-        ]);
-
-        return redirect()->back()->with('success', 'Cronómetro detenido.');
     }
 
     public function destroy($id)

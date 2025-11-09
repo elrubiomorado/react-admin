@@ -15,4 +15,9 @@ class Type extends Model
     {
         return $this->belongsToMany(Priority::class, 'priority_type');
     }
+    // Un tipo puede estar en muchos cronómetros
+    public function cronometros()
+    {
+        return $this->hasMany(Cronometro::class);
+    }
 }

@@ -39,13 +39,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // cronometros
     Route::get('/cronometros', [CronometrosController::class, 'index'])->name('cronometros.index');
-    Route::get('/cronometros/testcard', function () {
-        return Inertia::render('Cronometros/TestCard');
-    });
+    Route::get('/cronometros/create', [CronometrosController::class, 'create'])->name('cronometros.create');
     Route::post('/cronometros', [CronometrosController::class, 'store'])->name('cronometros.store');
-    Route::put('/cronometros/{id}/iniciar', [CronometrosController::class, 'iniciar'])->name('cronometros.iniciar');
-    Route::put('/cronometros/{id}/pausar', [CronometrosController::class, 'pausar'])->name('cronometros.pausar');
-    Route::put('/cronometros/{id}/detener', [CronometrosController::class, 'detener'])->name('cronometros.detener');
     Route::delete('/cronometros/{id}', [CronometrosController::class, 'destroy'])->name('cronometros.destroy');
 
     //Utilities

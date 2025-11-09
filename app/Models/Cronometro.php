@@ -7,25 +7,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cronometro extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'titulo',
-        'hora_inicio',
-        'hora_final',
-        'tiempo_pausado',
-        'estado',
-        'creado_por'
+        'title',
+        'ticket',
+        'start',
+        'end',
+        'priority_id',
+        'type_id',
+        'status_id',
+        'user_id',
+        'place_id'
     ];
 
-    protected $casts = [
-        'hora_inicio' => 'datetime',
-        'hora_final' => 'datetime',
-        'tiempo_pausado' => 'integer'
-    ];
-
-    public function usuario()
+    // Relaciones
+    public function priority()
     {
-        return $this->belongsTo(User::class, 'creado_por');
+        return $this->belongsTo(Priority::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
     }
 }

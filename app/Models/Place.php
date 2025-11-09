@@ -21,4 +21,9 @@ class Place extends Model
     public function engineers(){
         return $this->hasMany(Engineer::class);
     }
+    
+    public function cronometros()
+    {
+        return $this->hasMany(Cronometro::class);
+    }
 }

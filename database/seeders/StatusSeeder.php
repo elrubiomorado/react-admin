@@ -12,7 +12,7 @@ class StatusSeeder extends Seeder
      */
     public function run(): void
     {
-        $statuses = ['active', 'inactive', 'on_hold', 'done'];
+        $statuses = ['in_progress', 'done'];
 
         foreach ($statuses as $name) {
             Status::firstOrCreate(['name' => $name]);

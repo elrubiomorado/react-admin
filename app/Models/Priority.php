@@ -15,4 +15,10 @@ class Priority extends Model
     {
         return $this->belongsToMany(Type::class, 'priority_type');
     }
+
+    // Una prioridad puede tener muchos cronómetros
+    public function cronometros()
+    {
+        return $this->hasMany(Cronometro::class);
+    }
 }
