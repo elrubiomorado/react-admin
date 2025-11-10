@@ -35,5 +35,13 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        User::firstOrCreate(
+            ['email' => 'nanat.nataly@gmail.com'],
+            [
+                'name' => 'Nataly Lopez Figueroa',
+                'password' => 'nanat1234',
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }

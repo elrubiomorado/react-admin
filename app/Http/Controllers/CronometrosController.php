@@ -36,7 +36,7 @@ class CronometrosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:30',
+            'title' => 'required|string|max:30|unique:cronometros,title',
             'ticket' => 'required|integer|unique:cronometros,ticket',
             'priority_id' => 'required|integer|exists:priorities,id',
             'type_id' => 'required|integer|exists:types,id',
