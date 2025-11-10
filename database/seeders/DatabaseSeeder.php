@@ -25,13 +25,22 @@ class DatabaseSeeder extends Seeder
             EngineerPhoneSeeder::class,
             PrioritySeeder::class,
             TypeSeeder::class,
-            PriorityTypeSeeder::class
+            PriorityTypeSeeder::class,
+            EscalationStageSeeder::class
         ]);
         User::firstOrCreate(
             ['email' => 'avilaedgar2001@gmail.com'],
             [
                 'name' => 'Edgar Avila Gonzalez',
                 'password' => '12345678',
+                'email_verified_at' => now(),
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'nanat.nataly@gmail.com'],
+            [
+                'name' => 'Nataly Lopez Figueroa',
+                'password' => 'nanat1234',
                 'email_verified_at' => now(),
             ]
         );
