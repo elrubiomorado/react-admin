@@ -7,9 +7,9 @@ import React, { useState } from 'react';
 
 // Breadcrumbs para edición
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities/' },
-    { title: 'Places', href: '/utilities/places' },
-    { title: 'Edit', href: '#' },
+    { title: 'Utilidades', href: '/utilities/' },
+    { title: 'Plazas', href: '/utilities/places' },
+    { title: 'Editar', href: '#' },
 ];
 
 interface Props {
@@ -53,13 +53,13 @@ export default function Edit({ states, place }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Edit Place: ${place.name}`} />
+            <Head title={`Editar Plaza: ${place.name}`} />
 
             <div className="flex w-full justify-center py-6">
                 <div className="w-full max-w-3xl px-6">
                     {/* Cabecera */}
                     <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Edit Place</h1>
+                        <h1 className="text-2xl font-bold">Editar Plaza</h1>
                         <Link href="/utilities/places">
                             <Button>Volver</Button>
                         </Link>
@@ -127,7 +127,7 @@ export default function Edit({ states, place }: Props) {
                             ))}
                         </select>
 
-                        <Button type="submit">Update Place</Button>
+                        <Button type="submit">Actualizar Plaza</Button>
                     </form>
                 </div>
             </div>

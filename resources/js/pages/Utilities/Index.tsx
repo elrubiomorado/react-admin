@@ -5,7 +5,7 @@ import { GiMexico } from "react-icons/gi";
 import { Head, Link } from '@inertiajs/react';
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities' },
+    { title: 'Utilidades', href: '/utilities' },
 ];
 
 // Componente principal que muestra la lista de homologaciones
@@ -27,7 +27,7 @@ export default function Index() {
                     {/* Primer recuadro: va a Places */}
                     <Link
                         href="/utilities/places" // O route('utilities.places.index')
-                        className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
+                        className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
                     >
                         {/* Icono grande */}
                         <div className="flex flex-col items-center gap-2">
@@ -46,12 +46,12 @@ export default function Index() {
                                 />
                             </svg>
                             {/* Texto */}
-                            <span className="text-lg font-bold">Places</span>
+                            <span className="text-lg font-bold">Plazas</span>
                         </div>
                     </Link>
                     <Link
                         href="/utilities/teams" // O route('utilities.places.index')
-                        className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-gradient-to-r from-black to-black text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
+                        className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-linear-to-r from-black to-black text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
                     >
                         {/* Icono grande */}
                         <div className="flex flex-col items-center gap-2">
@@ -70,7 +70,7 @@ export default function Index() {
                                 />
                             </svg>
                             {/* Texto */}
-                            <span className="text-lg font-bold">Teams</span>
+                            <span className="text-lg font-bold">Equipos de trabajo</span>
                         </div>
                     </Link>
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">

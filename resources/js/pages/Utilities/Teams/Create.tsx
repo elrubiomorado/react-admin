@@ -6,9 +6,9 @@ import React, { useState } from 'react'; // useState para manejar el estado del 
 
 // Definición de las migas de pan para esta página
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities/' },
-    { title: 'Teams', href: '/utilities/teams' },       // Página de listado
-    { title: 'Create', href: '/utilities/teams/create' } // Página actual (crear)
+    { title: 'Utilidades', href: '/utilities/' },
+    { title: 'Equipos', href: '/utilities/teams' },       // Página de listado
+    { title: 'Crear', href: '/utilities/teams/create' } // Página actual (crear)
 ];
 
 // Componente principal para crear una plaza
@@ -49,14 +49,14 @@ export default function Create() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {/* Título de la pestaña del navegador */}
-            <Head title="Add Team" />
+            <Head title="Añadir Equipo" />
 
             {/* Contenedor centrado */}
             <div className="flex w-full justify-center py-6">
                 <div className="w-full max-w-3xl px-6">
                     {/* Cabecera del formulario */}
                     <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Add New Team</h1>
+                        <h1 className="text-2xl font-bold">Añadir Nuevo Equipo de Trabajo</h1>
 
                         {/* Botón para volver al listado */}
                         <Link href="/utilities/teams">
@@ -81,7 +81,7 @@ export default function Create() {
                         {infoOpen && (
                             <div className="mt-2 rounded border-l-4 border-blue-500 bg-gray-50 p-4 text-sm text-gray-700">
                                 <p className="mb-2">
-                                    Aquí puedes anadir nuevos teams a la base
+                                    Aquí puedes añadir nuevos equipos de trabajo a la base
                                     de datos
                                 </p>
                             </div>
@@ -104,26 +104,7 @@ export default function Create() {
                             className="w-full rounded border px-3 py-2"
                             required
                         />
-                        {/* Select para elegir la unidad de negocio */}
-                        {/* <select
-                            value={form.state_id} // Valor controlado
-                            onChange={(e) =>
-                                handleChange('state_id', e.target.value.toUpperCase()) // Actualiza estado
-                            }
-                            className="w-full rounded border px-3 py-2"
-                            required
-                        >
-                            <option value="">Select a State</option>
-
-                            {states.map((state: any) => (
-                                <option key={state.id} value={state.id}>
-                                    {state.name}
-                                </option>
-                            ))}
-                        </select> */}
-
-                        {/* Botón de submit */}
-                        <Button type="submit">Save Place</Button>
+                        <Button type="submit">Guardar Equipo</Button>
                     </form>
                 </div>
             </div>

@@ -6,8 +6,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/' },
-    { title: 'Engineers', href: '/engineers' },
+    { title: 'Inicio', href: '/dashboard' },
+    { title: 'Ingenieros', href: '/engineers' },
 ];
 
 interface Engineer {
@@ -59,7 +59,7 @@ export default function Index({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Engineers" />
+            <Head title="Ingenieros" />
 
             <div className="flex flex-col gap-4 p-4">
                 <h1 className="text-3xl font-bold text-gray-800">
@@ -69,7 +69,7 @@ export default function Index({
                 <div className="flex justify-start">
                     <Link href="/engineers/create">
                         <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
-                            Add New Inge
+                            Añadir ingeniero
                         </Button>
                     </Link>
                 </div>
@@ -78,7 +78,7 @@ export default function Index({
                 <div className="mt-2 flex gap-2">
                     <input
                         type="text"
-                        placeholder="Buscar por nombre, team, puesto, etc."
+                        placeholder="Buscar por nombre, equipo, puesto, etc."
                         value={searchText ?? ''}
                         onChange={(e) => setSearchText(e.target.value)}
                         className="flex-1 rounded border px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -107,7 +107,7 @@ export default function Index({
                                 Puesto
                             </th>
                             <th className="px-6 py-4 text-left text-gray-700">
-                                Team
+                                Equipo de trabajo
                             </th>
                             <th className="px-6 py-4 text-left text-gray-700">
                                 Plaza
