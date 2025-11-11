@@ -10,5 +10,7 @@ class EscalationStage extends Model
         'escalation_levels'
     ];
 
-
+    public function journal(){
+        return $this->hasMany(Journal::class);
+    }
 }
