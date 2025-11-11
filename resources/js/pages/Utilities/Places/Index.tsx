@@ -6,8 +6,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities' },
-    { title: 'Places', href: '/utilities/places' },
+    { title: 'Utilidades', href: '/utilities' },
+    { title: 'Plazas', href: '/utilities/places' },
 ];
 
 interface Props {
@@ -51,17 +51,17 @@ export default function Index({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Places" />
+            <Head title="Plazas" />
 
             <div className="flex flex-col gap-4 p-4">
                 <h1 className="text-3xl font-bold text-gray-800">
-                    Places / Plazas
+                Plazas
                 </h1>
 
                 <div className="flex justify-start">
                     <Link href="/utilities/places/create">
                         <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
-                            Add New Place
+                            Añadir plaza
                         </Button>
                     </Link>
                 </div>
@@ -96,7 +96,7 @@ export default function Index({
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-4 text-left text-gray-700">Nombre</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Nombre Corto</th>
+                            <th className="px-6 py-4 text-left text-gray-700">Abreviatura</th>
                             <th className="px-6 py-4 text-left text-gray-700">Estado</th>
                             <th className="px-6 py-4 text-left text-gray-700">Zona</th>
                             <th className="px-3 py-4 text-center text-gray-700">Acciones</th>

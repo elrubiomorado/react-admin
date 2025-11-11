@@ -64,7 +64,7 @@ export default function Create() {
                                     Aquí puedes crear homologaciones que luego se pueden reutilizar para generar títulos y cuerpos de manera automática.
                                 </p>
                                 <p className="mb-2">
-                                    En <strong>Title base</strong> y <strong>Body</strong> puedes usar variables entre llaves <code>{'{variable}'}</code>, como <code>{'{equipo}'}</code> o <code>{'{ip}'}</code>.
+                                    En <strong>Título</strong> y <strong>Mensaje</strong> puedes usar variables entre llaves <code>{'{variable}'}</code>, como <code>{'{equipo}'}</code> o <code>{'{ip}'}</code>.
                                 </p>
                                 <p>
                                     Luego de guardar la homologación, podrás verla en la tabla de homologaciones existentes y generar texto final con las variables reemplazadas.
@@ -86,7 +86,7 @@ export default function Create() {
 
                         <input
                             type="text"
-                            placeholder="Title base (puede contener {variables})"
+                            placeholder="Título (puede contener {variables})"
                             value={form.title_base}
                             onChange={(e) => handleChange('title_base', e.target.value)}
                             className="border rounded w-full px-3 py-2"
@@ -94,7 +94,7 @@ export default function Create() {
                         />
 
                         <textarea
-                            placeholder="Body (puede contener {variables})"
+                            placeholder="Mensaje (puede contener {variables})"
                             value={form.body}
                             onChange={(e) => handleChange('body', e.target.value)}
                             className="border rounded w-full px-3 py-2"

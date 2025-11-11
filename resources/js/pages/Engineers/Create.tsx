@@ -5,8 +5,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import React, { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Engineers', href: '/engineers' },
-    { title: 'Add', href: '/engineers/create' },
+    { title: 'Ingenieros', href: '/engineers' },
+    { title: 'Añadir', href: '/engineers/create' },
 ];
 
 interface Props {
@@ -68,12 +68,12 @@ export default function Create({ job_titles, places }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Add Engineer" />
+            <Head title="Añadir ingeniero" />
 
             <div className="flex w-full justify-center py-6">
                 <div className="w-full max-w-3xl px-6">
                     <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Add New Engineer</h1>
+                        <h1 className="text-2xl font-bold">Añadir ingeniero</h1>
                         <Link href="/engineers">
                             <Button>Volver</Button>
                         </Link>
@@ -169,7 +169,7 @@ export default function Create({ job_titles, places }: Props) {
                                 onClick={addPhone}
                                 disabled={form.engineer_phones.length >= 3}
                             >
-                                + Agregar teléfono
+                                + Añadir teléfono
                             </Button>
                         </div>
 
@@ -203,7 +203,7 @@ export default function Create({ job_titles, places }: Props) {
                             }
                             className="w-full rounded border px-3 py-2"
                         >
-                            <option value="">Select a position</option>
+                            <option value="">Selecciona un puesto</option>
                             {job_titles.map((jt: any) => (
                                 <option key={jt.id} value={jt.id}>
                                     {jt.title}
@@ -219,7 +219,7 @@ export default function Create({ job_titles, places }: Props) {
                             className="w-full rounded border px-3 py-2"
 
                         >
-                            <option value="">Select a place</option>
+                            <option value="">Selecciona una Plaza</option>
                             {places.map((p: any) => (
                                 <option key={p.id} value={p.id}>
                                     {p.name}
@@ -227,7 +227,7 @@ export default function Create({ job_titles, places }: Props) {
                             ))}
                         </select>
 
-                        <Button type="submit">Save Engineer</Button>
+                        <Button type="submit">Guardar perfil del ingeniero</Button>
                     </form>
                 </div>
             </div>

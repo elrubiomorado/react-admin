@@ -6,9 +6,9 @@ import React, { useState } from 'react';
 
 // Breadcrumbs para edición
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities/' },
-    { title: 'Teams', href: '/utilities/teams' },
-    { title: 'Edit', href: '#' },
+    { title: 'Utilidades', href: '/utilities/' },
+    { title: 'Equipos', href: '/utilities/teams' },
+    { title: 'Editar', href: '#' },
 ];
 
 interface Props {
@@ -52,7 +52,7 @@ export default function Edit({team}: Props) {
                 <div className="w-full max-w-3xl px-6">
                     {/* Cabecera */}
                     <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Edit Team</h1>
+                        <h1 className="text-2xl font-bold">Editar Equipo de Trabajo</h1>
                         <Link href="/utilities/teams">
                             <Button>Volver</Button>
                         </Link>
@@ -74,7 +74,7 @@ export default function Edit({team}: Props) {
                         {infoOpen && (
                             <div className="mt-2 rounded border-l-4 border-blue-500 bg-gray-50 p-4 text-sm text-gray-700">
                                 <p className="mb-2">
-                                    Aquí puedes editar los datos del team
+                                    Aquí puedes editar los datos del equipo de trabajo
                                 </p>
                             </div>
                         )}
@@ -84,7 +84,7 @@ export default function Edit({team}: Props) {
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
                         <input
                             type="text"
-                            placeholder="Nombre del team"
+                            placeholder="Nombre del Equipo de trabajo"
                             value={form.name}
                             onChange={(e) =>
                                 handleChange('name', e.target.value.toUpperCase())
@@ -106,7 +106,7 @@ export default function Edit({team}: Props) {
                         /> */}
 
 
-                        <Button type="submit">Update Team</Button>
+                        <Button type="submit">Actualizar equipo de trabajo</Button>
                     </form>
                 </div>
             </div>

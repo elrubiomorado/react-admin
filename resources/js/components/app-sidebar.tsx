@@ -38,7 +38,7 @@ const mainNavItems: NavItem[] = [
         icon: Contact,
     },
     {
-        title: 'Utilities',
+        title: 'Utilidades',
         href: '/utilities',
         icon: Folder,
     },

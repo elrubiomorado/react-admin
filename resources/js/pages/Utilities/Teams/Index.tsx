@@ -5,8 +5,8 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { Head, Link, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilities', href: '/utilities' },
-    { title: 'Teams', href: '/utilities/teams' },
+    { title: 'Utilidades', href: '/utilities' },
+    { title: 'Equipos de Trabajo', href: '/utilities/teams' },
 ];
 
 interface Props {
@@ -15,12 +15,12 @@ interface Props {
 
 export default function Index({ teams }: Props) {
     const handleDelete = (id: number) => {
-        if (confirm('¿Estás seguro de eliminar esta plaza?')) {
+        if (confirm('¿Estás seguro de eliminar este equipo de trabajo?')) {
             router.delete(`/utilities/teams/${id}`, {
                 onSuccess: () => router.reload(),
                 onError: (errors) => {
                     console.error('Error al eliminar:', errors);
-                    alert('Error al eliminar el team');
+                    alert('Error al eliminar el equipo de trabajo');
                 },
             });
         }
@@ -33,12 +33,12 @@ export default function Index({ teams }: Props) {
             <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-800">
-                        Teams
+                    Equipos de Trabajo
                     </h1>
 
                     <Link href="/utilities/teams/create">
                         <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
-                            Crear nuevo team
+                            Crear nuevo equipo de trabajo
                         </Button>
                     </Link>
                 </div>
