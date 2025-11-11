@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cronometros/create', [CronometrosController::class, 'create'])->name('cronometros.create');
     Route::post('/cronometros', [CronometrosController::class, 'store'])->name('cronometros.store');
     Route::delete('/cronometros/{id}', [CronometrosController::class, 'destroy'])->name('cronometros.destroy');
+    Route::patch('/cronometros/{id}', [CronometrosController::class, 'update']);
 
     //Utilities
     Route::get('/utilities', [UtilitiesController::class, 'index'])->name('utilities.index');
@@ -70,15 +71,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/engineers/{id}/edit', [EngineerController::class, 'edit'])->name('engineers.edit');
     Route::put('/engineers/{id}', [EngineerController::class, 'update'])->name('engineers.update');
     Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
-
-
-
-
-
-
-
-
-
 });
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

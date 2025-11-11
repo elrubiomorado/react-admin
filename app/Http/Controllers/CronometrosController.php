@@ -55,7 +55,19 @@ class CronometrosController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Cronómetro creado correctamente.');
+    }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status_id' => 'required|integer|exists:statuses,id',
+        ]);
+
+        $cronometro = Cronometro::findOrFail($id);
+        $cronometro->status_id = $request->status_id;
+        $cronometro->save();
+
+        return back()->with('success', 'Estado actualizado');
     }
 
     public function destroy($id)
