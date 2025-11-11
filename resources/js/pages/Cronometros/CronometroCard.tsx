@@ -48,8 +48,7 @@ export default function CronometroCard({ cron, onDelete }: CronometroCardProps) 
                     preserveScroll: true, // ✅ evita que se mueva la vista
                     preserveState: true,  // ✅ no refresca la página
                     replace: true,        // ✅ no empuja nueva entrada en el historial
-                    onSuccess: () => console.log('✅ Estado actualizado'),
-                    onError: (error) => console.error('❌ Error al actualizar:', error),
+
                 }
             );
         }
@@ -63,15 +62,15 @@ export default function CronometroCard({ cron, onDelete }: CronometroCardProps) 
             ? 'bg-yellow-100 border-yellow-400'
             : 'bg-red-100 border-red-400';
 
-    const estadoNombre =
-        statusId === 1 ? 'in_progress' : statusId === 2 ? 'almost' : 'scale';
-
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
         const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
         const s = Math.floor(seconds % 60).toString().padStart(2, '0');
         return `${h}:${m}:${s}`;
     };
+
+     // ❌ Si el status es 1, no renderizamos nada
+    if (statusId === 1) return null;
 
     return (
         <div
@@ -96,9 +95,6 @@ export default function CronometroCard({ cron, onDelete }: CronometroCardProps) 
                 <div className="truncate text-xs text-gray-700">{cron.ticket}</div>
                 <div className="text-[11px] text-gray-500">
                     {cron.user?.name || 'N/A'}
-                </div>
-                <div className="text-[11px] font-medium text-gray-600">
-                    {estadoNombre}
                 </div>
             </div>
         </div>

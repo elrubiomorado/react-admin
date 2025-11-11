@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import CronometroCard from '@/pages/Cronometros/CronometroCard';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react'; // ✅ Aseguramos la importación de useEffect
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -25,7 +25,7 @@ export default function Index({
     const [availablePriorities, setAvailablePriorities] = useState<any[]>([]);
     const [zonasSeleccionadas, setZonasSeleccionadas] = useState<number[]>([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(true);
-    const [fullscreen, setFullscreen] = useState(false); // ✅ modo fullscreen
+    const [fullscreen, setFullscreen] = useState(false);
 
     const zonas = Array.from(
         new Map(
@@ -35,7 +35,7 @@ export default function Index({
         ).values(),
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (zonasSeleccionadas.length === 0 && zonas.length > 0) {
             setZonasSeleccionadas(zonas.map((z) => z.id));
         }
@@ -103,16 +103,15 @@ export default function Index({
         }
     };
 
-    // ✅ Recarga automática cada 5 segundos para sincronizar los cronómetros
+    // 🔄 Recarga automática cada 5 segundos
     useEffect(() => {
         const intervalo = setInterval(() => {
             router.reload({ only: ['cronometros'] });
-        }, 5000); // cada 5 segundos
-
+        }, 5000);
         return () => clearInterval(intervalo);
-    }, []); // Solo se ejecuta una vez al montar el componente
+    }, []);
 
-    // Agrupar cronómetros por zona
+    // 🔍 Agrupar cronómetros por zona, filtrando solo estado_id 2 o 3
     const cronPorZona = zonas.reduce((acc: any, zona) => {
         acc[zona.id] = cronometros.filter((c) => {
             const zoneId =
@@ -155,7 +154,6 @@ export default function Index({
                                 )}
                             </Button>
 
-                            {/* Botón fullscreen */}
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -168,7 +166,7 @@ export default function Index({
                     </div>
                 )}
 
-                {/* Formulario (ocultable) */}
+                {/* Formulario */}
                 {!fullscreen && (
                     <div
                         className={`transition-all duration-300 overflow-hidden ${
@@ -285,7 +283,6 @@ export default function Index({
                         </Button>
                     ))}
 
-                    {/* Botón para salir de fullscreen */}
                     {fullscreen && (
                         <Button
                             variant="outline"
@@ -318,7 +315,7 @@ export default function Index({
                                     ))
                                 ) : (
                                     <div className="col-span-full text-center text-gray-500">
-                                        No hay cronómetros en esta zona.
+                                        No hay cronómetros activos en esta zona.
                                     </div>
                                 )}
                             </div>
