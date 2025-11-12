@@ -1,17 +1,19 @@
 import { login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
+import { motion, useMotionTemplate, useMotionValue, animate } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Stars } from '@react-three/drei';
 import Migajerito from '/public/images/Megajerito.jpeg';
+
+const COLORS_TOP = ['#292875', '#268d91', '#2a1e57', '#140085'];
 
 export default function Welcome() {
   const { auth } = usePage<SharedData>().props;
 
   // Texto "typewriter"
-  const fullText = ' - Bienvenido NOC, inicia sesión para continuar.';
+  const fullText = "  -Bienvenido NOC, inicia sesión para continuar.";
   const [text, setText] = useState('');
   useEffect(() => {
     let i = 0;
@@ -25,17 +27,18 @@ export default function Welcome() {
     return () => clearInterval(interval);
   }, []);
 
-  // Inicializar particles
-  const particlesInit = useCallback(async (engine: any) => {
-    console.log('init particles'); //prueba visual
-    await loadFull(engine);
+  // Animación de color para el fondo tipo aurora
+  const color = useMotionValue(COLORS_TOP[0]);
+  useEffect(() => {
+    animate(color, COLORS_TOP, {
+      ease: 'easeInOut',
+      duration: 10,
+      repeat: Infinity,
+      repeatType: 'mirror',
+    });
   }, []);
 
-  // Render sólo en cliente (evita problemas SSR)
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 12%, #020617 50%, ${color})`;
 
   return (
     <>
@@ -47,48 +50,17 @@ export default function Welcome() {
         />
       </Head>
 
-      <div className="relative flex h-screen w-full flex-col items-center justify-between bg-black text-white">
-        {/* Partículas de fondo: render sólo en cliente */}
-        {isClient && (
-          <Particles
-            id="tsparticles"
-            init={particlesInit}
-            className="pointer-events-none"
-            options={{
-              fullScreen: { enable: true, zIndex: 0 }, // canvas detrás de todo
-              background: { color: { value: 'transparent' } }, // no tapar el fondo
-              fpsLimit: 60,
-              particles: {
-                number: { value: 80, density: { enable: true, area: 800 } },
-                color: { value: ['#00f6ff', '#7c5cff', '#00ff9c'] },
-                shape: { type: 'circle' },
-                opacity: { value: 0.65 },
-                size: { value: { min: 2, max: 4 } }, // tamaño típico - más visible
-                move: {
-                  enable: true,
-                  speed: 1.5,
-                  direction: 'bottom',
-                  outModes: { default: 'out' },
-                },
-                links: {
-                  enable: true,
-                  distance: 140,
-                  color: '#00f6ff',
-                  opacity: 0.15,
-                  width: 1,
-                },
-              },
-              interactivity: {
-                events: {
-                  onHover: { enable: true, mode: 'repulse' },
-                  onClick: { enable: false },
-                  resize: true,
-                },
-                modes: { repulse: { distance: 100, duration: 0.3 } },
-              },
-            }}
-          />
-        )}
+      {/* Fondo aurora + estrellas */}
+      <motion.div
+        style={{ backgroundImage }}
+        className="relative flex h-screen w-full flex-col items-center justify-between overflow-hidden text-white"
+      >
+        {/* Capa de estrellas con Three.js */}
+        <div className="absolute inset-0 z-0">
+          <Canvas>
+            <Stars radius={70} count={2500} factor={3} fade speed={2} />
+          </Canvas>
+        </div>
 
         {/* Contenido principal */}
         <div className="relative z-10 flex grow flex-col items-center justify-center px-6 text-center">
@@ -116,7 +88,7 @@ export default function Welcome() {
           >
             <Link
               href={login()}
-              className="rounded-full bg-linear-to-r from-[#00f6ff] to-[#7c5cff] px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
+              className="rounded-full bg-gradient-to-r from-[#00f6ff] to-[#7c5cff] px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
             >
               Iniciar sesión
             </Link>
@@ -143,7 +115,7 @@ export default function Welcome() {
             />
           </div>
         </footer>
-      </div>
+      </motion.div>
     </>
   );
 }

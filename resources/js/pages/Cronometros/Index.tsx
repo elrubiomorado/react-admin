@@ -127,7 +127,6 @@ export default function Index({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Cronómetros" />
-
             <div className="flex flex-col gap-4 p-4">
                 {/* Header */}
                 {!fullscreen && (
@@ -304,7 +303,7 @@ export default function Index({
                                 {zona.name}
                             </h2>
 
-                            <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
+                            <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
                                 {cronPorZona[zona.id]?.length > 0 ? (
                                     cronPorZona[zona.id].map((cron: any) => (
                                         <CronometroCard
