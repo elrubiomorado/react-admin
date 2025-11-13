@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import Migajerito from '/public/images/Megajerito.jpeg';
+import AppLogo from '/public/images/mega-logo.png';
 
 const COLORS_TOP = ['#292875', '#268d91', '#2a1e57', '#140085'];
 
@@ -88,7 +89,7 @@ export default function Welcome() {
           >
             <Link
               href={login()}
-              className="rounded-full bg-gradient-to-r from-[#00f6ff] to-[#7c5cff] px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
+              className="rounded-full bg-linear-to-r from-[#00f6ff] to-[#7c5cff] px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
             >
               Iniciar sesión
             </Link>
@@ -108,10 +109,15 @@ export default function Welcome() {
               © 2025 Mega — <strong>Ingenieros en desarrollo</strong> — Nataly,
               Edgar y Jesús.
             </p>
-            <img
+           {/* <img
               src={Migajerito}
               alt="Logo migajeros"
-              className="h-10 rounded-md border border-[#ffffff10]"
+              className="h-15 w-10  border border-[#ffffff10] object-cover"
+            />*/}
+             <img
+              src={AppLogo}
+              alt="mega"
+              className="h-5 w-5  "
             />
           </div>
         </footer>
