@@ -3,8 +3,8 @@ import AppLayout from '@/layouts/app-layout';
 import CronometroCard from '@/pages/Cronometros/CronometroCard';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Cronómetros', href: '/cronometros' },
@@ -139,16 +139,20 @@ export default function Index({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setMostrarFormulario(!mostrarFormulario)}
+                                onClick={() =>
+                                    setMostrarFormulario(!mostrarFormulario)
+                                }
                                 className="flex items-center gap-1"
                             >
                                 {mostrarFormulario ? (
                                     <>
-                                        <ChevronUp className="w-4 h-4" /> Ocultar formulario
+                                        <ChevronUp className="h-4 w-4" />{' '}
+                                        Ocultar formulario
                                     </>
                                 ) : (
                                     <>
-                                        <ChevronDown className="w-4 h-4" /> Mostrar formulario
+                                        <ChevronDown className="h-4 w-4" />{' '}
+                                        Mostrar formulario
                                     </>
                                 )}
                             </Button>
@@ -159,7 +163,8 @@ export default function Index({
                                 onClick={() => setFullscreen(true)}
                                 className="flex items-center gap-1"
                             >
-                                <Maximize2 className="w-4 h-4" /> Pantalla completa
+                                <Maximize2 className="h-4 w-4" /> Pantalla
+                                completa
                             </Button>
                         </div>
                     </div>
@@ -168,7 +173,7 @@ export default function Index({
                 {/* Formulario */}
                 {!fullscreen && (
                     <div
-                        className={`transition-all duration-300 overflow-hidden ${
+                        className={`overflow-hidden transition-all duration-300 ${
                             mostrarFormulario
                                 ? 'max-h-[1000px] opacity-100'
                                 : 'max-h-0 opacity-0'
@@ -226,7 +231,9 @@ export default function Index({
                                     disabled={!selectedType}
                                 >
                                     {!selectedType ? (
-                                        <option>Primero selecciona un tipo</option>
+                                        <option>
+                                            Primero selecciona un tipo
+                                        </option>
                                     ) : availablePriorities.length > 0 ? (
                                         availablePriorities.map((p) => (
                                             <option key={p.id} value={p.id}>
@@ -234,7 +241,9 @@ export default function Index({
                                             </option>
                                         ))
                                     ) : (
-                                        <option>No hay prioridades disponibles</option>
+                                        <option>
+                                            No hay prioridades disponibles
+                                        </option>
                                     )}
                                 </select>
 
@@ -245,7 +254,9 @@ export default function Index({
                                     className="flex-1 rounded border bg-white p-2 text-black dark:bg-gray-800 dark:text-white"
                                     required
                                 >
-                                    <option value="">Selecciona una plaza</option>
+                                    <option value="">
+                                        Selecciona una plaza
+                                    </option>
                                     {places.map((place) => (
                                         <option key={place.id} value={place.id}>
                                             {place.name}
@@ -265,7 +276,7 @@ export default function Index({
                 )}
 
                 {/* Filtro de zonas */}
-                <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex flex-wrap items-center gap-2">
                     {zonas.map((zona) => (
                         <Button
                             key={zona.id}
@@ -287,9 +298,10 @@ export default function Index({
                             variant="outline"
                             size="sm"
                             onClick={() => setFullscreen(false)}
-                            className="flex items-center gap-1 ml-auto"
+                            className="ml-auto flex items-center gap-1"
                         >
-                            <Minimize2 className="w-4 h-4" /> Salir de pantalla completa
+                            <Minimize2 className="h-4 w-4" /> Salir de pantalla
+                            completa
                         </Button>
                     )}
                 </div>
