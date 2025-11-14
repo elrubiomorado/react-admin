@@ -192,13 +192,13 @@ export default function CronometroCard({
     const getColorClass = (statusId: number) => {
         switch (statusId) {
             case 1:
-                return 'bg-green-100 border-green-400 text-green-900';
+                return 'bg-[#7eb989] border-0 text-white';
             case 2:
-                return 'bg-yellow-100 border-yellow-400 text-yellow-900';
+                return 'bg-[#f8e384] border-0 text-gray-600';
             case 3:
-                return 'bg-red-100 border-red-400 text-red-900';
+                return 'bg-[#eb646d] border-0 text-white';
             default:
-                return 'bg-gray-100 border-gray-400 text-gray-900';
+                return 'bg-gray-100 border-0 text-gray-900';
         }
     };
 
@@ -290,7 +290,7 @@ export default function CronometroCard({
 
             <div
                 onClick={handleCardClick}
-                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border-2 p-3 shadow-sm transition-all duration-300 hover:shadow-md ${getColorClass(currentStatusId)} ${
+                className={`flex w-44 cursor-pointer flex-col justify-between rounded-3xl border-2 p-3 shadow-sm transition-all duration-300 hover:shadow-md ${getColorClass(currentStatusId)} ${
                     isFlashing ? 'ring-opacity-70 animate-pulse ring-2' : ''
                 } ${
                     currentStatusId === 1
@@ -302,12 +302,12 @@ export default function CronometroCard({
             >
                 <div className="mb-2 flex items-start justify-between">
                     <div
-                        className={`rounded-full px-2 py-1 text-xs font-bold ${
+                        className={`rounded-2xl px-2 py-1 text-xs font-bold ${
                             currentStatusId === 1
-                                ? 'bg-green-200'
+                                ? 'bg-green-300'
                                 : currentStatusId === 2
-                                  ? 'bg-yellow-200'
-                                  : 'bg-red-200'
+                                  ? 'bg-yellow-300'
+                                  : 'bg-red-300'
                         }`}
                     >
                         {getStatusText(currentStatusId)}
@@ -319,30 +319,18 @@ export default function CronometroCard({
                             e.stopPropagation();
                             onDelete(cron.id);
                         }}
-                        className="h-6 w-6 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                        className="h-6 w-6 text-white hover:bg-red-50 hover:text-red-400"
                     >
                         <TrashIcon className="h-3 w-3" />
                     </Button>
                 </div>
 
                 <div className="space-y-2 text-center">
-                    <div
-                        className="truncate text-sm font-semibold"
-                        title={cron.title}
-                    >
-                        {cron.title}
+                    <div className="text-xs font-bold" title={cron.ticket}>
+                        # {cron.ticket}
                     </div>
-                    <div className="font-mono text-xl leading-tight font-bold">
+                    <div className="font-mono text-xl leading-none font-medium">
                         {formatTime(elapsedTime)}
-                    </div>
-                    <div
-                        className="truncate text-xs opacity-75"
-                        title={cron.ticket}
-                    >
-                        Ticket: {cron.ticket}
-                    </div>
-                    <div className="text-[11px] opacity-60">
-                        {cron.user?.name || 'Sin asignar'}
                     </div>
                 </div>
             </div>
@@ -350,31 +338,31 @@ export default function CronometroCard({
             {isModalOpen && (
                 <div
                     ref={modalRef}
-                    className="absolute top-1/2 z-50 ml-4 w-80 -translate-y-1/2 rounded-lg border border-gray-200 bg-white shadow-lg"
+                    className="absolute top-1/2 z-50 ml-4 w-100 -translate-y-1/2 rounded-lg border border-gray-200 bg-white shadow-lg"
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        left: '100%',
+                        left: '110%',
                         maxHeight: '90vh',
                         overflowY: 'auto',
                     }}
                 >
                     {/* ----- Header del Modal ----*/}
                     <div
-                        className={`flex items-center justify-between rounded-t-lg p-4 ${
+                        className={`flex items-center justify-between rounded-t-lg p-3 ${
                             currentStatusId === 1
-                                ? 'bg-green-100'
+                                ? 'bg-[#7eb989]'
                                 : currentStatusId === 2
-                                  ? 'bg-yellow-100'
-                                  : 'bg-red-100'
+                                  ? 'bg-[#f8e384]'
+                                  : 'bg-[#eb646d]'
                         }`}
                     >
                         <h2
                             className={`text-lg font-bold ${
                                 currentStatusId === 1
-                                    ? 'text-green-900'
+                                    ? 'text-white'
                                     : currentStatusId === 2
-                                      ? 'text-yellow-900'
-                                      : 'text-red-900'
+                                      ? 'text-gray-600'
+                                      : 'text-white'
                             }`}
                         >
                             {cron.title}
@@ -385,10 +373,10 @@ export default function CronometroCard({
                             onClick={() => setIsModalOpen(false)}
                             className={`h-6 w-6 ${
                                 currentStatusId === 1
-                                    ? 'text-green-700 hover:bg-green-200 hover:text-green-900'
+                                    ? 'text-white hover:bg-green-400'
                                     : currentStatusId === 2
-                                      ? 'text-yellow-700 hover:bg-yellow-200 hover:text-yellow-900'
-                                      : 'text-red-700 hover:bg-red-200 hover:text-red-900'
+                                      ? 'text-gray-500 hover:bg-yellow-200'
+                                      : 'text-white hover:bg-red-300'
                             }`}
                         >
                             ✕
@@ -396,89 +384,77 @@ export default function CronometroCard({
                     </div>
 
                     {/* ----- Cuerpo del Modal ------ */}
-                    <div
-                        className={`rounded-b-lg p-4 ${
-                            currentStatusId === 1
-                                ? 'bg-green-50'
-                                : currentStatusId === 2
-                                  ? 'bg-yellow-50'
-                                  : 'bg-red-50'
-                        }`}
-                    >
+                    <div className={`rounded-b-lg p-3`}>
                         {/* Información de la alarma */}
-                        <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
+                        <div className="mb-1 grid grid-cols-1 gap-2 text-sm">
                             <div>
                                 <span className="font-medium text-gray-700">
                                     Ticket:
                                 </span>
-                                <span className="ml-1 block font-mono text-gray-800">
+                                <span className="ml-1 font-sans text-gray-800">
                                     {cron.ticket}
                                 </span>
                             </div>
+                            <div
+                                className={`mb-1 border-t border-gray-300`}
+                            ></div>
                             <div>
                                 <span className="font-medium text-gray-700">
                                     Tipo de alarma:
                                 </span>
-                                <span className="ml-1 block text-gray-800">
+                                <span className="ml-1 text-gray-800">
                                     {cron.alarm_type || 'No asignado'}
                                 </span>
                             </div>
+                            <div
+                                className={`mb-1 border-t border-gray-300`}
+                            ></div>
                             <div>
                                 <span className="font-medium text-gray-700">
                                     Lugar:
                                 </span>
-                                <span className="ml-1 block text-gray-800">
+                                <span className="ml-1 text-gray-800">
                                     {cron.location || 'No asignado'}
                                 </span>
                             </div>
+                            <div
+                                className={`mb-1 border-t border-gray-300`}
+                            ></div>
                             <div>
                                 <span className="font-medium text-gray-700">
                                     Usuario:
                                 </span>
-                                <span className="ml-1 block text-gray-800">
+                                <span className="ml-1 text-gray-800">
                                     {cron.user?.name}
                                 </span>
                             </div>
+                            <div
+                                className={`mb-1 border-t border-gray-300`}
+                            ></div>
                             <div>
                                 <span className="font-medium text-gray-700">
                                     Inicio:
                                 </span>
-                                <span className="ml-1 block text-gray-800">
+                                <span className="ml-1 text-gray-800">
                                     {formatDate(cron.created_at)}
                                 </span>
                             </div>
                         </div>
                         {/* Línea divisoria  */}
-                        <div
-                            className={`mb-4 border-t ${
-                                currentStatusId === 1
-                                    ? 'border-green-200'
-                                    : currentStatusId === 2
-                                      ? 'border-yellow-200'
-                                      : 'border-red-200'
-                            }`}
-                        ></div>
+                        <div className={`mb-2 border-t border-gray-300`}></div>
                         {/* Tiempo transcurrido */}
-                        <div className="mb-6 text-center">
+                        <div className="mb-3 text-center">
                             <div className="mb-1 text-sm font-medium text-gray-700">
                                 Tiempo Transcurrido
                             </div>
-                            <div className="font-mono text-2xl font-bold text-gray-800">
+                            <div className="font-sans text-2xl font-bold text-gray-800">
                                 {formatTime(elapsedTime)}
                             </div>
                         </div>
                         {/* Línea divisoria sutil */}
-                        <div
-                            className={`mb-4 border-t ${
-                                currentStatusId === 1
-                                    ? 'border-green-200'
-                                    : currentStatusId === 2
-                                      ? 'border-yellow-200'
-                                      : 'border-red-200'
-                            }`}
-                        ></div>
+                        <div className={`mb-2 border-t border-gray-300`}></div>
                         {/* ----- Historial de Escalaciones ----*/}
-                        <div className="mb-4">
+                        <div className="mb-2">
                             <h3 className="mb-2 text-sm font-medium text-gray-700">
                                 Historial de Escalaciones
                             </h3>
@@ -506,7 +482,7 @@ export default function CronometroCard({
                                     ))}
                                 </div>
                             ) : (
-                                <div className="py-4 text-center text-sm text-gray-500">
+                                <div className="py-2 text-center text-sm text-gray-500">
                                     No hay escalaciones registradas
                                 </div>
                             )}
@@ -516,7 +492,7 @@ export default function CronometroCard({
                             {/* Botón Escalar - Izquierda */}
                             <Button
                                 onClick={handleEscalar}
-                                className="bg-blue-500 px-3 py-1 text-xs font-medium text-white transition-transform hover:scale-105 hover:bg-blue-400"
+                                className="bg-blue-500 px-8 py-1 font-sans text-xs text-white transition-transform hover:scale-105 hover:bg-blue-400"
                                 size="sm"
                             >
                                 ⚠️ Escalar
@@ -527,7 +503,7 @@ export default function CronometroCard({
                                 <Button
                                     variant="outline"
                                     onClick={handlePause}
-                                    className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-500 p-0 text-white transition-transform hover:scale-105 hover:bg-gray-400"
+                                    className="flex h-7 w-7 items-center justify-center rounded-full p-0 text-gray-400 ring-2 transition-transform hover:scale-105"
                                     size="sm"
                                 >
                                     {isPaused ? (
@@ -538,9 +514,9 @@ export default function CronometroCard({
                                 </Button>
 
                                 <Button
-                                    variant="destructive"
+                                    variant="outline"
                                     onClick={handleDeleteFromModal}
-                                    className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-500 p-0 transition-transform hover:scale-105"
+                                    className="flex h-7 w-7 items-center justify-center rounded-full p-0 text-gray-400 ring-2 transition-transform hover:scale-105"
                                     size="sm"
                                 >
                                     <TrashIcon className="h-3 w-3" />
