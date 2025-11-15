@@ -302,7 +302,7 @@ export default function CronometroCard({
             >
                 <div className="mb-2 flex items-start justify-between">
                     <div
-                        className={`rounded-2xl px-2 py-1 text-xs font-bold ${
+                        className={`rounded-xl px-2 py-1 text-xs font-bold ${
                             currentStatusId === 1
                                 ? 'bg-green-300'
                                 : currentStatusId === 2

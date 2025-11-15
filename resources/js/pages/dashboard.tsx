@@ -1,4 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
+import CronometroCard from '@/pages/Cronometros/CronometroCard'; // Ajusta la ruta según tu estructura
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -8,22 +9,16 @@ import { MdFormatListBulleted } from 'react-icons/md';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Inicio',
+        title: 'Dashboard',
         href: dashboard().url,
     },
 ];
 
-const estadoColor = (estado: string) => {
-    switch (estado) {
-        case 'En espera':
-            return 'bg-yellow-400 text-black';
-        case 'En proceso':
-            return 'bg-green-500 text-white';
-        case 'Error':
-            return 'bg-red-500 text-white';
-        default:
-            return 'bg-gray-300 text-black';
-    }
+// Función para manejar la eliminación (si es necesaria)
+const handleDeleteCronometro = (id: number) => {
+    // Aquí puedes implementar la lógica de eliminación
+    console.log('Eliminar cronómetro:', id);
+    // Por ejemplo: router.delete(`/cronometros/${id}`);
 };
 
 export default function Dashboard({
@@ -31,74 +26,7 @@ export default function Dashboard({
 }: {
     cronometrosActivos: any[];
 }) {
-    const [vista, setVista] = useState<'lista' | 'grid'>('lista');
-
-    const data = [
-        {
-            ticket: '23434',
-            titulo: 'Prueba 1',
-            usuario: 'Juan lerma',
-            prioridad: 1,
-            tipo: 'Energía',
-            estado: 'En espera',
-        },
-        {
-            ticket: '23434',
-            titulo: 'Prueba 2',
-            usuario: 'Juan lerma',
-            prioridad: 2,
-            tipo: 'CFE',
-            estado: 'En proceso',
-        },
-        {
-            ticket: '43453',
-            titulo: 'Prueba 3',
-            usuario: 'Juan lerma',
-            prioridad: 3,
-            tipo: 'Energía',
-            estado: 'En espera',
-        },
-        {
-            ticket: '67657',
-            titulo: 'Prueba 4',
-            usuario: 'Juan lerma',
-            prioridad: 1,
-            tipo: 'CFE',
-            estado: 'En proceso',
-        },
-        {
-            ticket: '89978',
-            titulo: 'Prueba 5',
-            usuario: 'Juan lerma',
-            prioridad: 2,
-            tipo: 'Energía',
-            estado: 'En espera',
-        },
-        {
-            ticket: '545546',
-            titulo: 'Prueba 6',
-            usuario: 'Juan lerma',
-            prioridad: 3,
-            tipo: 'CFE',
-            estado: 'En proceso',
-        },
-        {
-            ticket: '34534',
-            titulo: 'Prueba 7',
-            usuario: 'Juan lerma',
-            prioridad: 1,
-            tipo: 'Energía',
-            estado: 'En espera',
-        },
-        {
-            ticket: '5464',
-            titulo: 'Prueba 8',
-            usuario: 'Juan lerma',
-            prioridad: 2,
-            tipo: 'CFE',
-            estado: 'En proceso',
-        },
-    ];
+    const [vista, setVista] = useState<'lista' | 'grid'>('grid'); // Cambié por defecto a 'grid'
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -113,16 +41,38 @@ export default function Dashboard({
                         <div className="text-gray-600">Alarmas Totales</div>
                     </div>
 
-                    <div className="rounded-xl border-l-4 border-green-500 bg-white p-6 text-center shadow-md">
+                    <div className="rounded-xl border-l-4 border-[#7eb989] bg-white p-6 text-center shadow-md">
                         <div className="mb-2 text-3xl font-bold text-green-600">
-                            2
+                            {
+                                cronometrosActivos.filter((cron) => {
+                                    const start = new Date(
+                                        cron.created_at,
+                                    ).getTime();
+                                    const now = Date.now();
+                                    const elapsedSeconds = Math.floor(
+                                        (now - start) / 1000,
+                                    );
+                                    return elapsedSeconds < 45; // Ajusta según tu lógica de estados
+                                }).length
+                            }
                         </div>
                         <div className="text-gray-600">Alarmas Activas</div>
                     </div>
 
                     <div className="rounded-xl border-l-4 border-gray-500 bg-white p-6 text-center shadow-md">
                         <div className="mb-2 text-3xl font-bold text-gray-600">
-                            2
+                            {
+                                cronometrosActivos.filter((cron) => {
+                                    const start = new Date(
+                                        cron.created_at,
+                                    ).getTime();
+                                    const now = Date.now();
+                                    const elapsedSeconds = Math.floor(
+                                        (now - start) / 1000,
+                                    );
+                                    return elapsedSeconds >= 45; // Ajusta según tu lógica de estados
+                                }).length
+                            }
                         </div>
                         <div className="text-gray-600">Alarmas Inactivas</div>
                     </div>
@@ -131,17 +81,15 @@ export default function Dashboard({
 
                 {/***------inicia parte de la info rápida ---- */}
 
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">
-                        Listado de Alarmas
-                    </h2>
+                <div className="mb-2 flex items-center justify-between">
+                    <h2 className="text-l font-semibold">Listado de Alarmas</h2>
 
                     <div className="flex gap-2">
                         <button
                             onClick={() => setVista('grid')}
                             className={`rounded-lg border px-3 py-2 ${
                                 vista === 'grid'
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-blue-500 text-white'
                                     : 'bg-white text-gray-700'
                             }`}
                         >
@@ -152,7 +100,7 @@ export default function Dashboard({
                             onClick={() => setVista('lista')}
                             className={`rounded-lg border px-3 py-2 ${
                                 vista === 'lista'
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-blue-500 text-white'
                                     : 'bg-white text-gray-700'
                             }`}
                         >
@@ -161,78 +109,116 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* ------------------- Vista LISTA ----------------------- */}
+                {/* ------------------- Vista LISTA (Tabla) ----------------------- */}
                 {vista === 'lista' && (
                     <div className="overflow-x-auto rounded-lg shadow">
                         <table className="w-full table-auto border-collapse">
                             <thead className="bg-gray-200 text-left">
                                 <tr>
-                                    <th className="p-3 font-semibold">
+                                    <th className="p-2 font-semibold">
                                         TICKET
                                     </th>
-                                    <th className="p-3 font-semibold">
+                                    <th className="p-2 font-semibold">
                                         TÍTULO
                                     </th>
-                                    <th className="p-3 font-semibold">
+                                    <th className="p-2 font-semibold">
                                         USUARIO
                                     </th>
-                                    <th className="p-3 font-semibold">
-                                        PRIORIDAD
+                                    <th className="p-2 font-semibold">
+                                        TIEMPO
                                     </th>
-                                    <th className="p-3 font-semibold">TIPO</th>
-                                    <th className="p-3 font-semibold">
+                                    <th className="p-2 font-semibold">
                                         ESTADO
                                     </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {data.map((item, i) => (
-                                    <tr
-                                        key={i}
-                                        className="border-b transition hover:bg-gray-100"
-                                    >
-                                        <td className="p-3">{item.ticket}</td>
-                                        <td className="p-3">{item.titulo}</td>
-                                        <td className="p-3">{item.usuario}</td>
-                                        <td className="p-3">
-                                            {item.prioridad}
-                                        </td>
-                                        <td className="p-3">{item.tipo}</td>
-                                        <td className="p-3">
-                                            <span
-                                                className={`rounded-md px-3 py-1 text-sm font-semibold ${estadoColor(
-                                                    item.estado,
-                                                )}`}
-                                            >
-                                                {item.estado}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {cronometrosActivos.map((cron) => {
+                                    const start = new Date(
+                                        cron.created_at,
+                                    ).getTime();
+                                    const now = Date.now();
+                                    const elapsedSeconds = Math.floor(
+                                        (now - start) / 1000,
+                                    );
+
+                                    const formatTime = (seconds: number) => {
+                                        const h = Math.floor(seconds / 3600)
+                                            .toString()
+                                            .padStart(2, '0');
+                                        const m = Math.floor(
+                                            (seconds % 3600) / 60,
+                                        )
+                                            .toString()
+                                            .padStart(2, '0');
+                                        const s = Math.floor(seconds % 60)
+                                            .toString()
+                                            .padStart(2, '0');
+                                        return `${h}:${m}:${s}`;
+                                    };
+
+                                    const getStatusInfo = (seconds: number) => {
+                                        if (seconds < 30)
+                                            return {
+                                                text: 'En Progreso',
+                                                color: 'bg-[#7eb989] text-white',
+                                            };
+                                        if (seconds < 45)
+                                            return {
+                                                text: 'Casi Listo',
+                                                color: 'bg-[#f8e384] text-gray-800',
+                                            };
+                                        return {
+                                            text: 'Necesita Escalar',
+                                            color: 'bg-[#eb646d] text-white',
+                                        };
+                                    };
+
+                                    const status =
+                                        getStatusInfo(elapsedSeconds);
+
+                                    return (
+                                        <tr
+                                            key={cron.id}
+                                            className="border-b transition hover:bg-gray-100"
+                                        >
+                                            <td className="p-2">
+                                                #{cron.ticket}
+                                            </td>
+                                            <td className="p-2">
+                                                {cron.title}
+                                            </td>
+                                            <td className="p-2">
+                                                {cron.user?.name || 'N/A'}
+                                            </td>
+                                            <td className="p-2 font-mono">
+                                                {formatTime(elapsedSeconds)}
+                                            </td>
+                                            <td className="p-2">
+                                                <span
+                                                    className={`rounded-md px-3 py-1 text-sm font-semibold ${status.color}`}
+                                                >
+                                                    {status.text}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
                 )}
 
-                {/* ------------------- Vista GRID ----------------------- */}
+                {/* ------------------- Vista GRID (Tarjetas de Cronómetros) ----------------------- */}
                 {vista === 'grid' && (
-                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                        {data.map((item, i) => (
-                            <div
-                                key={i}
-                                className="rounded-lg border bg-white p-4 shadow transition hover:shadow-md"
-                            >
-                                <div className="text-lg font-bold">
-                                    {item.titulo}
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                    # {item.ticket}
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                    Inicio: {item.usuario}
-                                </div>
-                            </div>
+                    <div className="flex flex-wrap gap-4">
+                        {cronometrosActivos.map((cron) => (
+                            <CronometroCard
+                                key={cron.id}
+                                cron={cron}
+                                onDelete={handleDeleteCronometro}
+                            />
                         ))}
                     </div>
                 )}
