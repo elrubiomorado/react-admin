@@ -272,15 +272,15 @@ export default function CronometroCard({
     const getModalPositionClass = () => {
         switch (modalPosition) {
             case 'center-right':
-                return 'left-full top-0 ml-4';
+                return 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-4';
             case 'center-left':
-                return 'right-full top-0 mr-4';
+                return 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mr-4';
             case 'bottom':
-                return 'top-full left-1/2 -translate-x-1/2 mt-4';
+                return 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-4';
             case 'top':
-                return 'bottom-full left-1/2 -translate-x-1/2 mb-4';
+                return 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mb-4';
             default:
-                return 'left-full top-0 ml-4';
+                return 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
         }
     };
 
@@ -290,7 +290,7 @@ export default function CronometroCard({
 
             <div
                 onClick={handleCardClick}
-                className={`flex w-44 cursor-pointer flex-col justify-between rounded-3xl border-2 p-3 shadow-sm transition-all duration-300 hover:shadow-md ${getColorClass(currentStatusId)} ${
+                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border-2 p-3 shadow-sm transition-all duration-300 hover:shadow-md ${getColorClass(currentStatusId)} ${
                     isFlashing ? 'ring-opacity-70 animate-pulse ring-2' : ''
                 } ${
                     currentStatusId === 1
@@ -302,7 +302,7 @@ export default function CronometroCard({
             >
                 <div className="mb-2 flex items-start justify-between">
                     <div
-                        className={`rounded-xl px-2 py-1 text-xs font-bold ${
+                        className={`rounded-md px-2 py-1 text-xs font-bold ${
                             currentStatusId === 1
                                 ? 'bg-green-300'
                                 : currentStatusId === 2
@@ -338,17 +338,16 @@ export default function CronometroCard({
             {isModalOpen && (
                 <div
                     ref={modalRef}
-                    className="absolute top-1/2 z-50 ml-4 w-100 -translate-y-1/2 rounded-lg border border-gray-200 bg-white shadow-lg"
+                    className="fixed top-1/2 left-1/2 z-50 ml-4 w-100 -translate-y-1/2 rounded-md border border-gray-200 bg-white shadow-lg"
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        left: '110%',
                         maxHeight: '90vh',
                         overflowY: 'auto',
                     }}
                 >
                     {/* ----- Header del Modal ----*/}
                     <div
-                        className={`flex items-center justify-between rounded-t-lg p-3 ${
+                        className={`flex items-center justify-between rounded-t-md p-3 ${
                             currentStatusId === 1
                                 ? 'bg-[#7eb989]'
                                 : currentStatusId === 2

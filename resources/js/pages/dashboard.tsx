@@ -31,17 +31,17 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inicio" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-md p-4">
                 {/*** -------- Inicia el código de las cards -----------------*/}
                 <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                    <div className="rounded-xl border-l-4 border-blue-500 bg-white p-6 text-center shadow-md">
+                    <div className="rounded-md border-l-4 border-blue-500 bg-white p-6 text-center shadow-md">
                         <div className="mb-2 text-3xl font-bold text-blue-600">
                             {cronometrosActivos.length}
                         </div>
                         <div className="text-gray-600">Alarmas Totales</div>
                     </div>
 
-                    <div className="rounded-xl border-l-4 border-[#7eb989] bg-white p-6 text-center shadow-md">
+                    <div className="rounded-md border-l-4 border-[#7eb989] bg-white p-6 text-center shadow-md">
                         <div className="mb-2 text-3xl font-bold text-green-600">
                             {
                                 cronometrosActivos.filter((cron) => {
@@ -59,7 +59,7 @@ export default function Dashboard({
                         <div className="text-gray-600">Alarmas Activas</div>
                     </div>
 
-                    <div className="rounded-xl border-l-4 border-gray-500 bg-white p-6 text-center shadow-md">
+                    <div className="rounded-md border-l-4 border-gray-500 bg-white p-6 text-center shadow-md">
                         <div className="mb-2 text-3xl font-bold text-gray-600">
                             {
                                 cronometrosActivos.filter((cron) => {
@@ -87,7 +87,7 @@ export default function Dashboard({
                     <div className="flex gap-2">
                         <button
                             onClick={() => setVista('grid')}
-                            className={`rounded-lg border px-3 py-2 ${
+                            className={`rounded-md border px-3 py-2 ${
                                 vista === 'grid'
                                     ? 'bg-blue-500 text-white'
                                     : 'bg-white text-gray-700'
@@ -98,7 +98,7 @@ export default function Dashboard({
 
                         <button
                             onClick={() => setVista('lista')}
-                            className={`rounded-lg border px-3 py-2 ${
+                            className={`rounded-md border px-3 py-2 ${
                                 vista === 'lista'
                                     ? 'bg-blue-500 text-white'
                                     : 'bg-white text-gray-700'
