@@ -19,8 +19,9 @@ export default function AppSidebarLayout({
                 <footer className="mt-auto bg-black py-3 text-white">
                     <div className="container mx-auto flex flex-col items-center justify-between md:flex-row">
                         <p className="mb-2 text-center md:mb-0 md:text-left">
-                           © 2025 Mega — <strong>Ingenieros en desarrollo</strong>{' '}
-                            Nataly, Edgar y Jesús.
+                            © 2025 Mega —{' '}
+                            <strong>Ingenieros en desarrollo</strong> Nataly,
+                            Edgar y Jesús.
                         </p>
                         <img
                             src={Migajerito}
