@@ -44,8 +44,8 @@ class Cronometro extends Model
         return $this->belongsTo(Place::class);
     }
 
-    public function journals(){
+    public function journals()
+    {
         return $this->hasMany(Journal::class);
     }
-    
 }

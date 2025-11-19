@@ -4,7 +4,6 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import { type BreadcrumbItem } from '@/types';
 import { type PropsWithChildren } from 'react';
-import Migajerito from '/public/images/Megajerito.jpeg';
 import AppLogo from '/public/images/mega-logo.png';
 
 
@@ -24,11 +23,6 @@ export default function AppSidebarLayout({
                            © 2025 Mega — <strong>Ingenieros en desarrollo</strong>{' '}
                             Nataly, Edgar y Jesús.
                         </p>
-                        {/*<img
-                            src={Migajerito}
-                            alt="Logo migajeros"
-                            className="h-10 rounded-md"
-                        />*/}
                         <img
                                   src={AppLogo}
                                   alt="mega"

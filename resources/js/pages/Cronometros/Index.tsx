@@ -14,12 +14,16 @@ interface Props {
     cronometros?: any[];
     types?: any[];
     places?: any[];
+    engineers: any[];
+    contactMethods: any[];
 }
 
 export default function Index({
     cronometros = [],
     types = [],
     places = [],
+    engineers = [],
+    contactMethods = [],
 }: Props) {
     const [selectedType, setSelectedType] = useState('');
     const [availablePriorities, setAvailablePriorities] = useState<any[]>([]);
@@ -230,8 +234,14 @@ export default function Index({
                                     required
                                     disabled={!selectedType}
                                 >
+                                    {selectedType && (
+                                        <option value="">
+                                            Selecciona prioridad
+                                        </option>
+                                    )}
+
                                     {!selectedType ? (
-                                        <option>
+                                        <option value="">
                                             Primero selecciona un tipo
                                         </option>
                                     ) : availablePriorities.length > 0 ? (
@@ -241,7 +251,7 @@ export default function Index({
                                             </option>
                                         ))
                                     ) : (
-                                        <option>
+                                        <option value="">
                                             No hay prioridades disponibles
                                         </option>
                                     )}
@@ -321,6 +331,8 @@ export default function Index({
                                         <CronometroCard
                                             key={cron.id}
                                             cron={cron}
+                                            engineers={engineers}
+                                            contactMethods={contactMethods}
                                             onDelete={handleDelete}
                                         />
                                     ))

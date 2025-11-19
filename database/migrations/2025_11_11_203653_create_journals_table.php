@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('cronometro_id')->constrained()->onDelete('cascade');
             $table->foreignId('engineer_id')->constrained()->onDelete('cascade');
             $table->foreignId('escalation_stage_id')->constrained()->onDelete('cascade');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->timestamp('notified_at')->nullable();
             $table->timestamps();
         });

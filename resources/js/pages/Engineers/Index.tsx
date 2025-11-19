@@ -20,7 +20,7 @@ interface Engineer {
         title: string;
         team?: { name: string };
     };
-    phones?: { phone: string }[]; // 👈 corregido
+    phones?: any[]; // 👈 corregido
 }
 
 interface Props {

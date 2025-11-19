@@ -7,13 +7,9 @@ use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\UtilitiesController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\EngineerController;
+use App\Http\Controllers\JournalController;
 use App\Models\Cronometro;
-
-
-
-
-
-
+use App\Models\Journal;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,7 +38,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cronometros/create', [CronometrosController::class, 'create'])->name('cronometros.create');
     Route::post('/cronometros', [CronometrosController::class, 'store'])->name('cronometros.store');
     Route::delete('/cronometros/{id}', [CronometrosController::class, 'destroy'])->name('cronometros.destroy');
-    Route::patch('/cronometros/{id}', [CronometrosController::class, 'update']);
+    Route::patch('/cronometros/{id}', [CronometrosController::class, 'update'])->name('cronometros.destroy');
+    Route::post('/cronometros/{id}/status', [CronometrosController::class, 'updateStatus'])->name('cronometros.updateStatus');
+
+    // Journal
+    Route::get('journals', [JournalController::class, 'index'])->name('utilities.journals.index');
+    Route::get('journals/create', [JournalController::class, 'create'])->name('utilities.journals.create');
+    Route::post('journals', [JournalController::class, 'store'])->name('utilities.journals.store');
+    Route::delete('journals/{id}', [JournalController::class, 'destroy'])->name('utilities.journals.destroy');
+    Route::get('journals/{id}/edit', [JournalController::class, 'edit'])->name('utilities.journals.edit');
+    Route::put('journals/{id}', [JournalController::class, 'update'])->name('utilities.journals.update');
 
     //Utilities
     Route::get('/utilities', [UtilitiesController::class, 'index'])->name('utilities.index');

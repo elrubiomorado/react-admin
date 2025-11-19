@@ -13,8 +13,9 @@ export function UserInfo({
 
     return (
         <>
+        {/* https://preview.redd.it/gen-the-greatest-manipulator-in-dr-stone-v0-35mh5vtc2moc1.jpeg?width=1125&auto=webp&s=87152a34da252d937e12533a3de45bcabd17ded9 */}
             <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src='https://pbs.twimg.com/media/GjKKFZbbsAEOV_z.jpg' alt={user.name} />
                 <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                     {getInitials(user.name)}
                 </AvatarFallback>

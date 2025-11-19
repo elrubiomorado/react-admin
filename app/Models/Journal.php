@@ -8,6 +8,7 @@ class Journal extends Model
 {
     //
     protected $fillable = [
+        'cronometro_id',
         'stopwatch_id',
         'engineer_id',
         'notified_at',
@@ -19,10 +20,12 @@ class Journal extends Model
     {
         return $this->belongsTo(Cronometro::class);
     }
-    public function escalationStage(){
+    public function escalationStage()
+    {
         return $this->belongsTo(EscalationStage::class);
     }
-    public function engineer(){
+    public function engineer()
+    {
         return $this->belongsTo(Engineer::class);
     }
     public function journalContactMethods()
