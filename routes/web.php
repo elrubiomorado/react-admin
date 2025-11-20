@@ -70,6 +70,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/utilities/teams/{id}/edit', [TeamController::class, 'edit'])->name('utilities.teams.edit');
     Route::put('/utilities/teams/{id}', [TeamController::class, 'update'])->name('utilities.teams.update');
 
+
+    // History:
+    Route::get('/cronometros/history', [CronometrosController::class, 'history']);
+    Route::post('/cronometros/export-history', [CronometrosController::class, 'exportHistory']);
+
     //Inges
     Route::get('/engineers', [EngineerController::class, 'index'])->name('engineers.index');
     Route::get('/engineers/create', [EngineerController::class, 'create'])->name('engineers.create');

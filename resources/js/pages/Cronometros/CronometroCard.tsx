@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
-import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleX, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CronometroCardProps {
@@ -307,7 +307,7 @@ export default function CronometroCard({
                         className="h-6 w-6 text-gray-500 hover:bg-green-50 hover:text-green-600"
                         title="Terminar cronómetro"
                     >
-                        <Check className="h-3 w-3" />
+                        <CircleX className="h-3 w-3" />
                     </Button>
                 </div>
                 <div className="space-y-2 text-center">

@@ -9,6 +9,9 @@ use App\Models\Place;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use App\Exports\CronometrosHistoryExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CronometrosController extends Controller
 {
@@ -65,7 +68,7 @@ class CronometrosController extends Controller
             'type_id' => $request->type_id,
             'status_id' => 1,
             'place_id' => $request->place_id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id() ?? 1,
         ]);
 
         return redirect()->back()->with('success', 'Cronómetro creado correctamente.');
@@ -112,23 +115,78 @@ class CronometrosController extends Controller
         return back()->with('success', 'Estado actualizado');
     }
 
-    public function history()
-    {
-        $cronometros = Cronometro::with([
-            'user:id,name',
-            'place:id,name,state_id',
-            'place.state:id,name,zone_id',
-            'place.state.zone:id,name',
-            'journals:id,cronometro_id,engineer_id,notified_at,note,escalation_stage_id',
-            'journals.journalContactMethods:id,responded,journal_id,contact_method_id',
-        ])
-        ->completed() // ← Usar scope para completados
+    public function history(){
+    $cronometros = Cronometro::with([
+        'user:id,name',
+        'place:id,name,state_id',
+        'place.state:id,name,zone_id',
+        'place.state.zone:id,name',
+        'journals:id,cronometro_id,engineer_id,notified_at,note,escalation_stage_id',
+        'journals.journalContactMethods:id,responded,journal_id,contact_method_id',
+    ])
+    ->where('is_active', false)  // Solo cronómetros terminados
+    ->whereNotNull('completed_at')
+    ->orderBy('completed_at', 'desc')
+    ->get();
+
+    return Inertia::render('Cronometros/History', [
+        'cronometros' => $cronometros
+    ]);
+ }
+
+    public function exportHistory(){
+    $cronometros = Cronometro::with(['user', 'place', 'place.state', 'place.state.zone', 'type', 'priority'])
+        ->where('is_active', false)
+        ->whereNotNull('completed_at')
         ->orderBy('completed_at', 'desc')
         ->get();
 
-        return Inertia::render('Cronometros/History', [
-            'cronometros' => $cronometros
-        ]);
-    }
+    $filename = 'cronometros-historial-' . now()->format('Y-m-d') . '.csv';
+    
+    $headers = [
+        'Content-Type' => 'text/csv; charset=utf-8',
+        'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+    ];
+
+    $callback = function() use ($cronometros) {
+        $file = fopen('php://output', 'w');
+        
+        // Agregar BOM para Excel con acentos
+        fwrite($file, "\xEF\xBB\xBF");
+        
+        // Headers
+        fputcsv($file, [
+            'ID', 'Título', 'Ticket', 'Lugar', 'Estado', 'Zona', 
+            'Tipo', 'Prioridad', 'Usuario', 'Fecha Inicio', 
+            'Fecha Término', 'Duración (días)'
+        ], ';');
+
+        // Data
+        foreach ($cronometros as $cron) {
+            $start = \Carbon\Carbon::parse($cron->start);
+            $end = $cron->completed_at ? \Carbon\Carbon::parse($cron->completed_at) : now();
+            $duration = $start->diffInDays($end);
+
+            fputcsv($file, [
+                $cron->id,
+                $cron->title,
+                $cron->ticket,
+                $cron->place->name ?? 'N/A',
+                $cron->place->state->name ?? 'N/A',
+                $cron->place->state->zone->name ?? 'N/A',
+                $cron->type->name ?? 'N/A',
+                $cron->priority->name ?? 'N/A',
+                $cron->user->name ?? 'N/A',
+                $cron->start,
+                $cron->completed_at ?? 'N/A',
+                $duration
+            ], ';');
+        }
+        
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
 }
 

@@ -3,7 +3,13 @@ import AppLayout from '@/layouts/app-layout';
 import CronometroCard from '@/pages/Cronometros/CronometroCard';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
+import {
+    ChevronDown,
+    ChevronUp,
+    Maximize2,
+    Minimize2,
+    Printer,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -183,7 +189,6 @@ export default function Index({
                         </div>
                     </div>
                 )}
-
                 {/* Formulario */}
                 {!fullscreen && (
                     <div
@@ -294,7 +299,14 @@ export default function Index({
                         </form>
                     </div>
                 )}
-
+                {/* Boton para obtener el historial de las alarmas */}
+                <Button
+                    onClick={() => router.get('/cronometros/history')}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                >
+                    <Printer className="h-4 w-4" />
+                </Button>
                 {/* Filtro de zonas */}
                 <div className="flex flex-wrap items-center gap-2">
                     {zonas.map((zona) => (
@@ -325,7 +337,6 @@ export default function Index({
                         </Button>
                     )}
                 </div>
-
                 {/* Cronómetros agrupados por zona */}
                 {zonas
                     .filter((z) => zonasSeleccionadas.includes(z.id))
