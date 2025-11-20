@@ -10,7 +10,7 @@ interface HistoryProps {
 
 export default function History({ cronometros }: HistoryProps) {
     const handleExportExcel = () => {
-        router.post('/cronometros/export-history');
+        window.open('/cronometros/export-history', '_blank');
     };
 
     const breadcrumbs: BreadcrumbItem[] = [

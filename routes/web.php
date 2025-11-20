@@ -73,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // History:
     Route::get('/cronometros/history', [CronometrosController::class, 'history']);
-    Route::post('/cronometros/export-history', [CronometrosController::class, 'exportHistory']);
+    Route::get('/cronometros/export-history', [CronometrosController::class, 'exportHistory']);
 
     //Inges
     Route::get('/engineers', [EngineerController::class, 'index'])->name('engineers.index');
