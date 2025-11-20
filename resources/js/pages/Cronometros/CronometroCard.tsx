@@ -1,31 +1,32 @@
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
-import { Stage } from '@react-three/drei';
-import { ChevronDown, ChevronUp, TrashIcon, User, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CronometroCardProps {
-    engineers: {
+    engineers: Array<{
         id: number;
         name: string;
         job_title: {
             id: number;
             title: string;
         };
-        place: {
-            id: number;
-            name: string;
-            state_id: number;
-            state: {
+        place: Array<
+            {
                 id: number;
                 name: string;
-                zone_id: number;
-                zone: { id: number; name: string };
-            };
-        }[];
+                state_id: number;
+                state: {
+                    id: number;
+                    name: string;
+                    zone_id: number;
+                    zone: { id: number; name: string };
+                };
+            }[]
+        >;
         //TODO hacer bien la interface
         phones: any[];
-    };
+    }>;
     contactMethods: { id: number; name: string }[];
     cron: {
         id: number;
@@ -62,7 +63,7 @@ interface CronometroCardProps {
             }[];
         }[];
     };
-    onDelete: (id: number) => void;
+    onComplete: (id: number) => void;
 }
 
 interface EngineerFormState {
@@ -74,7 +75,7 @@ interface EngineerFormState {
 
 export default function CronometroCard({
     cron,
-    onDelete,
+    onComplete,
     engineers,
     contactMethods,
 }: CronometroCardProps) {
@@ -272,7 +273,9 @@ export default function CronometroCard({
         ) || {};
 
     return (
-        <div className={`${cron.status_id === 1 ? 'hidden' : 'relative mx-2 my-2'}`}>
+        <div
+            className={`${cron.status_id === 1 ? 'hidden' : 'relative mx-2 my-2'}`}
+        >
             <div
                 className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm ${cron.status_id === 2 ? 'border-yellow-400 bg-yellow-200' : ''} ${cron.status_id === 3 ? 'border-red-500 bg-red-300' : ''} ${cron.status_id === 4 ? 'border-gray-900 bg-gray-700 text-white' : ''} `}
                 onClick={() => setOpenModal(true)}
@@ -286,23 +289,25 @@ export default function CronometroCard({
                               : cron.status_id === 3 && stage === 0
                                 ? 'Primer Escala'
                                 : cron.status_id === 3 && stage === 1
-                                    ? 'Segunda Escala'
-                                    :  cron.status_id === 3 && stage === 2
-                                        ? 'Tercera Escala'
-                                        : cron.status_id === 4
-                                            ? 'Quemado'
-                                            : 'Cerrado'}
+                                  ? 'Segunda Escala'
+                                  : cron.status_id === 3 && stage === 2
+                                    ? 'Tercera Escala'
+                                    : cron.status_id === 4
+                                      ? 'Quemado'
+                                      : 'Cerrado'}
                     </div>
+
                     <Button
                         size="icon"
                         variant="ghost"
                         onClick={(e) => {
                             e.stopPropagation();
-                            onDelete(cron.id);
+                            onComplete(cron.id);
                         }}
-                        className="h-6 w-6 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                        className="h-6 w-6 text-gray-500 hover:bg-green-50 hover:text-green-600"
+                        title="Terminar cronómetro"
                     >
-                        <TrashIcon className="h-3 w-3" />
+                        <Check className="h-3 w-3" />
                     </Button>
                 </div>
                 <div className="space-y-2 text-center">
@@ -329,21 +334,44 @@ export default function CronometroCard({
                         {cron.user.name ?? 'Sin asignar'}
                     </div>
                     {/* Perros chidos */}
-                    {cron.status_id === 2
-                        ? <div><img src="https://i.pinimg.com/originals/b1/8b/a1/b18ba1d6b1e6c63ec666165f5456484f.gif" alt="Perro con una sirena bien perra" /></div>
-                        : cron.status_id === 3 && cron.user.id === 2
-                                            ? <div><img src="https://preview.redd.it/9i08cu1osgs61.jpg?auto=webp&s=a84a222467cea9f5affe80e33e63b18dbe1ced66" alt="Perro con una sirena bien perra" /></div>
-                            : cron.status_id === 3
-
-                                ? <div><img src="https://media.tenor.com/J3sih0hnKLwAAAAM/borzoi-siren.gif" alt="Perro con una sirena bien perra" /></div>
-
-                                    : cron.status_id === 4 && cron.user.id === 1
-                                        ? <div><img src="https://pbs.twimg.com/media/E7RtEOZUcAYl60G.jpg" alt="Perro con una sirena bien perra" /></div>
-
-                                        : cron.status_id === 4 && cron.user.id === 2
-                                            ? <div><img src="https://pbs.twimg.com/media/E41U-dSXwAUmWby.jpg" alt="Perro con una sirena bien perra" /></div>
-                                            : 'hola'
-                                        }
+                    {cron.status_id === 2 ? (
+                        <div>
+                            <img
+                                src="https://i.pinimg.com/originals/b1/8b/a1/b18ba1d6b1e6c63ec666165f5456484f.gif"
+                                alt="Perro con una sirena bien perra"
+                            />
+                        </div>
+                    ) : cron.status_id === 3 && cron.user.id === 2 ? (
+                        <div>
+                            <img
+                                src="https://preview.redd.it/9i08cu1osgs61.jpg?auto=webp&s=a84a222467cea9f5affe80e33e63b18dbe1ced66"
+                                alt="Perro con una sirena bien perra"
+                            />
+                        </div>
+                    ) : cron.status_id === 3 ? (
+                        <div>
+                            <img
+                                src="https://media.tenor.com/J3sih0hnKLwAAAAM/borzoi-siren.gif"
+                                alt="Perro con una sirena bien perra"
+                            />
+                        </div>
+                    ) : cron.status_id === 4 && cron.user.id === 1 ? (
+                        <div>
+                            <img
+                                src="https://pbs.twimg.com/media/E7RtEOZUcAYl60G.jpg"
+                                alt="Perro con una sirena bien perra"
+                            />
+                        </div>
+                    ) : cron.status_id === 4 && cron.user.id === 2 ? (
+                        <div>
+                            <img
+                                src="https://pbs.twimg.com/media/E41U-dSXwAUmWby.jpg"
+                                alt="Perro con una sirena bien perra"
+                            />
+                        </div>
+                    ) : (
+                        'hola'
+                    )}
                 </div>
             </div>
 
@@ -425,19 +453,30 @@ export default function CronometroCard({
                                             </option>
                                             {engineers
                                                 .filter(
-                                                    (e) =>
-                                                        e.place?.name ===
-                                                        cron.place?.name,
+                                                    (
+                                                        e: any, // ← Agregar tipo 'any' temporalmente
+                                                    ) =>
+                                                        e.place?.some(
+                                                            (p: any) =>
+                                                                p.name ===
+                                                                cron.place
+                                                                    ?.name,
+                                                        ), // ← Cambiar a .some()
                                                 )
-                                                .map((e) => (
-                                                    <option
-                                                        key={e.id}
-                                                        value={e.id}
-                                                    >
-                                                        {e.name} -{' '}
-                                                        {e.job_title.title}
-                                                    </option>
-                                                ))}
+                                                .map(
+                                                    (
+                                                        e: any, // ← Agregar tipo aquí también
+                                                    ) => (
+                                                        <option
+                                                            key={e.id}
+                                                            value={e.id}
+                                                        >
+                                                            {e.name} -{' '}
+                                                            {e.job_title?.title}{' '}
+                                                            {/* ← Agregar ? por si es undefined */}
+                                                        </option>
+                                                    ),
+                                                )}
                                         </select>
                                         <Button
                                             type="button"

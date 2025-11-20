@@ -16,8 +16,29 @@ class Cronometro extends Model
         'type_id',
         'status_id',
         'user_id',
-        'place_id'
+        'place_id',
+        'is_active',
+        'completed_at'
     ];
+
+    //  métodos
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('is_active', false);
+    }
+
+    public function markAsCompleted()
+    {
+        $this->update([
+            'is_active' => false,
+            'completed_at' => now()
+        ]);
+    }
 
     // Relaciones
     public function priority()

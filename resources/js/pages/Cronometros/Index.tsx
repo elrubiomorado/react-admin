@@ -95,15 +95,25 @@ export default function Index({
         });
     };
 
-    const handleDelete = (id: number) => {
-        if (confirm('¿Estás seguro de eliminar este cronómetro?')) {
-            router.delete(`/cronometros/${id}`, {
-                onSuccess: () => router.reload(),
-                onError: (errors) => {
-                    console.error('Error al eliminar:', errors);
-                    alert('Error al eliminar el cronómetro');
+    //********Función para eliminar la card ******* *
+    const handleComplete = (id: number) => {
+        if (confirm('¿Estás seguro de terminar este cronómetro?')) {
+            router.post(
+                `/cronometros/${id}/complete`,
+                {},
+                {
+                    onSuccess: () => {
+                        router.reload();
+                    },
+                    onError: (errors) => {
+                        console.error(
+                            'Error al terminar el cronómetro:',
+                            errors,
+                        );
+                        alert('Error al terminar el cronómetro');
+                    },
                 },
-            });
+            );
         }
     };
 
@@ -331,9 +341,9 @@ export default function Index({
                                         <CronometroCard
                                             key={cron.id}
                                             cron={cron}
-                                            engineers={engineers}
+                                            engineers={engineers as any} // ← SOLUCIÓN 1: Cast a any
                                             contactMethods={contactMethods}
-                                            onDelete={handleDelete}
+                                            onComplete={handleComplete} // ← CAMBIAR onDelete por onComplete
                                         />
                                     ))
                                 ) : (

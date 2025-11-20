@@ -24,6 +24,7 @@ class CronometrosController extends Controller
             'journals.journalContactMethods:id,responded,journal_id,contact_method_id',
 
         ])
+            ->active()    
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -83,6 +84,15 @@ class CronometrosController extends Controller
         return back()->with('success', 'Estado actualizado');
     }
 
+    public function complete($id)
+    {
+        $cronometro = Cronometro::findOrFail($id);
+        
+        $cronometro->markAsCompleted(); // ← Usar el método del modelo
+
+        return redirect()->back()->with('success', 'Cronómetro marcado como terminado.');
+    }
+
     public function destroy($id)
     {
         $cronometro = Cronometro::findOrFail($id);
@@ -101,4 +111,24 @@ class CronometrosController extends Controller
 
         return back()->with('success', 'Estado actualizado');
     }
+
+    public function history()
+    {
+        $cronometros = Cronometro::with([
+            'user:id,name',
+            'place:id,name,state_id',
+            'place.state:id,name,zone_id',
+            'place.state.zone:id,name',
+            'journals:id,cronometro_id,engineer_id,notified_at,note,escalation_stage_id',
+            'journals.journalContactMethods:id,responded,journal_id,contact_method_id',
+        ])
+        ->completed() // ← Usar scope para completados
+        ->orderBy('completed_at', 'desc')
+        ->get();
+
+        return Inertia::render('Cronometros/History', [
+            'cronometros' => $cronometros
+        ]);
+    }
 }
+

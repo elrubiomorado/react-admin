@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/cronometros/{id}', [CronometrosController::class, 'destroy'])->name('cronometros.destroy');
     Route::patch('/cronometros/{id}', [CronometrosController::class, 'update'])->name('cronometros.destroy');
     Route::post('/cronometros/{id}/status', [CronometrosController::class, 'updateStatus'])->name('cronometros.updateStatus');
+    Route::post('/cronometros/{id}/complete', [CronometrosController::class, 'complete']);
 
     // Journal
     Route::get('journals', [JournalController::class, 'index'])->name('utilities.journals.index');
