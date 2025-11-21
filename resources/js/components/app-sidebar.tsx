@@ -18,6 +18,7 @@ import {
     BarChart3,
     BookOpen,
     Contact,
+    FileText,
     Folder,
     LayoutGrid,
     NotepadText,
@@ -34,6 +35,11 @@ const mainNavItems: NavItem[] = [
         title: 'Métricas', // ← NUEVO ITEM
         href: '/dashboard/metrics',
         icon: BarChart3, // ← Nuevo ícono
+    },
+    {
+        title: 'Reportes',
+        href: '/reports/custom',
+        icon: FileText, // Asegúrate de importar FileText de lucide-react
     },
     {
         title: 'Cronómetros', // ← Cambié "Escalas" por "Cronómetros" para que sea más claro
