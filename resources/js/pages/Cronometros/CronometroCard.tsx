@@ -231,7 +231,6 @@ export default function CronometroCard({
     //TODO: Ajustar bien tiempos y cantidad de escalas
     useEffect(() => {
         if (!cron) return;
-
         if (stage === 0) {
             if (elapsedTime >= 30 && cron.status_id === 1)
                 updateStatus(cron.id, 2);
@@ -344,7 +343,7 @@ export default function CronometroCard({
                     ) : cron.status_id === 3 && cron.user.id === 2 ? (
                         <div>
                             <img
-                                src="https://preview.redd.it/9i08cu1osgs61.jpg?auto=webp&s=a84a222467cea9f5affe80e33e63b18dbe1ced66"
+                                src="https://assets-v2.lottiefiles.com/a/0ecadb48-20b4-11f0-a13b-03f717b3da73/oRKyynvI6g.gif"
                                 alt="Perro con una sirena bien perra"
                             />
                         </div>
@@ -358,14 +357,14 @@ export default function CronometroCard({
                     ) : cron.status_id === 4 && cron.user.id === 1 ? (
                         <div>
                             <img
-                                src="https://pbs.twimg.com/media/E7RtEOZUcAYl60G.jpg"
+                                src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGY1eGlxeHA1cXZteXV2ZzB0NjEwbjU5YXVvZjVzdXR3eGIwc240aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/nrXif9YExO9EI/giphy.gif"
                                 alt="Perro con una sirena bien perra"
                             />
                         </div>
                     ) : cron.status_id === 4 && cron.user.id === 2 ? (
                         <div>
                             <img
-                                src="https://pbs.twimg.com/media/E41U-dSXwAUmWby.jpg"
+                                src="https://cdn-icons-mp4.flaticon.com/512/7920/7920938.mp4"
                                 alt="Perro con una sirena bien perra"
                             />
                         </div>

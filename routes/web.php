@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/engineers/{id}/edit', [EngineerController::class, 'edit'])->name('engineers.edit');
     Route::put('/engineers/{id}', [EngineerController::class, 'update'])->name('engineers.update');
     Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
+
 });
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
