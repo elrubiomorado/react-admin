@@ -18,14 +18,14 @@ class CalendarsSeeder extends Seeder
             [
                 'note'=> 'Inicio de mis turnos, dia 1',
                 'date'=> '2025-02-01',
-                'user_id'=>1,
+                'user_id'=>null,
                 'created_at'=> now(),
                 'updated_at'=> now(),
             ],
             [
                 'note'=> 'Turno nocturno de ejemplo',
                 'date'=> '2025-02-02',
-                'user_id'=>2,
+                'user_id'=>null,
                 'created_at'=> now(),
                 'updated_at'=> now(),
             ],

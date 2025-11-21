@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('calendars', function (Blueprint $table) {
             $table->id();
+            $table->string('note');
+            $table->date('date')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
+    /*
+      Reverse the migrations.
      */
     public function down(): void
     {

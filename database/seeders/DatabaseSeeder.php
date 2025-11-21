@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             TypeSeeder::class,
             PriorityTypeSeeder::class,
             EscalationStageSeeder::class,
-            ContactMethodSeeder::class
+            ContactMethodSeeder::class,
+            CalendarsSeeder::class
         ]);
         User::firstOrCreate(
             ['email' => 'avilaedgar2001@gmail.com'],

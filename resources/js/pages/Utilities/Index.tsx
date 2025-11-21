@@ -73,6 +73,30 @@ export default function Index() {
                             <span className="text-lg font-bold">Equipos de trabajo</span>
                         </div>
                     </Link>
+                       <Link
+                        href="/utilities/calendars" // O route('utilities.places.index')
+                        className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-linear-to-r from-black to-black text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
+                    >
+                        {/* Icono grande */}
+                        <div className="flex flex-col items-center gap-2">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-12 w-12"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M3 7h18M3 12h18M3 17h18"
+                                />
+                            </svg>
+                            {/* Texto */}
+                            <span className="text-lg font-bold">Equipos de trabajo</span>
+                        </div>
+                    </Link>
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
