@@ -6,9 +6,9 @@ import { Head, router } from '@inertiajs/react';
 import {
     ChevronDown,
     ChevronUp,
+    ClipboardMinus,
     Maximize2,
     Minimize2,
-    Printer,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -299,14 +299,7 @@ export default function Index({
                         </form>
                     </div>
                 )}
-                {/* Boton para obtener el historial de las alarmas */}
-                <Button
-                    onClick={() => router.get('/cronometros/history')}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                >
-                    <Printer className="h-4 w-4" />
-                </Button>
+
                 {/* Filtro de zonas */}
                 <div className="flex flex-wrap items-center gap-2">
                     {zonas.map((zona) => (
@@ -336,6 +329,17 @@ export default function Index({
                             completa
                         </Button>
                     )}
+
+                    {/* Boton para acceder al reporte del historial */}
+                    <Button
+                        onClick={() => router.get('/cronometros/history')}
+                        size="icon"
+                        variant="outline"
+                        className="h-9 w-9 rounded-full shadow-sm transition-all duration-200 hover:shadow-md"
+                        title="Ver Historial"
+                    >
+                        <ClipboardMinus className="h-4 w-4" />
+                    </Button>
                 </div>
                 {/* Cronómetros agrupados por zona */}
                 {zonas

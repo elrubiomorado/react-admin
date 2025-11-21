@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types'; // ← Agregar este import
+import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { ArrowLeftIcon, DownloadIcon } from 'lucide-react';
 
@@ -15,7 +15,7 @@ export default function History({ cronometros }: HistoryProps) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         // ← Usar el tipo correcto
-        { title: 'Cronómetros', href: '/cronometros' }, // ← Cambiar label→title, url→href
+        { title: 'Cronómetros', href: '/cronometros' },
         { title: 'Historial', href: '/cronometros/history' },
     ];
 
@@ -39,10 +39,12 @@ export default function History({ cronometros }: HistoryProps) {
                 </div>
                 <Button
                     onClick={handleExportExcel}
-                    className="flex items-center gap-2"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute top-4 right-6 h-10 w-10 rounded-full border border-gray-200 bg-white shadow-md transition-all duration-200 hover:bg-gray-50 hover:shadow-lg"
+                    title="Exportar a Excel"
                 >
                     <DownloadIcon className="h-4 w-4" />
-                    Exportar a Excel
                 </Button>
             </div>
 
