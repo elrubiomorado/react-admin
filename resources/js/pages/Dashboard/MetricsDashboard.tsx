@@ -20,13 +20,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface MetricsDashboardProps {
     metrics: {
         ticketsActivos: number;
-        ticketsCreadosHoy: number; // NUEVO
+        ticketsCreadosHoy: number;
         ticketsResueltosHoy: number;
         tiempoPromedioResolucion: number;
         tendenciaTickets: number;
         tendenciaTiempo: number;
         ticketsPorUsuario: Array<{
-            // NUEVO
             nombre: string;
             tickets: number;
             avatar?: string;
@@ -72,7 +71,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         title="Creados Hoy"
                         value={metrics.ticketsCreadosHoy}
                         icon={<PlusCircle className="h-6 w-6 text-blue-500" />}
-                        trend={8} // Podemos calcular esta tendencia también
+                        trend={8}
                         trendLabel="vs ayer"
                     />
 
@@ -230,7 +229,6 @@ function UsuarioItem({
     );
 }
 
-// Componente para items de zona (se mantiene igual)
 function ZonaItem({
     nombre,
     tickets,

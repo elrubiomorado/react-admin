@@ -319,13 +319,12 @@ export default function Index({
                         <Button
                             key={zona.id}
                             size="sm"
-                            variant={
-                                zonasSeleccionadas.includes(zona.id)
-                                    ? 'default'
-                                    : 'outline'
-                            }
                             onClick={() => toggleZona(zona.id)}
-                            className="text-xs"
+                            className={
+                                zonasSeleccionadas.includes(zona.id)
+                                    ? 'bg-slate-800 text-xs text-white hover:bg-slate-700' // Seleccionado
+                                    : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50' // No seleccionado
+                            }
                         >
                             {zona.name}
                         </Button>
