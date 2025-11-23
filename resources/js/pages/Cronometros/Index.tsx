@@ -163,7 +163,7 @@ export default function Index({
                                     router.get('/cronometros/history')
                                 }
                                 title="Ver Historial"
-                                className="flex min-w-[120px] items-center gap-1 sm:min-w-auto"
+                                className="flex min-w-[120px] items-center gap-1 bg-blue-500 hover:bg-blue-600 sm:min-w-auto"
                             >
                                 <ReceiptText className="h-4 w-4 text-white" />
                                 Ver historial

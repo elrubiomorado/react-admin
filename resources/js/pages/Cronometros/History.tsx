@@ -40,8 +40,7 @@ export default function History({ cronometros }: HistoryProps) {
                 <Button
                     onClick={handleExportExcel}
                     size="icon"
-                    variant="secondary"
-                    className="absolute top-4 right-6 h-10 w-10 rounded-full border border-gray-200 bg-white shadow-md transition-all duration-200 hover:bg-gray-50 hover:shadow-lg"
+                    className="absolute top-4 right-6 h-10 w-10 rounded-full bg-blue-500 shadow-md transition-all duration-200 hover:bg-blue-600"
                     title="Exportar a Excel"
                 >
                     <DownloadIcon className="h-4 w-4" />

@@ -20,29 +20,23 @@ import {
     Contact,
     FileText,
     Folder,
-    LayoutGrid,
     NotepadText,
-} from 'lucide-react'; // ← Agregar BarChart3
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Métricas', // ← NUEVO ITEM
+        title: 'Dasboard',
         href: '/dashboard/metrics',
-        icon: BarChart3, // ← Nuevo ícono
+        icon: BarChart3,
     },
     {
         title: 'Reportes',
         href: '/reports/custom',
-        icon: FileText, // Asegúrate de importar FileText de lucide-react
+        icon: FileText,
     },
     {
-        title: 'Cronómetros', // ← Cambié "Escalas" por "Cronómetros" para que sea más claro
+        title: 'Cronómetros',
         href: '/cronometros',
         icon: AlarmClock,
     },

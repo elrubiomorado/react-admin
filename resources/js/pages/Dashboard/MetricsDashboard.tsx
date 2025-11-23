@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -11,6 +12,10 @@ import {
     User,
 } from 'lucide-react';
 import React from 'react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+];
 
 interface MetricsDashboardProps {
     metrics: {
@@ -36,7 +41,7 @@ interface MetricsDashboardProps {
 
 export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard de Métricas" />
 
             <div className="space-y-6 p-6">

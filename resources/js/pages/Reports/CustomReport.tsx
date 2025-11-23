@@ -1,3 +1,6 @@
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
 import {
     AlertTriangle,
     BarChart3,
@@ -9,6 +12,10 @@ import {
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Reportes', href: '/reportes' },
+];
 
 // Interfaces
 interface CustomReportProps {
@@ -157,8 +164,8 @@ export default function CustomReport({
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <title>Reporte Personalizado</title>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Reporte Personalizado" />
 
             <div className="space-y-6 p-6">
                 {/* Header */}
@@ -493,7 +500,7 @@ export default function CustomReport({
                     </>
                 )}
             </div>
-        </div>
+        </AppLayout>
     );
 }
 
