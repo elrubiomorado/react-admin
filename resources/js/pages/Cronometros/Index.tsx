@@ -6,9 +6,9 @@ import { Head, router } from '@inertiajs/react';
 import {
     ChevronDown,
     ChevronUp,
-    ClipboardMinus,
     Maximize2,
     Minimize2,
+    ReceiptText,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -155,7 +155,20 @@ export default function Index({
                             Cronómetros
                         </h1>
 
-                        <div className="flex items-center gap-2">
+                        {/* *********Botones ******* */}
+                        <div className="ml-4 flex items-center gap-2">
+                            <Button
+                                size="sm"
+                                onClick={() =>
+                                    router.get('/cronometros/history')
+                                }
+                                title="Ver Historial"
+                                className="flex min-w-[120px] items-center gap-1 bg-blue-500 hover:bg-blue-600 sm:min-w-auto"
+                            >
+                                <ReceiptText className="h-4 w-4 text-white" />
+                                Ver historial
+                            </Button>
+
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -306,13 +319,12 @@ export default function Index({
                         <Button
                             key={zona.id}
                             size="sm"
-                            variant={
-                                zonasSeleccionadas.includes(zona.id)
-                                    ? 'default'
-                                    : 'outline'
-                            }
                             onClick={() => toggleZona(zona.id)}
-                            className="text-xs"
+                            className={
+                                zonasSeleccionadas.includes(zona.id)
+                                    ? 'bg-slate-800 text-xs text-white hover:bg-slate-700' // Seleccionado
+                                    : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50' // No seleccionado
+                            }
                         >
                             {zona.name}
                         </Button>
@@ -329,17 +341,6 @@ export default function Index({
                             completa
                         </Button>
                     )}
-
-                    {/* Boton para acceder al reporte del historial */}
-                    <Button
-                        onClick={() => router.get('/cronometros/history')}
-                        size="icon"
-                        variant="outline"
-                        className="h-9 w-9 rounded-full shadow-sm transition-all duration-200 hover:shadow-md"
-                        title="Ver Historial"
-                    >
-                        <ClipboardMinus className="h-4 w-4" />
-                    </Button>
                 </div>
                 {/* Cronómetros agrupados por zona */}
                 {zonas

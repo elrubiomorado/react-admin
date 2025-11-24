@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import FormularioHomologacion, { type Homologacion } from "./FormularioHomologacion";
 import {
     ClipboardIcon,
     PencilIcon,
@@ -9,7 +8,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { Head, Link, router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
-
+import FormularioHomologacion, {
+    type Homologacion,
+} from './FormularioHomologacion';
 
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
@@ -69,7 +70,7 @@ export default function Index({
             <div className="flex flex-col gap-4 p-4">
                 {/* Botón para crear nueva homologación */}
                 <Link href="/homologaciones/create">
-                    <Button className="flex items-center gap-2 bg-green-600 text-white hover:bg-green-700">
+                    <Button className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600">
                         Crear Homologación
                     </Button>
                 </Link>

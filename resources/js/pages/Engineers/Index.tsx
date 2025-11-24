@@ -68,7 +68,7 @@ export default function Index({
 
                 <div className="flex justify-start">
                     <Link href="/engineers/create">
-                        <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
+                        <Button className="flex items-center gap-2 bg-blue-500 text-white shadow-md hover:bg-blue-600">
                             Añadir ingeniero
                         </Button>
                     </Link>

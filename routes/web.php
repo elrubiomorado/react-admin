@@ -8,6 +8,8 @@ use App\Http\Controllers\UtilitiesController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\EngineerController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Models\Cronometro;
 use App\Models\Journal;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +76,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // History:
     Route::get('/cronometros/history', [CronometrosController::class, 'history']);
     Route::get('/cronometros/export-history', [CronometrosController::class, 'exportHistory']);
+
+    // Dashboard:
+    Route::get('/dashboard/metrics', [DashboardController::class, 'metrics']);
+
+    // Report Controller:
+    Route::get('/reports/custom', [ReportController::class, 'create']);
+    Route::post('/reports/generate', [ReportController::class, 'generate']);
+    Route::post('/reports/export', [ReportController::class, 'export']);
 
     //Inges
     Route::get('/engineers', [EngineerController::class, 'index'])->name('engineers.index');
