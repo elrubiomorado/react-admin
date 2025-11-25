@@ -19,11 +19,11 @@ class DashboardController extends Controller
             'ticketsCreadosHoy' => $this->getCreatedToday(),
             'ticketsResueltosHoy' => $this->getResolvedToday(),
             'tiempoPromedioResolucion' => $this->calculateAverageResolutionTime(),
-            
+
             // Tendencias
             'tendenciaTickets' => $this->calculateTicketTrend(),
             'tendenciaTiempo' => $this->calculateTimeTrend(),
-            
+
             // Nuevas métricas
             'ticketsPorUsuario' => $this->getTicketsByUser(),
             'topZonas' => $this->getTopZones(),
@@ -36,7 +36,7 @@ class DashboardController extends Controller
 
     private function getActiveTickets()
     {
-        return Cronometro::where('is_active', true)->count();
+        return Cronometro::whereIn('status_id', [1, 2, 3, 4])->count();
     }
 
     private function getCreatedToday()
@@ -46,15 +46,15 @@ class DashboardController extends Controller
 
     private function getResolvedToday()
     {
-        return Cronometro::where('is_active', false)
-            ->whereDate('completed_at', today())
+        return Cronometro::where('user_id', 5)
+            ->whereDate('end', today())
             ->count();
     }
 
     private function calculateAverageResolutionTime()
     {
-        $resolvedTickets = Cronometro::where('is_active', false)
-            ->whereNotNull('completed_at')
+        $resolvedTickets = Cronometro::where('user_id', 5)
+            ->whereNotNull('end')
             ->get();
 
         if ($resolvedTickets->isEmpty()) {
@@ -63,7 +63,7 @@ class DashboardController extends Controller
 
         $totalHours = $resolvedTickets->sum(function ($ticket) {
             $start = Carbon::parse($ticket->start);
-            $end = Carbon::parse($ticket->completed_at);
+            $end = Carbon::parse($ticket->end);
             return $start->diffInHours($end);
         });
 
@@ -72,8 +72,8 @@ class DashboardController extends Controller
 
     private function calculateTicketTrend()
     {
-        $todayCount = Cronometro::whereDate('created_at', today())->count();
-        $yesterdayCount = Cronometro::whereDate('created_at', today()->subDay())->count();
+        $todayCount = Cronometro::whereDate('start', today())->count();
+        $yesterdayCount = Cronometro::whereDate('start', today()->subDay())->count();
 
         if ($yesterdayCount === 0) {
             return 0;
@@ -100,9 +100,9 @@ class DashboardController extends Controller
         $startDate = now()->subWeeks($weeksAgo)->startOfWeek();
         $endDate = now()->subWeeks($weeksAgo)->endOfWeek();
 
-        $tickets = Cronometro::where('is_active', false)
-            ->whereNotNull('completed_at')
-            ->whereBetween('completed_at', [$startDate, $endDate])
+        $tickets = Cronometro::where('user_id', 5)
+            ->whereNotNull('end')
+            ->whereBetween('end', [$startDate, $endDate])
             ->get();
 
         if ($tickets->isEmpty()) {
@@ -111,7 +111,7 @@ class DashboardController extends Controller
 
         $totalHours = $tickets->sum(function ($ticket) {
             $start = Carbon::parse($ticket->start);
-            $end = Carbon::parse($ticket->completed_at);
+            $end = Carbon::parse($ticket->end);
             return $start->diffInHours($end);
         });
 
@@ -124,7 +124,7 @@ class DashboardController extends Controller
         $endOfWeek = now()->endOfWeek();
 
         // Método alternativo que funciona sin la relación en el modelo User
-        $usersWithTickets = Cronometro::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+        $usersWithTickets = Cronometro::whereBetween('start', [$startOfWeek, $endOfWeek])
             ->selectRaw('user_id, COUNT(*) as tickets_count')
             ->with('user:id,name') // Cargar relación user desde Cronometro
             ->groupBy('user_id')
@@ -147,19 +147,19 @@ class DashboardController extends Controller
     {
         return Place::withCount([
             'cronometros as active_tickets' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('user_id', 5);
             }
         ])
-        ->orderByDesc('active_tickets')
-        ->limit($limit)
-        ->get()
-        ->map(function ($place) {
-            return [
-                'nombre' => $place->name,
-                'tickets' => $place->active_tickets,
-                'tendencia' => rand(-15, 15) // Por ahora aleatorio, luego podemos calcular tendencia real
-            ];
-        })
-        ->toArray();
+            ->orderByDesc('active_tickets')
+            ->limit($limit)
+            ->get()
+            ->map(function ($place) {
+                return [
+                    'nombre' => $place->name,
+                    'tickets' => $place->active_tickets,
+                    'tendencia' => rand(-15, 15) // Por ahora aleatorio, luego podemos calcular tendencia real
+                ];
+            })
+            ->toArray();
     }
 }

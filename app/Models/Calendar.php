@@ -8,8 +8,6 @@ class Calendar extends Model
 {
     //Calender
     protected $fillable = [
-
-
         'note',
         'date',
         'user_id',

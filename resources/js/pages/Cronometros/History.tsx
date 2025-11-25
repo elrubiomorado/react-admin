@@ -71,7 +71,7 @@ export default function History({ cronometros }: HistoryProps) {
                                             <p className="text-sm text-gray-500">
                                                 Terminado:{' '}
                                                 {new Date(
-                                                    cron.completed_at,
+                                                    cron.end,
                                                 ).toLocaleDateString()}
                                             </p>
                                         </div>

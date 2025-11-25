@@ -109,11 +109,7 @@ export default function Welcome() {
               © 2025 Mega — <strong>Ingenieros en desarrollo</strong> — Nataly,
               Edgar y Jesús.
             </p>
-           {/* <img
-              src={Migajerito}
-              alt="Logo migajeros"
-              className="h-15 w-10  border border-[#ffffff10] object-cover"
-            />*/}
+           
              <img
               src={AppLogo}
               alt="mega"

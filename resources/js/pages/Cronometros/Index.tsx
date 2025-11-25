@@ -37,12 +37,14 @@ export default function Index({
     const [mostrarFormulario, setMostrarFormulario] = useState(true);
     const [fullscreen, setFullscreen] = useState(false);
 
+
+
     const zonas = Array.from(
         new Map(
             places
                 .filter((p) => p.state?.zone)
-                .map((p) => [p.state.zone.id, p.state.zone]),
-        ).values(),
+                .map((p) => [p.state.zone.id, p.state.zone])
+        ).values()
     );
 
     useEffect(() => {
@@ -53,7 +55,7 @@ export default function Index({
 
     const toggleZona = (id: number) => {
         setZonasSeleccionadas((prev) =>
-            prev.includes(id) ? prev.filter((z) => z !== id) : [...prev, id],
+            prev.includes(id) ? prev.filter((z) => z !== id) : [...prev, id]
         );
     };
 
@@ -75,7 +77,7 @@ export default function Index({
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -96,30 +98,33 @@ export default function Index({
             },
             onError: (errors) => {
                 console.error('Errores:', errors);
-                alert('Ocurrió un error al crear el cronómetro');
             },
         });
     };
 
-    //********Función para eliminar la card ******* *
+    const handleDelete = (id: number) => {
+        if (confirm('¿Estás seguro de eliminar este cronómetro?')) {
+            router.delete(`/cronometros/${id}`, {
+                onSuccess: () => {
+                    router.reload();
+                },
+                onError: (errors) => {
+                    console.error('Error al eliminar el cronómetro:', errors);
+                    alert('Error al eliminar el cronómetro');
+                },
+            });
+        }
+    };
+
     const handleComplete = (id: number) => {
         if (confirm('¿Estás seguro de terminar este cronómetro?')) {
-            router.post(
-                `/cronometros/${id}/complete`,
-                {},
-                {
-                    onSuccess: () => {
-                        router.reload();
-                    },
-                    onError: (errors) => {
-                        console.error(
-                            'Error al terminar el cronómetro:',
-                            errors,
-                        );
-                        alert('Error al terminar el cronómetro');
-                    },
+            router.post(`/cronometros/${id}/complete`, {}, {
+                onSuccess: () => router.reload(),
+                onError: (errors) => {
+                    console.error('Error al terminar el cronómetro:', errors);
+                    alert('Error al terminar el cronómetro');
                 },
-            );
+            });
         }
     };
 
@@ -131,18 +136,15 @@ export default function Index({
         return () => clearInterval(intervalo);
     }, []);
 
-    // 🔍 Agrupar cronómetros por zona, filtrando solo estado_id 2 o 3
-    const cronPorZona = zonas.reduce((acc: any, zona) => {
-        acc[zona.id] = cronometros.filter((c) => {
-            const zoneId =
-                c.place?.state?.zone?.id ??
-                c.place?.state?.zone_id ??
-                c.place?.zone_id ??
-                c.zone_id;
-            return zoneId === zona.id;
-        });
-        return acc;
-    }, {});
+    // 🔍 Filtrar cronómetros según zonas seleccionadas
+    const cronometrosFiltrados = cronometros.filter((c) => {
+        const zoneId =
+            c.place?.state?.zone?.id ??
+            c.place?.state?.zone_id ??
+            c.place?.zone_id ??
+            c.zone_id;
+        return zonasSeleccionadas.includes(zoneId);
+    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -155,13 +157,10 @@ export default function Index({
                             Cronómetros
                         </h1>
 
-                        {/* *********Botones ******* */}
                         <div className="ml-4 flex items-center gap-2">
                             <Button
                                 size="sm"
-                                onClick={() =>
-                                    router.get('/cronometros/history')
-                                }
+                                onClick={() => router.get('/cronometros/history')}
                                 title="Ver Historial"
                                 className="flex min-w-[120px] items-center gap-1 bg-blue-500 hover:bg-blue-600 sm:min-w-auto"
                             >
@@ -172,20 +171,16 @@ export default function Index({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                    setMostrarFormulario(!mostrarFormulario)
-                                }
+                                onClick={() => setMostrarFormulario(!mostrarFormulario)}
                                 className="flex items-center gap-1"
                             >
                                 {mostrarFormulario ? (
                                     <>
-                                        <ChevronUp className="h-4 w-4" />{' '}
-                                        Ocultar formulario
+                                        <ChevronUp className="h-4 w-4" /> Ocultar formulario
                                     </>
                                 ) : (
                                     <>
-                                        <ChevronDown className="h-4 w-4" />{' '}
-                                        Mostrar formulario
+                                        <ChevronDown className="h-4 w-4" /> Mostrar formulario
                                     </>
                                 )}
                             </Button>
@@ -196,19 +191,17 @@ export default function Index({
                                 onClick={() => setFullscreen(true)}
                                 className="flex items-center gap-1"
                             >
-                                <Maximize2 className="h-4 w-4" /> Pantalla
-                                completa
+                                <Maximize2 className="h-4 w-4" /> Pantalla completa
                             </Button>
                         </div>
                     </div>
                 )}
+
                 {/* Formulario */}
                 {!fullscreen && (
                     <div
                         className={`overflow-hidden transition-all duration-300 ${
-                            mostrarFormulario
-                                ? 'max-h-[1000px] opacity-100'
-                                : 'max-h-0 opacity-0'
+                            mostrarFormulario ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
                         }`}
                     >
                         <form
@@ -262,25 +255,24 @@ export default function Index({
                                     required
                                     disabled={!selectedType}
                                 >
-                                    {selectedType && (
-                                        <option value="">
-                                            Selecciona prioridad
-                                        </option>
-                                    )}
-
-                                    {!selectedType ? (
-                                        <option value="">
-                                            Primero selecciona un tipo
-                                        </option>
-                                    ) : availablePriorities.length > 0 ? (
-                                        availablePriorities.map((p) => (
-                                            <option key={p.id} value={p.id}>
-                                                {p.level}
-                                            </option>
-                                        ))
+                                    {selectedType ? (
+                                        <>
+                                            <option value="">Selecciona prioridad</option>
+                                            {availablePriorities.length > 0 ? (
+                                                availablePriorities.map((p) => (
+                                                    <option key={p.id} value={p.id}>
+                                                        {p.level}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option value="">
+                                                    No hay prioridades disponibles
+                                                </option>
+                                            )}
+                                        </>
                                     ) : (
                                         <option value="">
-                                            No hay prioridades disponibles
+                                            Primero selecciona un tipo
                                         </option>
                                     )}
                                 </select>
@@ -292,9 +284,7 @@ export default function Index({
                                     className="flex-1 rounded border bg-white p-2 text-black dark:bg-gray-800 dark:text-white"
                                     required
                                 >
-                                    <option value="">
-                                        Selecciona una plaza
-                                    </option>
+                                    <option value="">Selecciona una plaza</option>
                                     {places.map((place) => (
                                         <option key={place.id} value={place.id}>
                                             {place.name}
@@ -314,7 +304,7 @@ export default function Index({
                 )}
 
                 {/* Filtro de zonas */}
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                     {zonas.map((zona) => (
                         <Button
                             key={zona.id}
@@ -322,8 +312,8 @@ export default function Index({
                             onClick={() => toggleZona(zona.id)}
                             className={
                                 zonasSeleccionadas.includes(zona.id)
-                                    ? 'bg-slate-800 text-xs text-white hover:bg-slate-700' // Seleccionado
-                                    : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50' // No seleccionado
+                                    ? 'bg-slate-800 text-xs text-white hover:bg-slate-700'
+                                    : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
                             }
                         >
                             {zona.name}
@@ -337,39 +327,30 @@ export default function Index({
                             onClick={() => setFullscreen(false)}
                             className="ml-auto flex items-center gap-1"
                         >
-                            <Minimize2 className="h-4 w-4" /> Salir de pantalla
-                            completa
+                            <Minimize2 className="h-4 w-4" /> Salir de pantalla completa
                         </Button>
                     )}
                 </div>
-                {/* Cronómetros agrupados por zona */}
-                {zonas
-                    .filter((z) => zonasSeleccionadas.includes(z.id))
-                    .map((zona) => (
-                        <div key={zona.id}>
-                            <h2 className="mt-4 mb-2 text-sm font-semibold text-gray-700">
-                                {zona.name}
-                            </h2>
 
-                            <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
-                                {cronPorZona[zona.id]?.length > 0 ? (
-                                    cronPorZona[zona.id].map((cron: any) => (
-                                        <CronometroCard
-                                            key={cron.id}
-                                            cron={cron}
-                                            engineers={engineers as any} // ← SOLUCIÓN 1: Cast a any
-                                            contactMethods={contactMethods}
-                                            onComplete={handleComplete} // ← CAMBIAR onDelete por onComplete
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="col-span-full text-center text-gray-500">
-                                        No hay cronómetros activos en esta zona.
-                                    </div>
-                                )}
-                            </div>
+                {/* Cronómetros filtrados */}
+                <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 mt-4">
+                    {cronometrosFiltrados.length > 0 ? (
+                        cronometrosFiltrados.map((cron: any) => (
+                            <CronometroCard
+                                key={cron.id}
+                                cron={cron}
+                                engineers={engineers as any}
+                                contactMethods={contactMethods}
+                                onDelete={handleDelete}
+                                onComplete={handleComplete}
+                            />
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center text-gray-500">
+                            No hay cronómetros activos.
                         </div>
-                    ))}
+                    )}
+                </div>
             </div>
         </AppLayout>
     );

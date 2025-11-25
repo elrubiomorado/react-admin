@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
-import { ChevronDown, ChevronUp, CircleX, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, TrashIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CronometroCardProps {
@@ -11,6 +11,7 @@ interface CronometroCardProps {
             id: number;
             title: string;
         };
+
         place: Array<
             {
                 id: number;
@@ -26,6 +27,8 @@ interface CronometroCardProps {
         >;
         //TODO hacer bien la interface
         phones: any[];
+
+        teams_user?: string;
     }>;
     contactMethods: { id: number; name: string }[];
     cron: {
@@ -36,6 +39,8 @@ interface CronometroCardProps {
         status_id: number;
         user: { id: number; name: string };
         type_id: number;
+        start: string;
+        end: Date;
         place: {
             id: number;
             name: string;
@@ -64,6 +69,7 @@ interface CronometroCardProps {
         }[];
     };
     onComplete: (id: number) => void;
+    onDelete: (id: number) => void;
 }
 
 interface EngineerFormState {
@@ -75,6 +81,7 @@ interface EngineerFormState {
 
 export default function CronometroCard({
     cron,
+    onDelete,
     onComplete,
     engineers,
     contactMethods,
@@ -88,7 +95,6 @@ export default function CronometroCard({
         const start = new Date(cron.created_at).getTime();
         return Math.floor((Date.now() - start) / 1000);
     });
-
     //Modal esta o no esta
     const [openModal, setOpenModal] = useState(false);
 
@@ -221,6 +227,7 @@ export default function CronometroCard({
         const interval = setInterval(() => setElapsedTime((t) => t + 1), 1000);
         return () => clearInterval(interval);
     }, []);
+
     const [stage, setStage] = useState(0);
 
     useEffect(() => {
@@ -228,6 +235,7 @@ export default function CronometroCard({
         setStage(latestJournal?.escalation_stage_id || 0);
     }, [cron]);
     /** LÓGICA ESCALACION / QUEMADO */
+
     //TODO: Ajustar bien tiempos y cantidad de escalas
     useEffect(() => {
         if (!cron) return;
@@ -271,6 +279,17 @@ export default function CronometroCard({
             {} as Record<number, typeof cron.journals>,
         ) || {};
 
+
+
+    const buildWhatsappText = (
+        engineer: any,
+        cron: any,
+        stage: number,
+        ) => {
+            const saludo = new Date().getHours() >= 6 && new Date().getHours() < 19 ? 'Buenos días' : 'Buenas noches';
+            return `Hola ${saludo}, Ing. ${engineer.name} reportamos el ticket: ${cron.ticket} ${ stage === 0 ? " la primera escalacion " : stage === 1 ? " la segunda escalacion " : stage === 2 ? " la tercer escalacion " : " los avances en vecimiento del ticket "}en ${cron.place.name} con hora y fecha de inicio aproximada: ${cron.start}.`;
+    };
+
     return (
         <div
             className={`${cron.status_id === 1 ? 'hidden' : 'relative mx-2 my-2'}`}
@@ -297,16 +316,17 @@ export default function CronometroCard({
                     </div>
 
                     <Button
+                        //BOTON NECESARIO PARA ELIMINAR CRONOMETROS INCORRECTOS O DE PRUEBA, NO LLENAR DE DATOS INUTILES LA DB
                         size="icon"
                         variant="ghost"
                         onClick={(e) => {
                             e.stopPropagation();
-                            onComplete(cron.id);
+                            onDelete(cron.id);
                         }}
                         className="h-6 w-6 text-gray-500 hover:bg-green-50 hover:text-green-600"
-                        title="Terminar cronómetro"
+                        title="Eliminar cronómetro"
                     >
-                        <CircleX className="h-3 w-3" />
+                        <TrashIcon className="h-3 w-3" />
                     </Button>
                 </div>
                 <div className="space-y-2 text-center">
@@ -392,13 +412,17 @@ export default function CronometroCard({
                                 <h3 className="mb-3 text-lg font-semibold text-gray-700">
                                     Información general
                                 </h3>
+
                                 <div className="grid grid-cols-2 gap-3 text-sm">
                                     <p>
                                         <strong>Título:</strong> {cron.title}
                                     </p>
                                     <p>
-                                        <strong>Ticket:</strong> {cron.ticket}{' '}
-                                        <strong>Prioridad: </strong>{' '}
+                                        <strong>Ticket:</strong> {cron.ticket}
+                                    </p>
+
+                                    <p>
+                                        <strong>Prioridad:</strong>{' '}
                                         {cron.type_id}
                                     </p>
                                     <p>
@@ -408,11 +432,12 @@ export default function CronometroCard({
                                             : cron.status_id === 2
                                               ? 'Por escalar'
                                               : cron.status_id === 3
-                                                ? 'Escala'
+                                                ? 'Pendiente de escalar'
                                                 : cron.status_id === 4
                                                   ? 'Quemado'
                                                   : 'Cerrado'}
                                     </p>
+
                                     <p>
                                         <strong>Plaza:</strong>{' '}
                                         {cron.place?.name}
@@ -421,7 +446,8 @@ export default function CronometroCard({
                                         <strong>Zona:</strong>{' '}
                                         {cron.place?.state?.zone?.name}
                                     </p>
-                                    <p>
+
+                                    <p className="col-span-2 text-xl font-bold">
                                         <strong>Tiempo transcurrido:</strong>{' '}
                                         {formatTime(elapsedTime)}
                                     </p>
@@ -431,7 +457,17 @@ export default function CronometroCard({
                             {/* Formulario escalación */}
                             <section className="rounded-lg border bg-gray-50 p-4">
                                 <h3 className="mb-3 text-lg font-semibold text-gray-700">
-                                    Crear nueva escalación
+                                    {
+                                        stage === 0
+                                            ? 'Crear primer escala'
+                                            : stage === 2
+                                              ? 'Crear segunda escala'
+                                              : stage === 3
+                                                ? 'Crear tercer escala'
+                                                : stage === 4
+                                                  ? 'Avance quemado'
+                                                  : '' // valor por defecto si no coincide ningún stage
+                                    }{' '}
                                 </h3>
                                 <form
                                     className="flex flex-col gap-4"
@@ -452,30 +488,19 @@ export default function CronometroCard({
                                             </option>
                                             {engineers
                                                 .filter(
-                                                    (
-                                                        e: any, // ← Agregar tipo 'any' temporalmente
-                                                    ) =>
-                                                        e.place?.some(
-                                                            (p: any) =>
-                                                                p.name ===
-                                                                cron.place
-                                                                    ?.name,
-                                                        ), // ← Cambiar a .some()
+                                                    (e: any) =>
+                                                        e.place?.name ===
+                                                        cron.place?.name,
                                                 )
-                                                .map(
-                                                    (
-                                                        e: any, // ← Agregar tipo aquí también
-                                                    ) => (
-                                                        <option
-                                                            key={e.id}
-                                                            value={e.id}
-                                                        >
-                                                            {e.name} -{' '}
-                                                            {e.job_title?.title}{' '}
-                                                            {/* ← Agregar ? por si es undefined */}
-                                                        </option>
-                                                    ),
-                                                )}
+                                                .map((e: any) => (
+                                                    <option
+                                                        key={e.id}
+                                                        value={e.id}
+                                                    >
+                                                        {e.name} -{' '}
+                                                        {e.job_title?.title}
+                                                    </option>
+                                                ))}
                                         </select>
                                         <Button
                                             type="button"
@@ -564,75 +589,124 @@ export default function CronometroCard({
                                                                     method.id
                                                                 ] !==
                                                                     undefined && (
-                                                                    <div className="mt-1 ml-6 flex items-center gap-4">
-                                                                        {method.id ===
-                                                                        1 ? (
-                                                                            <p>
-                                                                                whatsapp
-                                                                            </p>
-                                                                        ) : method.id ===
-                                                                          2 ? (
-                                                                            <p>
-                                                                                Numero
-                                                                            </p>
-                                                                        ) : method.id ===
-                                                                          2 ? (
-                                                                            <p>
-                                                                                teams
-                                                                            </p>
+                                                                    <div className="mt-1 ml-6 space-y-4">
+
+                                                                        {method.id === 1 ? (
+                                                                            <div className="space-y-4">
+                                                                                {engineers.find((e) => e.id === form.engineerId)
+                                                                                    ?.phones?.map((p) => (
+                                                                                        <div
+                                                                                            key={p.id}
+                                                                                            className="p-4 border rounded-lg bg-gray-50 shadow-sm space-y-2"
+                                                                                        >
+                                                                                            <p key={p.id} className="font-bold text-lg">
+                                                                                                {p.phone}
+                                                                                            </p>
+
+                                                                                            <hr className="border-gray-300" />
+
+                                                                                            <div className="text-sm leading-relaxed">
+                                                                                                {buildWhatsappText(engineers.find((e)=>e.id === form.engineerId), cron, stage)}
+                                                                                           </div>
+
+                                                                                            <div className="flex gap-2 pt-1">
+                                                                                                <Button
+                                                                                                    size="sm"
+                                                                                                    variant="secondary"
+                                                                                                    className="mt-2"
+                                                                                                    onClick={(e) => {
+                                                                                                    e.preventDefault();
+                                                                                                    navigator.clipboard.writeText(
+                                                                                                        buildWhatsappText(
+                                                                                                            engineers.find((x) => x.id === form.engineerId),
+                                                                                                            cron,
+                                                                                                            stage
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                >
+                                                                                                    Copiar
+                                                                                                </Button>
+
+                                                                                                <a
+                                                                                                    href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
+                                                                                                        buildWhatsappText(
+                                                                                                            engineers.find((e) => e.id === form.engineerId),
+                                                                                                            cron,
+                                                                                                            stage
+                                                                                                        )
+                                                                                                    )}`}
+                                                                                                    target="_blank"
+                                                                                                    rel="noreferrer"
+                                                                                                    onClick={(e) => e.stopPropagation()} // evita submit o eventos padres
+                                                                                                >
+                                                                                                    <Button
+                                                                                                        type="button" // IMPORTANTE para evitar submit
+                                                                                                        className="bg-green-600 text-white"
+                                                                                                    >
+                                                                                                        Enviar WhatsApp
+                                                                                                    </Button>
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    )) || "No tiene teléfonos"}
+                                                                            </div>
+
+                                                                        ) : method.id === 2 ? (
+                                                                            <div className="p-2 bg-gray-50 rounded-lg border">
+                                                                                {engineers.find((e) => e.id === form.engineerId)
+                                                                                    ?.phones?.map((p) => (
+                                                                                        <p className="font-bold">
+                                                                                            {p.phone}
+                                                                                        </p>
+                                                                                    )) || "No tiene teléfonos"}
+                                                                            </div>
+
+                                                                        ) : method.id === 3 ? (
+                                                                            <div className="p-2 bg-gray-50 rounded-lg border">
+                                                                                <p className="font-semibold">
+                                                                                    {engineers.find((e) => e.id === form.engineerId)?.teams_user ||
+                                                                                        "No tiene teams"}
+                                                                                </p>
+                                                                            </div>
+
                                                                         ) : (
-                                                                            'Desconocido'
+                                                                            "Desconocido"
                                                                         )}
-                                                                        <div></div>
-                                                                        <span className="text-sm">
-                                                                            ¿Hubo
-                                                                            respuesta?
-                                                                        </span>
-                                                                        <label className="flex items-center gap-1">
-                                                                            <input
-                                                                                type="radio"
-                                                                                name={`respuesta_${form.engineerId}_${method.id}`}
-                                                                                checked={
-                                                                                    form
-                                                                                        .responses[
-                                                                                        method
-                                                                                            .id
-                                                                                    ] ===
-                                                                                    true
-                                                                                }
-                                                                                onChange={() =>
-                                                                                    handleResponseChange(
-                                                                                        form.engineerId,
-                                                                                        method.id,
-                                                                                        true,
-                                                                                    )
-                                                                                }
-                                                                            />{' '}
-                                                                            Sí
-                                                                        </label>
-                                                                        <label className="flex items-center gap-1">
-                                                                            <input
-                                                                                type="radio"
-                                                                                name={`respuesta_${form.engineerId}_${method.id}`}
-                                                                                checked={
-                                                                                    form
-                                                                                        .responses[
-                                                                                        method
-                                                                                            .id
-                                                                                    ] ===
-                                                                                    false
-                                                                                }
-                                                                                onChange={() =>
-                                                                                    handleResponseChange(
-                                                                                        form.engineerId,
-                                                                                        method.id,
-                                                                                        false,
-                                                                                    )
-                                                                                }
-                                                                            />{' '}
-                                                                            No
-                                                                        </label>
+
+                                                                        <div className="flex items-center gap-4 pt-1 mb-2">
+                                                                            <span className="text-sm font-medium">
+                                                                                ¿Hubo respuesta?
+                                                                            </span>
+
+                                                                            <label className="flex items-center gap-1">
+                                                                                <input
+                                                                                    type="radio"
+                                                                                    name={`respuesta_${form.engineerId}_${method.id}`}
+                                                                                    checked={form.responses[method.id] === true}
+                                                                                    onChange={() =>
+                                                                                        handleResponseChange(form.engineerId, method.id, true)
+                                                                                    }
+                                                                                />
+                                                                                Sí
+                                                                            </label>
+
+                                                                            <label className="flex items-center gap-1">
+                                                                                <input
+                                                                                    type="radio"
+                                                                                    name={`respuesta_${form.engineerId}_${method.id}`}
+                                                                                    checked={form.responses[method.id] === false}
+                                                                                    onChange={() =>
+                                                                                        handleResponseChange(form.engineerId, method.id, false)
+                                                                                    }
+                                                                                />
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+
+
                                                                     </div>
+
                                                                 )}
                                                             </div>
                                                         ),
@@ -674,7 +748,6 @@ export default function CronometroCard({
                                     </Button>
                                 </form>
                             </section>
-
                             {/* Historial agrupado por stage */}
                             <section className="rounded-lg border bg-gray-50 p-4">
                                 <h3 className="mb-3 text-lg font-semibold text-gray-700">
@@ -766,6 +839,18 @@ export default function CronometroCard({
                                     )}
                                 </div>
                             </section>
+                            {/* AQUI SI ES NECESARIO EL DE ONCOMPLETE PARA INDICAR EXPLICITAMENTE QUE LO MARCARA COMO COMPLETADO */}
+                            <Button
+                                variant="default"
+                                className="flex w-full items-center gap-2"
+                                onClick={() => {
+                                    onComplete(cron.id);
+                                    setOpenModal(false);
+                                }}
+                                title="Marcar como completado"
+                            >
+                                Marcar como completado
+                            </Button>
                         </div>
                     </div>
                 </div>

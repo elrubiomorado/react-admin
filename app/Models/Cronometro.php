@@ -17,26 +17,25 @@ class Cronometro extends Model
         'status_id',
         'user_id',
         'place_id',
-        'is_active',
-        'completed_at'
     ];
 
     //  métodos
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query-> whereIn('status_id', [1, 2, 3, 4]);
     }
 
     public function scopeCompleted($query)
     {
-        return $query->where('is_active', false);
+        return $query-> whereIn('status_id', [1, 2, 3, 4]);
     }
 
+    //isActive, is Status = Closed and complete_at is end
     public function markAsCompleted()
     {
         $this->update([
-            'is_active' => false,
-            'completed_at' => now()
+            'status_id' => 5,
+            'end' => now()
         ]);
     }
 

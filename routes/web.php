@@ -20,13 +20,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        $cronometrosActivos = Cronometro::all();
 
-        return Inertia::render('dashboard', compact('cronometrosActivos'));
-    })->name('dashboard');
-    Route::get('/escalas', [EscalasController::class, 'index'])->name('escalas.index');
-
+    Route::get('/dashboard', [DashboardController::class, 'metrics']);
     // homologaciones
     Route::get('/homologaciones', [HomologacionesController::class, 'index'])->name('homologaciones.index');
     Route::get('/homologaciones/create', [HomologacionesController::class, 'create'])->name('homologaciones.create');
@@ -42,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/cronometros/{id}', [CronometrosController::class, 'destroy'])->name('cronometros.destroy');
     Route::patch('/cronometros/{id}', [CronometrosController::class, 'update'])->name('cronometros.destroy');
     Route::post('/cronometros/{id}/status', [CronometrosController::class, 'updateStatus'])->name('cronometros.updateStatus');
-    Route::post('/cronometros/{id}/complete', [CronometrosController::class, 'complete']);
+    Route::post('/cronometros/{id}/complete', [CronometrosController::class, 'complete'])->name('cronometros.complete');
 
     // Journal
     Route::get('journals', [JournalController::class, 'index'])->name('utilities.journals.index');
