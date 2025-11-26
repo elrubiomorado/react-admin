@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CronometrosController;
-use App\Http\Controllers\EscalasController;
 use App\Http\Controllers\HomologacionesController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\UtilitiesController;
@@ -10,8 +9,7 @@ use App\Http\Controllers\EngineerController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
-use App\Models\Cronometro;
-use App\Models\Journal;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 

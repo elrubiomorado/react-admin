@@ -352,7 +352,7 @@ export default function CronometroCard({
                     <div className="text-[11px] opacity-60">
                         {cron.user.name ?? 'Sin asignar'}
                     </div>
-                    {/* Perros chidos */}
+                    {/* Perros chidos
                     {cron.status_id === 2 ? (
                         <div>
                             <img
@@ -390,7 +390,7 @@ export default function CronometroCard({
                         </div>
                     ) : (
                         'hola'
-                    )}
+                    )} */}
                 </div>
             </div>
 

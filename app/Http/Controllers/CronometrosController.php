@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Exports\CronometrosHistoryExport;
+use App\Models\User;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CronometrosController extends Controller
@@ -41,12 +42,15 @@ class CronometrosController extends Controller
             'jobTitle.team:id,name',
             'phones:id,engineer_id,phone',
         ])->get();
+
+        $user = User::findOrFail(Auth::id())->get();
         return Inertia::render('Cronometros/Index', [
             'cronometros' => $cronometros,
             'places' => $places,
             'types' => $types,
             'engineers' => $engineers,
-            'contactMethods' => $contactMethods
+            'contactMethods' => $contactMethods,
+            'user_id' => Auth::id(),
         ]);
     }
 
