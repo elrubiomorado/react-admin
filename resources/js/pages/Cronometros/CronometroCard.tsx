@@ -313,19 +313,18 @@ export default function CronometroCard({
             const formattedMinutes = String(minutes).padStart(2, '0');
 
             // Formatear el texto final
-            const formattedText = `*Asunto:* ${escalacionText} - ${cron.place.name}
+            const formattedText = `*Asunto:* *${escalacionText} - ${cron.place.name}*
 Hola ${saludo}, *Ing. ${engineer.name}*.
 
-Reportamos la ${escalacionText} en ${cron.place.name}.
-• Fecha y hora (Inicio Aproximado): ${cron.start}
-• Id incidente: ${cron.ticket}
-• Prioridad: ${cron.type_id}
-• Tiempo transcurrido (aproximado): ${days > 0 ? `${days} días, ` : ''}${formattedHours}:${formattedMinutes} horas.
+Reportamos la *${escalacionText}* en *${cron.place.name}*.
+• Fecha y hora (Inicio Aproximado): *${cron.start}*
+• Id incidente: *${cron.ticket}*
+• Prioridad: *${cron.type_id}*
+• Tiempo transcurrido (aproximado): *${days > 0 ? `${days} días, ` : ''}${formattedHours}:${formattedMinutes} horas*.
 
 Quedo atento a sus indicaciones.
 Saludos,
-Atentamente: ${user_name}
-            `;
+Atentamente: *${user_name}*`;
 
         return formattedText;
     };
