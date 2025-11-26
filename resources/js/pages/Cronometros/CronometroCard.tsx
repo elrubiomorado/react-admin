@@ -320,7 +320,6 @@ Reportamos la ${escalacionText} en ${cron.place.name}.
 • Fecha y hora (Inicio Aproximado): ${cron.start}
 • Id incidente: ${cron.ticket}
 • Prioridad: ${cron.type_id}
-• Estado Actual: TODO
 • Tiempo transcurrido (aproximado): ${days > 0 ? `${days} días, ` : ''}${formattedHours}:${formattedMinutes} horas.
 
 Quedo atento a sus indicaciones.

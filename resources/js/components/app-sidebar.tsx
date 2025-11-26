@@ -31,15 +31,16 @@ const mainNavItems: NavItem[] = [
         icon: BarChart3,
     },
     {
-        title: 'Reportes',
-        href: '/reports/custom',
-        icon: FileText,
-    },
-    {
         title: 'Cronómetros',
         href: '/cronometros',
         icon: AlarmClock,
     },
+    {
+        title: 'Reportes',
+        href: '/reports/custom',
+        icon: FileText,
+    },
+
     {
         title: 'Homologaciones',
         href: '/homologaciones',
