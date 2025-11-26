@@ -22,7 +22,9 @@ interface Props {
     places?: any[];
     engineers: any[];
     contactMethods: any[];
-    user: string;
+    user: {
+        name: string;
+    }
 }
 
 export default function Index({
@@ -152,7 +154,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Cronómetros" />
             <div className="flex flex-col gap-4 p-4">
-            
+
                 {/* Header */}
                 {!fullscreen && (
                     <div className="flex items-center justify-between">
@@ -346,6 +348,7 @@ export default function Index({
                                 contactMethods={contactMethods}
                                 onDelete={handleDelete}
                                 onComplete={handleComplete}
+                                user={user}
                             />
                         ))
                     ) : (

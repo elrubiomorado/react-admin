@@ -43,14 +43,14 @@ class CronometrosController extends Controller
             'phones:id,engineer_id,phone',
         ])->get();
 
-        $user = User::findOrFail(Auth::id())->get();
+        $user = User::findOrFail(Auth::id());
         return Inertia::render('Cronometros/Index', [
             'cronometros' => $cronometros,
             'places' => $places,
             'types' => $types,
             'engineers' => $engineers,
             'contactMethods' => $contactMethods,
-            'user_id' => Auth::id(),
+            'user' => $user,
         ]);
     }
 

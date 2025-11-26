@@ -4,6 +4,9 @@ import { ChevronDown, ChevronUp, TrashIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CronometroCardProps {
+    user: {
+        name: string;
+    }
     engineers: Array<{
         id: number;
         name: string;
@@ -85,6 +88,7 @@ export default function CronometroCard({
     onComplete,
     engineers,
     contactMethods,
+    user
 }: CronometroCardProps) {
     //seleccionar inge
     const [selectedEngineer, setSelectedEngineer] = useState<number | ''>('');
@@ -285,10 +289,48 @@ export default function CronometroCard({
         engineer: any,
         cron: any,
         stage: number,
+        user_name: string
         ) => {
             const saludo = new Date().getHours() >= 6 && new Date().getHours() < 19 ? 'Buenos días' : 'Buenas noches';
-            return `Hola ${saludo}, Ing. ${engineer.name} reportamos el ticket: ${cron.ticket} ${ stage === 0 ? " la primera escalacion " : stage === 1 ? " la segunda escalacion " : stage === 2 ? " la tercer escalacion " : " los avances en vecimiento del ticket "}en ${cron.place.name} con hora y fecha de inicio aproximada: ${cron.start}.`;
+
+            const escalacionText = stage === 0 ? "Primer escalación"
+                : stage === 1 ? "Segunda escalación"
+                : stage === 2 ? "Tercer escalación"
+                : "Actualizacion del ticket vencido";
+
+
+            const now = new Date();
+            const startDate = new Date(cron.start);
+            const diffInMilliseconds = now.getTime() - startDate.getTime();
+
+            // Calcular días, horas y minutos
+            const days = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convertir a días
+            const hours = Math.floor((diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Convertir a horas
+            const minutes = Math.floor((diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)); // Convertir a minutos
+
+            // Asegurar que horas y minutos siempre tengan dos dígitos
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+
+            // Formatear el texto final
+            const formattedText = `*Asunto:* ${escalacionText} - ${cron.place.name}
+Hola ${saludo}, *Ing. ${engineer.name}*.
+
+Reportamos la ${escalacionText} en ${cron.place.name}.
+• Fecha y hora (Inicio Aproximado): ${cron.start}
+• Id incidente: ${cron.ticket}
+• Prioridad: ${cron.type_id}
+• Estado Actual: TODO
+• Tiempo transcurrido (aproximado): ${days > 0 ? `${days} días, ` : ''}${formattedHours}:${formattedMinutes} horas.
+
+Quedo atento a sus indicaciones.
+Saludos,
+Atentamente: ${user_name}
+            `;
+
+        return formattedText;
     };
+
 
     return (
         <div
@@ -606,7 +648,7 @@ export default function CronometroCard({
                                                                                             <hr className="border-gray-300" />
 
                                                                                             <div className="text-sm leading-relaxed">
-                                                                                                {buildWhatsappText(engineers.find((e)=>e.id === form.engineerId), cron, stage)}
+                                                                                                {buildWhatsappText(engineers.find((e)=>e.id === form.engineerId), cron, stage, user.name)}
                                                                                            </div>
 
                                                                                             <div className="flex gap-2 pt-1">
@@ -620,7 +662,8 @@ export default function CronometroCard({
                                                                                                         buildWhatsappText(
                                                                                                             engineers.find((x) => x.id === form.engineerId),
                                                                                                             cron,
-                                                                                                            stage
+                                                                                                            stage,
+                                                                                                            user.name
                                                                                                         )
                                                                                                     );
                                                                                                 }}
@@ -629,13 +672,18 @@ export default function CronometroCard({
                                                                                                 </Button>
 
                                                                                                 <a
-                                                                                                    href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
-                                                                                                        buildWhatsappText(
-                                                                                                            engineers.find((e) => e.id === form.engineerId),
-                                                                                                            cron,
-                                                                                                            stage
-                                                                                                        )
-                                                                                                    )}`}
+                                                                                                    // href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
+                                                                                                    //     buildWhatsappText(
+                                                                                                    //         engineers.find((e) => e.id === form.engineerId),
+                                                                                                    //         cron,
+                                                                                                    //         stage,
+                                                                                                    //         user.name
+                                                                                                    //     )
+                                                                                                    // )}`}
+                                                                                                    // href={`https://web.whatsapp.com/send/?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}&type=phone_number&app_absent=0`}
+                                                                                                    href={`whatsapp://send?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}`}
+
+                                                                                                    //https://web.whatsapp.com/send/?phone=3751226303&text=Hola+Buenos+d%C3%ADas%2C+Ing.+Edgar+Avila+Gonzalez+reportamos+el+ticket%3A+1234++la+primera+escalacion+en+GUADALAJARA+con+hora+y+fecha+de+inicio+aproximada%3A+2025-11-26+13%3A33%3A19.&type=phone_number&app_absent=0
                                                                                                     target="_blank"
                                                                                                     rel="noreferrer"
                                                                                                     onClick={(e) => e.stopPropagation()} // evita submit o eventos padres
