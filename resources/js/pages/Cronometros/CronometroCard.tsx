@@ -326,7 +326,7 @@ Quedo atento a sus indicaciones.
 Saludos,
 Atentamente: *${user_name}*`;
 
-        return formattedText;
+            return formattedText;
     };
 
 
