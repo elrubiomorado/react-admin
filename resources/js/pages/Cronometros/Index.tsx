@@ -40,7 +40,7 @@ export default function Index({
     const [zonasSeleccionadas, setZonasSeleccionadas] = useState<number[]>([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(true);
     const [fullscreen, setFullscreen] = useState(false);
-
+    const [mostrarTodos, setMostrarTodos] = useState(true);
 
 
     const zonas = Array.from(
@@ -311,6 +311,7 @@ export default function Index({
                 {/* Filtro de zonas */}
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                     {zonas.map((zona) => (
+
                         <Button
                             key={zona.id}
                             size="sm"
@@ -323,9 +324,19 @@ export default function Index({
                         >
                             {zona.name}
                         </Button>
+
                     ))}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setMostrarTodos(!mostrarTodos)}
+                        className={!mostrarTodos ? 'ml-auto flex bg-slate-800 text-xs text-white hover:bg-slate-700' :  'ml-auto flex border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'}
+                    >
+                        {!mostrarTodos ? 'MOSTRAR EN PROCESO' : 'OCULTAR EN PROCESO'}
+                    </Button>
 
                     {fullscreen && (
+
                         <Button
                             variant="outline"
                             size="sm"
@@ -334,7 +345,10 @@ export default function Index({
                         >
                             <Minimize2 className="h-4 w-4" /> Salir de pantalla completa
                         </Button>
+
+
                     )}
+
                 </div>
 
                 {/* Cronómetros filtrados */}
@@ -349,6 +363,7 @@ export default function Index({
                                 onDelete={handleDelete}
                                 onComplete={handleComplete}
                                 user={user}
+                                mostrarTodos={mostrarTodos}
                             />
                         ))
                     ) : (

@@ -73,6 +73,7 @@ interface CronometroCardProps {
     };
     onComplete: (id: number) => void;
     onDelete: (id: number) => void;
+    mostrarTodos: boolean;
 }
 
 interface EngineerFormState {
@@ -88,7 +89,8 @@ export default function CronometroCard({
     onComplete,
     engineers,
     contactMethods,
-    user
+    user,
+    mostrarTodos
 }: CronometroCardProps) {
     //seleccionar inge
     const [selectedEngineer, setSelectedEngineer] = useState<number | ''>('');
@@ -332,7 +334,7 @@ Atentamente: *${user_name}*`;
 
     return (
         <div
-            className={`${cron.status_id === 1 ? 'hidden' : 'relative mx-2 my-2'}`}
+            className={`${cron.status_id === 1 && mostrarTodos === false ? 'hidden' : 'relative mx-2 my-2'}`}
         >
             <div
                 className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm ${cron.status_id === 2 ? 'border-yellow-400 bg-yellow-200' : ''} ${cron.status_id === 3 ? 'border-red-500 bg-red-300' : ''} ${cron.status_id === 4 ? 'border-gray-900 bg-gray-700 text-white' : ''} `}
