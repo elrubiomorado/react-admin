@@ -723,7 +723,7 @@ Atentamente: *${user_name}*`;
                                                                             <div className="p-2 bg-gray-50 rounded-lg border">
                                                                                 {engineers.find((e) => e.id === form.engineerId)
                                                                                     ?.phones?.map((p) => (
-                                                                                        <p className="font-bold">
+                                                                                        <p className="font-bold" key={p.id}>
                                                                                             {p.phone}
                                                                                         </p>
                                                                                     )) || "No tiene teléfonos"}
