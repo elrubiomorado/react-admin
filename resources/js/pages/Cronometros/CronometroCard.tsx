@@ -337,7 +337,11 @@ Atentamente: *${user_name}*`;
             className={`${cron.status_id === 1 && mostrarTodos === false ? 'hidden' : 'relative mx-2 my-2'}`}
         >
             <div
-                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm ${cron.status_id === 2 ? 'border-yellow-400 bg-yellow-200' : ''} ${cron.status_id === 3 ? 'border-red-500 bg-red-300' : ''} ${cron.status_id === 4 ? 'border-gray-900 bg-gray-700 text-white' : ''} `}
+                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm
+                    ${cron.status_id === 2 ? 'border-yellow-500 bg-yellow-100 alert-warning' : ''}
+                    ${cron.status_id === 3 ? 'border-red-600 bg-red-200 alert-critical' : ''}
+                    ${cron.status_id === 4 ? 'border-orange-900 bg-gray-800 text-white alert-burned' : ''}
+                `}
                 onClick={() => setOpenModal(true)}
             >
                 <div className="mb-2 flex items-start justify-between">

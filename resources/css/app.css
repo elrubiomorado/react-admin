@@ -141,3 +141,196 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* ============================= */
+/* 🟡 ESTADO 2 — Advertencia pro */
+/* ============================= */
+
+.alert-warning {
+    animation: warningPulse 1.3s infinite ease-in-out;
+    position: relative;
+}
+
+@keyframes warningPulse {
+    0% {
+        box-shadow: 0 0 0px rgba(255, 204, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 18px rgba(255, 204, 0, 1);
+    }
+    100% {
+        box-shadow: 0 0 0px rgba(255, 204, 0, 0.4);
+    }
+}
+
+/* ==================================== */
+/* 🔴 ESTADO 3 — Alerta Crítica Sirena */
+/* ==================================== */
+
+.alert-critical {
+    animation: criticalFlash 0.9s infinite;
+    position: relative;
+}
+
+@keyframes criticalFlash {
+    0%,
+    100% {
+        filter: brightness(1);
+        box-shadow: 0 0 0px rgba(255, 0, 51, 0.3);
+    }
+    50% {
+        filter: brightness(1.25);
+        box-shadow: 0 0 15px rgba(255, 0, 51, 1);
+    }
+}
+
+/* ============================================== */
+/* ⚫ ESTADO 4 — Glitch Dañado estilo Cyberpunk   */
+/* ============================================== */
+
+.alert-damaged {
+    position: relative;
+    animation: damagedGlitch 2s infinite linear;
+    overflow: hidden;
+}
+
+@keyframes damagedGlitch {
+    0% {
+        transform: translate(0);
+        opacity: 1;
+    }
+    8% {
+        transform: translate(-2px, 1px);
+        opacity: 0.85;
+    }
+    15% {
+        transform: translate(2px, -1px);
+        opacity: 0.6;
+    }
+    22% {
+        transform: translate(-1px, 2px);
+        opacity: 0.8;
+    }
+    30% {
+        transform: translate(1px, -1px);
+        opacity: 0.5;
+    }
+    45% {
+        transform: translate(-2px, 1px);
+        opacity: 0.9;
+    }
+    60% {
+        transform: translate(2px, -1px);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(0);
+        opacity: 1;
+    }
+}
+
+/* Glitch RGB highlights */
+.alert-damaged::before,
+.alert-damaged::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: screen;
+    opacity: 0.15;
+}
+
+.alert-damaged::before {
+    background: rgb(0, 120, 255); /* azul eléctrico */
+    animation: glitchBlue 0.25s infinite;
+}
+
+.alert-damaged::after {
+    background: rgb(255, 0, 80); /* rojo glitch */
+    animation: glitchRed 0.3s infinite;
+}
+
+@keyframes glitchBlue {
+    0% {
+        transform: translate(1px, 0);
+    }
+    50% {
+        transform: translate(-1px, -1px);
+    }
+    100% {
+        transform: translate(1px, 0);
+    }
+}
+
+@keyframes glitchRed {
+    0% {
+        transform: translate(-1px, 0);
+    }
+    50% {
+        transform: translate(1px, 1px);
+    }
+    100% {
+        transform: translate(-1px, 0);
+    }
+}
+/* =============================== */
+/* 🔥 ESTADO 4 — Quemado (Flames) */
+/* =============================== */
+
+.alert-burned {
+    position: relative;
+    overflow: hidden;
+    animation: burnedGlow 2.2s infinite ease-in-out;
+    box-shadow:
+        inset 0 0 8px rgba(255, 80, 0, 0.4),
+        0 0 10px rgba(255, 120, 0, 0.2);
+}
+
+/* Glow cálido como brasas */
+@keyframes burnedGlow {
+    0% {
+        box-shadow:
+            inset 0 0 4px rgba(255, 100, 0, 0.35),
+            0 0 6px rgba(255, 140, 0, 0.25);
+        filter: brightness(1);
+    }
+    50% {
+        box-shadow:
+            inset 0 0 12px rgba(255, 80, 0, 0.55),
+            0 0 14px rgba(255, 60, 0, 0.35);
+        filter: brightness(1.08);
+    }
+    100% {
+        box-shadow:
+            inset 0 0 4px rgba(255, 100, 0, 0.35),
+            0 0 6px rgba(255, 140, 0, 0.25);
+        filter: brightness(1);
+    }
+}
+
+/* Lenguas de fuego ligeras */
+.alert-burned::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(rgba(255, 80, 0, 0.15), rgba(255, 120, 0, 0));
+    animation: flameRise 2.8s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes flameRise {
+    0% {
+        opacity: 0.1;
+        transform: scaleY(1);
+    }
+    50% {
+        opacity: 0.35;
+        transform: scaleY(1.25);
+    }
+    100% {
+        opacity: 0.1;
+        transform: scaleY(1);
+    }
+}
