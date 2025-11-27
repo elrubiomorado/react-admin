@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
 import { ChevronDown, ChevronUp, TrashIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import {notify} from '@/utils/notify';
 
 interface CronometroCardProps {
     user: {
@@ -246,29 +247,43 @@ export default function CronometroCard({
     useEffect(() => {
         if (!cron) return;
         if (stage === 0) {
-            if (elapsedTime >= 30 && cron.status_id === 1)
+            if (elapsedTime >= 30 && cron.status_id === 1){
                 updateStatus(cron.id, 2);
+                notify(`Ya casi es la primera escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+            }
 
-            if (elapsedTime >= 45 && cron.status_id === 2)
+            if (elapsedTime >= 45 && cron.status_id === 2){
                 updateStatus(cron.id, 3);
+                notify(`Ya es la primera escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
+            }
+
         } else if (stage === 1) {
-            if (elapsedTime >= 120 && cron.status_id === 1)
+            if (elapsedTime >= 120 && cron.status_id === 1){
                 updateStatus(cron.id, 2);
+                notify(`Ya casi es la segunda escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+            }
 
-            if (elapsedTime >= 145 && cron.status_id === 2)
+
+            if (elapsedTime >= 145 && cron.status_id === 2){
+                notify(`Ya es la segunda escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
                 updateStatus(cron.id, 3);
+            }
+
         } else if (stage === 2) {
-            if (elapsedTime >= 220 && cron.status_id === 1)
+            if (elapsedTime >= 220 && cron.status_id === 1){
                 updateStatus(cron.id, 2);
+                notify(`Ya casi es la tercera escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+            }
 
-            if (elapsedTime >= 245 && cron.status_id === 2)
+            if (elapsedTime >= 245 && cron.status_id === 2){
                 updateStatus(cron.id, 3);
+                notify(`Ya es la tercera escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
+            }
         } else if (stage === 3) {
-            if (
-                elapsedTime >= 345 &&
-                (cron.status_id === 1 || cron.status_id === 2)
+            if (elapsedTime >= 345 && (cron.status_id === 1 || cron.status_id === 2)
             ) {
                 updateStatus(cron.id, 4);
+                notify(`Ya se te quemo ${cron.title}`, 'En chinga papi en chinga que vas pa fuera');
             }
         }
     }, [elapsedTime, stage, cron]);

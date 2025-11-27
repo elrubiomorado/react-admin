@@ -42,7 +42,8 @@ const handleSystemThemeChange = () => {
 
 export function initializeTheme() {
     const savedAppearance =
-        (localStorage.getItem('appearance') as Appearance) || 'system';
+        //                                                    system para que agarre en automatico el del navegador
+        (localStorage.getItem('appearance') as Appearance) || 'light';
 
     applyTheme(savedAppearance);
 

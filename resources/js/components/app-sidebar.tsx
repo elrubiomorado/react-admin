@@ -22,8 +22,8 @@ import {
     Folder,
     NotepadText,
 } from 'lucide-react';
+import { useEffect } from 'react';
 import AppLogo from './app-logo';
-
 const mainNavItems: NavItem[] = [
     {
         title: 'Dasboard',
@@ -72,6 +72,17 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    useEffect(() => {
+        if (!('Notification' in window)) return;
+
+        const asked = localStorage.getItem('notifAsked');
+
+        if (!asked && Notification.permission === 'default') {
+            Notification.requestPermission().finally(() => {
+                localStorage.setItem('notifAsked', 'true');
+            });
+        }
+    }, []);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
