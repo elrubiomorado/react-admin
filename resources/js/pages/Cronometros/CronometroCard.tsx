@@ -457,7 +457,7 @@ Atentamente: *${user_name}*`;
 
             {openModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="max-h-[85vh] w-[650px] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+                    <div className="max-h-[85vh] w-[750px] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
                         <div className="mb-5 flex items-center justify-between">
                             <h2 className="text-2xl font-bold">
                                 Detalles del Cronómetro
