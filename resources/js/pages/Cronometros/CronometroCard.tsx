@@ -1,13 +1,13 @@
 import { Button } from '@/components/ui/button';
+import { notify } from '@/utils/notify';
 import { router } from '@inertiajs/react';
-import { ChevronDown, ChevronUp, TrashIcon, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, TrashIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import {notify} from '@/utils/notify';
 
 interface CronometroCardProps {
     user: {
         name: string;
-    }
+    };
     engineers: Array<{
         id: number;
         name: string;
@@ -91,7 +91,7 @@ export default function CronometroCard({
     engineers,
     contactMethods,
     user,
-    mostrarTodos
+    mostrarTodos,
 }: CronometroCardProps) {
     //seleccionar inge
     const [selectedEngineer, setSelectedEngineer] = useState<number | ''>('');
@@ -247,43 +247,63 @@ export default function CronometroCard({
     useEffect(() => {
         if (!cron) return;
         if (stage === 0) {
-            if (elapsedTime >= 30 && cron.status_id === 1){
+            if (elapsedTime >= 30 && cron.status_id === 1) {
                 updateStatus(cron.id, 2);
-                notify(`Ya casi es la primera escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+                notify(
+                    `Ya casi es la primera escalacion de ${cron.title}`,
+                    'En chinga papi en chinga ya casi le tienes que escalar a yamuni',
+                );
             }
 
-            if (elapsedTime >= 45 && cron.status_id === 2){
+            if (elapsedTime >= 45 && cron.status_id === 2) {
                 updateStatus(cron.id, 3);
-                notify(`Ya es la primera escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
+                notify(
+                    `Ya es la primera escalacion de ${cron.title}`,
+                    'En chinga papi en chinga avisale a yamuni',
+                );
             }
-
         } else if (stage === 1) {
-            if (elapsedTime >= 120 && cron.status_id === 1){
+            if (elapsedTime >= 120 && cron.status_id === 1) {
                 updateStatus(cron.id, 2);
-                notify(`Ya casi es la segunda escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+                notify(
+                    `Ya casi es la segunda escalacion de ${cron.title}`,
+                    'En chinga papi en chinga ya casi le tienes que escalar a yamuni',
+                );
             }
 
-
-            if (elapsedTime >= 145 && cron.status_id === 2){
-                notify(`Ya es la segunda escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
+            if (elapsedTime >= 145 && cron.status_id === 2) {
+                notify(
+                    `Ya es la segunda escalacion de ${cron.title}`,
+                    'En chinga papi en chinga avisale a yamuni',
+                );
                 updateStatus(cron.id, 3);
             }
-
         } else if (stage === 2) {
-            if (elapsedTime >= 220 && cron.status_id === 1){
+            if (elapsedTime >= 220 && cron.status_id === 1) {
                 updateStatus(cron.id, 2);
-                notify(`Ya casi es la tercera escalacion de ${cron.title}`, 'En chinga papi en chinga ya casi le tienes que escalar a yamuni');
+                notify(
+                    `Ya casi es la tercera escalacion de ${cron.title}`,
+                    'En chinga papi en chinga ya casi le tienes que escalar a yamuni',
+                );
             }
 
-            if (elapsedTime >= 245 && cron.status_id === 2){
+            if (elapsedTime >= 245 && cron.status_id === 2) {
                 updateStatus(cron.id, 3);
-                notify(`Ya es la tercera escalacion de ${cron.title}`, 'En chinga papi en chinga avisale a yamuni');
+                notify(
+                    `Ya es la tercera escalacion de ${cron.title}`,
+                    'En chinga papi en chinga avisale a yamuni',
+                );
             }
         } else if (stage === 3) {
-            if (elapsedTime >= 345 && (cron.status_id === 1 || cron.status_id === 2)
+            if (
+                elapsedTime >= 345 &&
+                (cron.status_id === 1 || cron.status_id === 2)
             ) {
                 updateStatus(cron.id, 4);
-                notify(`Ya se te quemo ${cron.title}`, 'En chinga papi en chinga que vas pa fuera');
+                notify(
+                    `Ya se te quemo ${cron.title}`,
+                    'En chinga papi en chinga que vas pa fuera',
+                );
             }
         }
     }, [elapsedTime, stage, cron]);
@@ -300,37 +320,45 @@ export default function CronometroCard({
             {} as Record<number, typeof cron.journals>,
         ) || {};
 
-
-
     const buildWhatsappText = (
         engineer: any,
         cron: any,
         stage: number,
-        user_name: string
-        ) => {
-            const saludo = new Date().getHours() >= 6 && new Date().getHours() < 19 ? 'Buenos días' : 'Buenas noches';
+        user_name: string,
+    ) => {
+        const saludo =
+            new Date().getHours() >= 6 && new Date().getHours() < 19
+                ? 'Buenos días'
+                : 'Buenas noches';
 
-            const escalacionText = stage === 0 ? "Primer escalación"
-                : stage === 1 ? "Segunda escalación"
-                : stage === 2 ? "Tercer escalación"
-                : "Actualizacion del ticket vencido";
+        const escalacionText =
+            stage === 0
+                ? 'Primer escalación'
+                : stage === 1
+                  ? 'Segunda escalación'
+                  : stage === 2
+                    ? 'Tercer escalación'
+                    : 'Actualizacion del ticket vencido';
 
+        const now = new Date();
+        const startDate = new Date(cron.start);
+        const diffInMilliseconds = now.getTime() - startDate.getTime();
 
-            const now = new Date();
-            const startDate = new Date(cron.start);
-            const diffInMilliseconds = now.getTime() - startDate.getTime();
+        // Calcular días, horas y minutos
+        const days = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convertir a días
+        const hours = Math.floor(
+            (diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        ); // Convertir a horas
+        const minutes = Math.floor(
+            (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60),
+        ); // Convertir a minutos
 
-            // Calcular días, horas y minutos
-            const days = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convertir a días
-            const hours = Math.floor((diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Convertir a horas
-            const minutes = Math.floor((diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)); // Convertir a minutos
+        // Asegurar que horas y minutos siempre tengan dos dígitos
+        const formattedHours = String(hours).padStart(2, '0');
+        const formattedMinutes = String(minutes).padStart(2, '0');
 
-            // Asegurar que horas y minutos siempre tengan dos dígitos
-            const formattedHours = String(hours).padStart(2, '0');
-            const formattedMinutes = String(minutes).padStart(2, '0');
-
-            // Formatear el texto final
-            const formattedText = `*Asunto:* *${escalacionText} - ${cron.place.name}*
+        // Formatear el texto final
+        const formattedText = `*Asunto:* *${escalacionText} - ${cron.place.name}*
 Hola ${saludo}, *Ing. ${engineer.name}*.
 
 Reportamos la *${escalacionText}* en *${cron.place.name}*.
@@ -343,20 +371,15 @@ Quedo atento a sus indicaciones.
 Saludos,
 Atentamente: *${user_name}*`;
 
-            return formattedText;
+        return formattedText;
     };
-
 
     return (
         <div
             className={`${cron.status_id === 1 && mostrarTodos === false ? 'hidden' : 'relative mx-2 my-2'}`}
         >
             <div
-                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm
-                    ${cron.status_id === 2 ? 'border-yellow-500 bg-yellow-100 alert-warning' : ''}
-                    ${cron.status_id === 3 ? 'border-red-600 bg-red-200 alert-critical' : ''}
-                    ${cron.status_id === 4 ? 'border-orange-900 bg-gray-800 text-white alert-burned' : ''}
-                `}
+                className={`flex w-44 cursor-pointer flex-col justify-between rounded-md border p-3 shadow-sm ${cron.status_id === 2 ? 'alert-warning border-yellow-500 bg-yellow-100' : ''} ${cron.status_id === 3 ? 'alert-critical border-red-600 bg-red-200' : ''} ${cron.status_id === 4 ? 'alert-burned border-orange-900 bg-gray-800 text-white' : ''} `}
                 onClick={() => setOpenModal(true)}
             >
                 <div className="mb-2 flex items-start justify-between">
@@ -651,108 +674,202 @@ Atentamente: *${user_name}*`;
                                                                 ] !==
                                                                     undefined && (
                                                                     <div className="mt-1 ml-6 space-y-4">
-
-                                                                        {method.id === 1 ? (
+                                                                        {method.id ===
+                                                                        1 ? (
                                                                             <div className="space-y-4">
-                                                                                {engineers.find((e) => e.id === form.engineerId)
-                                                                                    ?.phones?.map((p) => (
-                                                                                        <div
-                                                                                            key={p.id}
-                                                                                            className="p-4 border rounded-lg bg-gray-50 shadow-sm space-y-2"
-                                                                                        >
-                                                                                            <p key={p.id} className="font-bold text-lg">
-                                                                                                {p.phone}
-                                                                                            </p>
-
-                                                                                            <hr className="border-gray-300" />
-
-                                                                                            <div className="text-sm leading-relaxed">
-                                                                                                {buildWhatsappText(engineers.find((e)=>e.id === form.engineerId), cron, stage, user.name)}
-                                                                                           </div>
-
-                                                                                            <div className="flex gap-2 pt-1">
-                                                                                                <Button
-                                                                                                    size="sm"
-                                                                                                    variant="secondary"
-                                                                                                    className="mt-2"
-                                                                                                    onClick={(e) => {
-                                                                                                    e.preventDefault();
-                                                                                                    navigator.clipboard.writeText(
-                                                                                                        buildWhatsappText(
-                                                                                                            engineers.find((x) => x.id === form.engineerId),
-                                                                                                            cron,
-                                                                                                            stage,
-                                                                                                            user.name
-                                                                                                        )
-                                                                                                    );
-                                                                                                }}
+                                                                                {engineers
+                                                                                    .find(
+                                                                                        (
+                                                                                            e,
+                                                                                        ) =>
+                                                                                            e.id ===
+                                                                                            form.engineerId,
+                                                                                    )
+                                                                                    ?.phones?.map(
+                                                                                        (
+                                                                                            p,
+                                                                                        ) => (
+                                                                                            <div
+                                                                                                key={
+                                                                                                    p.id
+                                                                                                }
+                                                                                                className="space-y-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
+                                                                                            >
+                                                                                                <p
+                                                                                                    key={
+                                                                                                        p.id
+                                                                                                    }
+                                                                                                    className="text-lg font-bold"
                                                                                                 >
-                                                                                                    Copiar
-                                                                                                </Button>
+                                                                                                    {
+                                                                                                        p.phone
+                                                                                                    }
+                                                                                                </p>
 
-                                                                                                <a
-                                                                                                    // href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
-                                                                                                    //     buildWhatsappText(
-                                                                                                    //         engineers.find((e) => e.id === form.engineerId),
-                                                                                                    //         cron,
-                                                                                                    //         stage,
-                                                                                                    //         user.name
-                                                                                                    //     )
-                                                                                                    // )}`}
-                                                                                                    // href={`https://web.whatsapp.com/send/?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}&type=phone_number&app_absent=0`}
-                                                                                                    href={`whatsapp://send?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}`}
+                                                                                                <hr className="border-gray-300" />
 
-                                                                                                    //https://web.whatsapp.com/send/?phone=3751226303&text=Hola+Buenos+d%C3%ADas%2C+Ing.+Edgar+Avila+Gonzalez+reportamos+el+ticket%3A+1234++la+primera+escalacion+en+GUADALAJARA+con+hora+y+fecha+de+inicio+aproximada%3A+2025-11-26+13%3A33%3A19.&type=phone_number&app_absent=0
-                                                                                                    target="_blank"
-                                                                                                    rel="noreferrer"
-                                                                                                    onClick={(e) => e.stopPropagation()} // evita submit o eventos padres
-                                                                                                >
+                                                                                                <div className="text-sm leading-relaxed">
+                                                                                                    {buildWhatsappText(
+                                                                                                        engineers.find(
+                                                                                                            (
+                                                                                                                e,
+                                                                                                            ) =>
+                                                                                                                e.id ===
+                                                                                                                form.engineerId,
+                                                                                                        ),
+                                                                                                        cron,
+                                                                                                        stage,
+                                                                                                        user.name,
+                                                                                                    )}
+                                                                                                </div>
+
+                                                                                                <div className="flex gap-2 pt-1">
                                                                                                     <Button
-                                                                                                        type="button" // IMPORTANTE para evitar submit
-                                                                                                        className="bg-green-600 text-white"
+                                                                                                        size="sm"
+                                                                                                        variant="secondary"
+                                                                                                        className="mt-2"
+                                                                                                        onClick={(
+                                                                                                            e,
+                                                                                                        ) => {
+                                                                                                            e.preventDefault();
+                                                                                                            navigator.clipboard.writeText(
+                                                                                                                buildWhatsappText(
+                                                                                                                    engineers.find(
+                                                                                                                        (
+                                                                                                                            x,
+                                                                                                                        ) =>
+                                                                                                                            x.id ===
+                                                                                                                            form.engineerId,
+                                                                                                                    ),
+                                                                                                                    cron,
+                                                                                                                    stage,
+                                                                                                                    user.name,
+                                                                                                                ),
+                                                                                                            );
+                                                                                                        }}
                                                                                                     >
-                                                                                                        Enviar WhatsApp
+                                                                                                        Copiar
                                                                                                     </Button>
-                                                                                                </a>
+
+                                                                                                    <a
+                                                                                                        // href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
+                                                                                                        //     buildWhatsappText(
+                                                                                                        //         engineers.find((e) => e.id === form.engineerId),
+                                                                                                        //         cron,
+                                                                                                        //         stage,
+                                                                                                        //         user.name
+                                                                                                        //     )
+                                                                                                        // )}`}
+                                                                                                        // href={`https://web.whatsapp.com/send/?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}&type=phone_number&app_absent=0`}
+                                                                                                        href={`whatsapp://send?phone=${p.phone}&text=${encodeURIComponent(
+                                                                                                            buildWhatsappText(
+                                                                                                                engineers.find(
+                                                                                                                    (
+                                                                                                                        e,
+                                                                                                                    ) =>
+                                                                                                                        e.id ===
+                                                                                                                        form.engineerId,
+                                                                                                                ),
+                                                                                                                cron,
+                                                                                                                stage,
+                                                                                                                user.name,
+                                                                                                            ),
+                                                                                                        )}`}
+                                                                                                        //https://web.whatsapp.com/send/?phone=3751226303&text=Hola+Buenos+d%C3%ADas%2C+Ing.+Edgar+Avila+Gonzalez+reportamos+el+ticket%3A+1234++la+primera+escalacion+en+GUADALAJARA+con+hora+y+fecha+de+inicio+aproximada%3A+2025-11-26+13%3A33%3A19.&type=phone_number&app_absent=0
+                                                                                                        target="_blank"
+                                                                                                        rel="noreferrer"
+                                                                                                        onClick={(
+                                                                                                            e,
+                                                                                                        ) =>
+                                                                                                            e.stopPropagation()
+                                                                                                        } // evita submit o eventos padres
+                                                                                                    >
+                                                                                                        <Button
+                                                                                                            type="button" // IMPORTANTE para evitar submit
+                                                                                                            className="bg-green-600 text-white"
+                                                                                                        >
+                                                                                                            Enviar
+                                                                                                            WhatsApp
+                                                                                                        </Button>
+                                                                                                    </a>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    )) || "No tiene teléfonos"}
+                                                                                        ),
+                                                                                    ) ||
+                                                                                    'No tiene teléfonos'}
                                                                             </div>
-
-                                                                        ) : method.id === 2 ? (
-                                                                            <div className="p-2 bg-gray-50 rounded-lg border">
-                                                                                {engineers.find((e) => e.id === form.engineerId)
-                                                                                    ?.phones?.map((p) => (
-                                                                                        <p className="font-bold" key={p.id}>
-                                                                                            {p.phone}
-                                                                                        </p>
-                                                                                    )) || "No tiene teléfonos"}
+                                                                        ) : method.id ===
+                                                                          2 ? (
+                                                                            <div className="rounded-lg border bg-gray-50 p-2">
+                                                                                {engineers
+                                                                                    .find(
+                                                                                        (
+                                                                                            e,
+                                                                                        ) =>
+                                                                                            e.id ===
+                                                                                            form.engineerId,
+                                                                                    )
+                                                                                    ?.phones?.map(
+                                                                                        (
+                                                                                            p,
+                                                                                        ) => (
+                                                                                            <p
+                                                                                                className="font-bold"
+                                                                                                key={
+                                                                                                    p.id
+                                                                                                }
+                                                                                            >
+                                                                                                {
+                                                                                                    p.phone
+                                                                                                }
+                                                                                            </p>
+                                                                                        ),
+                                                                                    ) ||
+                                                                                    'No tiene teléfonos'}
                                                                             </div>
-
-                                                                        ) : method.id === 3 ? (
-                                                                            <div className="p-2 bg-gray-50 rounded-lg border">
+                                                                        ) : method.id ===
+                                                                          3 ? (
+                                                                            <div className="rounded-lg border bg-gray-50 p-2">
                                                                                 <p className="font-semibold">
-                                                                                    {engineers.find((e) => e.id === form.engineerId)?.teams_user ||
-                                                                                        "No tiene teams"}
+                                                                                    {engineers.find(
+                                                                                        (
+                                                                                            e,
+                                                                                        ) =>
+                                                                                            e.id ===
+                                                                                            form.engineerId,
+                                                                                    )
+                                                                                        ?.teams_user ||
+                                                                                        'No tiene teams'}
                                                                                 </p>
                                                                             </div>
-
                                                                         ) : (
-                                                                            "Desconocido"
+                                                                            'Desconocido'
                                                                         )}
 
-                                                                        <div className="flex items-center gap-4 pt-1 mb-2">
+                                                                        <div className="mb-2 flex items-center gap-4 pt-1">
                                                                             <span className="text-sm font-medium">
-                                                                                ¿Hubo respuesta?
+                                                                                ¿Hubo
+                                                                                respuesta?
                                                                             </span>
 
                                                                             <label className="flex items-center gap-1">
                                                                                 <input
                                                                                     type="radio"
                                                                                     name={`respuesta_${form.engineerId}_${method.id}`}
-                                                                                    checked={form.responses[method.id] === true}
+                                                                                    checked={
+                                                                                        form
+                                                                                            .responses[
+                                                                                            method
+                                                                                                .id
+                                                                                        ] ===
+                                                                                        true
+                                                                                    }
                                                                                     onChange={() =>
-                                                                                        handleResponseChange(form.engineerId, method.id, true)
+                                                                                        handleResponseChange(
+                                                                                            form.engineerId,
+                                                                                            method.id,
+                                                                                            true,
+                                                                                        )
                                                                                     }
                                                                                 />
                                                                                 Sí
@@ -762,18 +879,26 @@ Atentamente: *${user_name}*`;
                                                                                 <input
                                                                                     type="radio"
                                                                                     name={`respuesta_${form.engineerId}_${method.id}`}
-                                                                                    checked={form.responses[method.id] === false}
+                                                                                    checked={
+                                                                                        form
+                                                                                            .responses[
+                                                                                            method
+                                                                                                .id
+                                                                                        ] ===
+                                                                                        false
+                                                                                    }
                                                                                     onChange={() =>
-                                                                                        handleResponseChange(form.engineerId, method.id, false)
+                                                                                        handleResponseChange(
+                                                                                            form.engineerId,
+                                                                                            method.id,
+                                                                                            false,
+                                                                                        )
                                                                                     }
                                                                                 />
                                                                                 No
                                                                             </label>
                                                                         </div>
-
-
                                                                     </div>
-
                                                                 )}
                                                             </div>
                                                         ),
@@ -816,10 +941,73 @@ Atentamente: *${user_name}*`;
                                 </form>
                             </section>
                             {/* Historial agrupado por stage */}
-                            <section className="rounded-lg border bg-gray-50 p-4">
-                                <h3 className="mb-3 text-lg font-semibold text-gray-700">
-                                    Historial de escalación
-                                </h3>
+                            <section className="relative rounded-lg border bg-gray-50 p-4">
+                                {/* 🔘 Botón copiar de shadcn */}
+                                {Object.entries(journalsByStage).length > 0 && (
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className="absolute top-2 right-2"
+                                        onClick={() => {
+                                            let finalText = '';
+
+                                            Object.entries(
+                                                journalsByStage,
+                                            ).forEach(([stage, journals]) => {
+                                                finalText += `Escala ${stage}\n`;
+
+                                                journals.forEach((j) => {
+                                                    const engineerName =
+                                                        engineers.find(
+                                                            (e) =>
+                                                                e.id ===
+                                                                j.engineer_id,
+                                                        )?.name || 'N/A';
+
+                                                    const methodsText =
+                                                        j.journalContactMethods
+                                                            ?.map((m) => {
+                                                                const methodName =
+                                                                    contactMethods.find(
+                                                                        (c) =>
+                                                                            c.id ===
+                                                                            m.contact_method_id,
+                                                                    )?.name ||
+                                                                    '';
+
+                                                                const responded =
+                                                                    m.responded
+                                                                        ? 'Sí'
+                                                                        : 'No';
+                                                                const comment =
+                                                                    m.comment
+                                                                        ? ` (${m.comment})`
+                                                                        : '';
+
+                                                                return `${methodName}: ${responded}${comment}`;
+                                                            })
+                                                            .join(', ') || '-';
+
+                                                    finalText += `
+Ingeniero: ${engineerName}
+Hora notificación: ${formatDateTime(j.notified_at)}
+Notas: ${j.note || '-'}
+Métodos: ${methodsText}
+`;
+                                                });
+
+                                                finalText += '\n';
+                                            });
+
+                                            navigator.clipboard.writeText(
+                                                finalText,
+                                            );
+                                        }}
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                    </Button>
+                                )}
+
                                 <div className="max-h-48 overflow-y-auto rounded border bg-white p-3 text-sm">
                                     {Object.entries(journalsByStage).length ? (
                                         Object.entries(journalsByStage).map(
@@ -831,6 +1019,7 @@ Atentamente: *${user_name}*`;
                                                     <h4 className="mb-1 text-sm font-bold">
                                                         Escala {stage}
                                                     </h4>
+
                                                     {journals.map((j) => (
                                                         <div
                                                             key={j.id}
@@ -847,6 +1036,7 @@ Atentamente: *${user_name}*`;
                                                                 )?.name ||
                                                                     'N/A'}
                                                             </p>
+
                                                             <p>
                                                                 <strong>
                                                                     Hora
@@ -856,12 +1046,14 @@ Atentamente: *${user_name}*`;
                                                                     j.notified_at,
                                                                 )}
                                                             </p>
+
                                                             <p>
                                                                 <strong>
                                                                     Notas:
                                                                 </strong>{' '}
                                                                 {j.note || '-'}
                                                             </p>
+
                                                             <p>
                                                                 <strong>
                                                                     Métodos:
