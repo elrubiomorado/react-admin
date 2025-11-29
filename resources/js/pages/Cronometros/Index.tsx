@@ -1,8 +1,27 @@
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import CronometroCard from '@/pages/Cronometros/CronometroCard';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
+
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+
 import {
     ChevronDown,
     ChevronUp,
@@ -24,7 +43,7 @@ interface Props {
     contactMethods: any[];
     user: {
         name: string;
-    }
+    };
 }
 
 export default function Index({
@@ -33,7 +52,7 @@ export default function Index({
     places = [],
     engineers = [],
     contactMethods = [],
-    user
+    user,
 }: Props) {
     const [selectedType, setSelectedType] = useState('');
     const [availablePriorities, setAvailablePriorities] = useState<any[]>([]);
@@ -42,13 +61,12 @@ export default function Index({
     const [fullscreen, setFullscreen] = useState(false);
     const [mostrarTodos, setMostrarTodos] = useState(true);
 
-
     const zonas = Array.from(
         new Map(
             places
                 .filter((p) => p.state?.zone)
-                .map((p) => [p.state.zone.id, p.state.zone])
-        ).values()
+                .map((p) => [p.state.zone.id, p.state.zone]),
+        ).values(),
     );
 
     useEffect(() => {
@@ -59,7 +77,7 @@ export default function Index({
 
     const toggleZona = (id: number) => {
         setZonasSeleccionadas((prev) =>
-            prev.includes(id) ? prev.filter((z) => z !== id) : [...prev, id]
+            prev.includes(id) ? prev.filter((z) => z !== id) : [...prev, id],
         );
     };
 
@@ -81,7 +99,7 @@ export default function Index({
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -122,13 +140,20 @@ export default function Index({
 
     const handleComplete = (id: number) => {
         if (confirm('¿Estás seguro de terminar este cronómetro?')) {
-            router.post(`/cronometros/${id}/complete`, {}, {
-                onSuccess: () => router.reload(),
-                onError: (errors) => {
-                    console.error('Error al terminar el cronómetro:', errors);
-                    alert('Error al terminar el cronómetro');
+            router.post(
+                `/cronometros/${id}/complete`,
+                {},
+                {
+                    onSuccess: () => router.reload(),
+                    onError: (errors) => {
+                        console.error(
+                            'Error al terminar el cronómetro:',
+                            errors,
+                        );
+                        alert('Error al terminar el cronómetro');
+                    },
                 },
-            });
+            );
         }
     };
 
@@ -151,278 +176,377 @@ export default function Index({
     });
 
     return (
-    <>
-        {fullscreen ? (
-        /* 🔵 VISTA FULLSCREEN  */
-        <div className="flex flex-col gap-4 p-4">
+        <>
+            {fullscreen ? (
+                /* 🔵 VISTA FULLSCREEN  */
+                <div className="flex flex-col gap-4 p-4">
+                    {/* Botón para salir de fullscreen */}
+                    <div className="flex justify-end">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFullscreen(false)}
+                            className="flex items-center gap-1"
+                        >
+                            <Minimize2 className="h-4 w-4" /> Salir de pantalla
+                            completa
+                        </Button>
+                    </div>
 
-            {/* Botón para salir de fullscreen */}
-            <div className="flex justify-end">
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFullscreen(false)}
-                className="flex items-center gap-1"
-            >
-                <Minimize2 className="h-4 w-4" /> Salir de pantalla completa
-            </Button>
-            </div>
+                    {/* Filtro de zonas */}
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                        {zonas.map((zona) => (
+                            <Button
+                                key={zona.id}
+                                size="sm"
+                                onClick={() => toggleZona(zona.id)}
+                                className={
+                                    zonasSeleccionadas.includes(zona.id)
+                                        ? 'bg-slate-800 text-xs text-white hover:bg-slate-700'
+                                        : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
+                                }
+                            >
+                                {zona.name}
+                            </Button>
+                        ))}
 
-            {/* Filtro de zonas */}
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-            {zonas.map((zona) => (
-                <Button
-                key={zona.id}
-                size="sm"
-                onClick={() => toggleZona(zona.id)}
-                className={
-                    zonasSeleccionadas.includes(zona.id)
-                    ? 'bg-slate-800 text-xs text-white hover:bg-slate-700'
-                    : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
-                }
-                >
-                {zona.name}
-                </Button>
-            ))}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setMostrarTodos(!mostrarTodos)}
+                            className={
+                                !mostrarTodos
+                                    ? 'ml-auto flex bg-slate-800 text-xs text-white hover:bg-slate-700'
+                                    : 'ml-auto flex border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
+                            }
+                        >
+                            {!mostrarTodos
+                                ? 'MOSTRAR EN PROCESO'
+                                : 'OCULTAR EN PROCESO'}
+                        </Button>
+                    </div>
 
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setMostrarTodos(!mostrarTodos)}
-                className={
-                !mostrarTodos
-                    ? 'ml-auto flex bg-slate-800 text-xs text-white hover:bg-slate-700'
-                    : 'ml-auto flex border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
-                }
-            >
-                {!mostrarTodos ? 'MOSTRAR EN PROCESO' : 'OCULTAR EN PROCESO'}
-            </Button>
-            </div>
-
-            {/* Grid fullscreen */}
-            <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 mt-4">
-            {cronometrosFiltrados.length > 0 ? (
-                cronometrosFiltrados.map((cron) => (
-                <CronometroCard
-                    key={cron.id}
-                    cron={cron}
-                    engineers={engineers}
-                    contactMethods={contactMethods}
-                    onDelete={handleDelete}
-                    onComplete={handleComplete}
-                    user={user}
-                    mostrarTodos={mostrarTodos}
-                />
-                ))
-            ) : (
-                <div className="col-span-full text-center text-gray-500">
-                No hay cronómetros activos.
-                </div>
-            )}
-            </div>
-        </div>
-        ) : (
-        /* 🟢 VISTA NORMAL CON LAYOUT */
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Cronómetros" />
-            <div className="flex flex-col gap-4 p-4">
-
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-gray-800">
-                Cronómetros
-                </h1>
-
-                <div className="ml-4 flex items-center gap-2">
-                <Button
-                    size="sm"
-                    onClick={() => router.get('/cronometros/history')}
-                    title="Ver Historial"
-                    className="flex min-w-[120px] items-center gap-1 bg-blue-500 hover:bg-blue-600 sm:min-w-auto"
-                >
-                    <ReceiptText className="h-4 w-4 text-white" />
-                    Ver historial
-                </Button>
-
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setMostrarFormulario(!mostrarFormulario)}
-                    className="flex items-center gap-1"
-                >
-                    {mostrarFormulario ? (
-                    <>
-                        <ChevronUp className="h-4 w-4" /> Ocultar formulario
-                    </>
-                    ) : (
-                    <>
-                        <ChevronDown className="h-4 w-4" /> Mostrar formulario
-                    </>
-                    )}
-                </Button>
-
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setFullscreen(true)}
-                    className="flex items-center gap-1"
-                >
-                    <Maximize2 className="h-4 w-4" /> Pantalla completa
-                </Button>
-                </div>
-            </div>
-
-            {/* Formulario */}
-            <div
-                className={`overflow-hidden transition-all duration-300 ${
-                mostrarFormulario ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
-            >
-                <form
-                onSubmit={handleSubmit}
-                className="mt-2 flex flex-col gap-4 rounded-lg border bg-gray-100 p-4 shadow"
-                >
-                <div className="flex flex-col gap-4 md:flex-row">
-                    <input
-                    type="text"
-                    name="title"
-                    placeholder="Título"
-                    value={form.title}
-                    onChange={handleChange}
-                    className="flex-1 rounded border p-2 text-black"
-                    required
-                    />
-                    <input
-                    type="number"
-                    name="ticket"
-                    placeholder="Ticket"
-                    value={form.ticket}
-                    onChange={handleChange}
-                    className="flex-1 rounded border p-2 text-black"
-                    required
-                    />
-                </div>
-
-                <div className="flex flex-col gap-4 md:flex-row">
-                    <select
-                    name="type_id"
-                    value={form.type_id}
-                    onChange={handleTypeChange}
-                    className="flex-1 rounded border bg-white p-2 text-black dark:bg-gray-800 dark:text-white"
-                    required
-                    >
-                    <option value="">Selecciona tipo</option>
-                    {types.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                    </select>
-
-                    <select
-                    name="priority_id"
-                    value={form.priority_id}
-                    onChange={handleChange}
-                    className={`flex-1 rounded border bg-white p-2 text-black dark:bg-gray-800 dark:text-white ${
-                        !selectedType ? 'opacity-70' : ''
-                    }`}
-                    required
-                    disabled={!selectedType}
-                    >
-                    {selectedType ? (
-                        <>
-                        <option value="">Selecciona prioridad</option>
-                        {availablePriorities.length > 0 ? (
-                            availablePriorities.map((p) => (
-                            <option key={p.id} value={p.id}>
-                                {p.level}
-                            </option>
+                    {/* Grid fullscreen */}
+                    <div className="mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
+                        {cronometrosFiltrados.length > 0 ? (
+                            cronometrosFiltrados.map((cron) => (
+                                <CronometroCard
+                                    key={cron.id}
+                                    cron={cron}
+                                    engineers={engineers}
+                                    contactMethods={contactMethods}
+                                    onDelete={handleDelete}
+                                    onComplete={handleComplete}
+                                    user={user}
+                                    mostrarTodos={mostrarTodos}
+                                />
                             ))
                         ) : (
-                            <option>No hay prioridades disponibles</option>
+                            <div className="col-span-full text-center text-gray-500">
+                                No hay cronómetros activos.
+                            </div>
                         )}
-                        </>
-                    ) : (
-                        <option>Primero selecciona un tipo</option>
-                    )}
-                    </select>
-
-                    <select
-                    name="place_id"
-                    value={form.place_id}
-                    onChange={handleChange}
-                    className="flex-1 rounded border bg-white p-2 text-black dark:bg-gray-800 dark:text-white"
-                    required
-                    >
-                    <option value="">Selecciona una plaza</option>
-                    {places.map((place) => (
-                        <option key={place.id} value={place.id}>{place.name}</option>
-                    ))}
-                    </select>
+                    </div>
                 </div>
+            ) : (
+                /* 🟢 VISTA NORMAL CON LAYOUT */
+                <AppLayout breadcrumbs={breadcrumbs}>
+                    <Head title="Cronómetros" />
+                    <div className="flex flex-col gap-4 p-4">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                            <h1 className="text-3xl font-bold text-foreground">
+                                Cronómetros
+                            </h1>
 
-                <Button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white md:w-auto"
-                >
-                    Crear cronómetro
-                </Button>
-                </form>
-            </div>
+                            <div className="ml-4 flex items-center gap-2">
+                                <Button
+                                    size="sm"
+                                    onClick={() =>
+                                        router.get('/cronometros/history')
+                                    }
+                                    title="Ver Historial"
+                                    className="flex min-w-[120px] items-center gap-1 bg-blue-500 hover:bg-blue-600 sm:min-w-auto"
+                                >
+                                    <ReceiptText className="h-4 w-4 text-white" />
+                                    Ver historial
+                                </Button>
 
-            {/* Filtro de zonas */}
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-                {zonas.map((zona) => (
-                <Button
-                    key={zona.id}
-                    size="sm"
-                    onClick={() => toggleZona(zona.id)}
-                    className={
-                    zonasSeleccionadas.includes(zona.id)
-                        ? 'bg-slate-800 text-xs text-white hover:bg-slate-700'
-                        : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
-                    }
-                >
-                    {zona.name}
-                </Button>
-                ))}
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                        setMostrarFormulario(!mostrarFormulario)
+                                    }
+                                    className="flex items-center gap-1"
+                                >
+                                    {mostrarFormulario ? (
+                                        <>
+                                            <ChevronUp className="h-4 w-4" />{' '}
+                                            Ocultar formulario
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ChevronDown className="h-4 w-4" />{' '}
+                                            Mostrar formulario
+                                        </>
+                                    )}
+                                </Button>
 
-                <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setMostrarTodos(!mostrarTodos)}
-                className={
-                    !mostrarTodos
-                    ? 'ml-auto flex bg-slate-800 text-xs text-white hover:bg-slate-700'
-                    : 'ml-auto flex border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
-                }
-                >
-                {!mostrarTodos ? 'MOSTRAR EN PROCESO' : 'OCULTAR EN PROCESO'}
-                </Button>
-            </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setFullscreen(true)}
+                                    className="flex items-center gap-1"
+                                >
+                                    <Maximize2 className="h-4 w-4" /> Pantalla
+                                    completa
+                                </Button>
+                            </div>
+                        </div>
 
-            {/* Grid normal */}
-            <div className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 mt-4">
-                {cronometrosFiltrados.length > 0 ? (
-                cronometrosFiltrados.map((cron) => (
-                    <CronometroCard
-                    key={cron.id}
-                    cron={cron}
-                    engineers={engineers}
-                    contactMethods={contactMethods}
-                    onDelete={handleDelete}
-                    onComplete={handleComplete}
-                    user={user}
-                    mostrarTodos={mostrarTodos}
-                    />
-                ))
-                ) : (
-                <div className="col-span-full text-center text-gray-500">
-                    No hay cronómetros activos.
-                </div>
-                )}
-            </div>
-            </div>
-        </AppLayout>
-        )}
-    </>
+                        {/* Formulario */}
+                        <div
+                            className={`overflow-hidden transition-all duration-300 ${
+                                mostrarFormulario
+                                    ? 'max-h-[1000px] opacity-100'
+                                    : 'max-h-0 opacity-0'
+                            }`}
+                        >
+                            <Card className="mt-2">
+                                <CardHeader>
+                                    <CardTitle className="text-lg">
+                                        Crear Cronómetro
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Llena los campos para crear un nuevo
+                                        registro.
+                                    </CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <form
+                                        onSubmit={handleSubmit}
+                                        className="space-y-4"
+                                    >
+                                        {/* TÍTULO */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="title">
+                                                Título
+                                            </Label>
+                                            <Input
+                                                id="title"
+                                                name="title"
+                                                value={form.title}
+                                                onChange={handleChange}
+                                                placeholder="Ingresa un título"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* TICKET */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="ticket">
+                                                Ticket
+                                            </Label>
+                                            <Input
+                                                id="ticket"
+                                                type="number"
+                                                name="ticket"
+                                                value={form.ticket}
+                                                onChange={handleChange}
+                                                placeholder="Número de ticket"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* SELECTS */}
+                                        <div className="grid gap-4 md:grid-cols-3">
+                                            {/* Tipo */}
+                                            <div className="space-y-2">
+                                                <Label>Tipo</Label>
+                                                <Select
+                                                    value={form.type_id}
+                                                    onValueChange={(val) =>
+                                                        handleTypeChange({
+                                                            target: {
+                                                                value: val,
+                                                            },
+                                                        })
+                                                    }
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecciona un tipo" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {types.map((t) => (
+                                                            <SelectItem
+                                                                key={t.id}
+                                                                value={String(
+                                                                    t.id,
+                                                                )}
+                                                            >
+                                                                {t.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Prioridad */}
+                                            <div className="space-y-2">
+                                                <Label>Prioridad</Label>
+                                                <Select
+                                                    disabled={!selectedType}
+                                                    value={form.priority_id}
+                                                    onValueChange={(val) =>
+                                                        setForm({
+                                                            ...form,
+                                                            priority_id: val,
+                                                        })
+                                                    }
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue
+                                                            placeholder={
+                                                                selectedType
+                                                                    ? 'Selecciona prioridad'
+                                                                    : 'Primero selecciona un tipo'
+                                                            }
+                                                        />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {availablePriorities.length >
+                                                        0 ? (
+                                                            availablePriorities.map(
+                                                                (p) => (
+                                                                    <SelectItem
+                                                                        key={
+                                                                            p.id
+                                                                        }
+                                                                        value={String(
+                                                                            p.id,
+                                                                        )}
+                                                                    >
+                                                                        {
+                                                                            p.level
+                                                                        }
+                                                                    </SelectItem>
+                                                                ),
+                                                            )
+                                                        ) : (
+                                                            <SelectItem
+                                                                value="0"
+                                                                disabled
+                                                            >
+                                                                No hay
+                                                                prioridades
+                                                                disponibles
+                                                            </SelectItem>
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Plaza */}
+                                            <div className="space-y-2">
+                                                <Label>Plaza</Label>
+                                                <Select
+                                                    value={form.place_id}
+                                                    onValueChange={(val) =>
+                                                        setForm({
+                                                            ...form,
+                                                            place_id: val,
+                                                        })
+                                                    }
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecciona una plaza" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {places.map((place) => (
+                                                            <SelectItem
+                                                                key={place.id}
+                                                                value={String(
+                                                                    place.id,
+                                                                )}
+                                                            >
+                                                                {place.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                                        >
+                                            Crear cronómetro
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Filtro de zonas */}
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                            {zonas.map((zona) => (
+                                <Button
+                                    key={zona.id}
+                                    size="sm"
+                                    onClick={() => toggleZona(zona.id)}
+                                    className={
+                                        zonasSeleccionadas.includes(zona.id)
+                                            ? 'bg-slate-800 text-xs text-white hover:bg-slate-700'
+                                            : 'border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
+                                    }
+                                >
+                                    {zona.name}
+                                </Button>
+                            ))}
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setMostrarTodos(!mostrarTodos)}
+                                className={
+                                    !mostrarTodos
+                                        ? 'ml-auto flex bg-slate-800 text-xs text-white hover:bg-slate-700'
+                                        : 'ml-auto flex border border-gray-300 bg-white text-xs text-gray-500 hover:bg-gray-50'
+                                }
+                            >
+                                {!mostrarTodos
+                                    ? 'MOSTRAR EN PROCESO'
+                                    : 'OCULTAR EN PROCESO'}
+                            </Button>
+                        </div>
+
+                        {/* Grid normal */}
+                        <div className="mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
+                            {cronometrosFiltrados.length > 0 ? (
+                                cronometrosFiltrados.map((cron) => (
+                                    <CronometroCard
+                                        key={cron.id}
+                                        cron={cron}
+                                        engineers={engineers}
+                                        contactMethods={contactMethods}
+                                        onDelete={handleDelete}
+                                        onComplete={handleComplete}
+                                        user={user}
+                                        mostrarTodos={mostrarTodos}
+                                    />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center text-gray-500">
+                                    No hay cronómetros activos.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </AppLayout>
+            )}
+        </>
     );
 }
