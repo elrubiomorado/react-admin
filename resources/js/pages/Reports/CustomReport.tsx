@@ -17,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Reportes', href: '/reportes' },
 ];
 
-// Interfaces
+// Interfaces (mantener igual)
 interface CustomReportProps {
     zones: Array<{ id: number; name: string }>;
     types: Array<{ id: number; name: string }>;
@@ -170,15 +170,15 @@ export default function CustomReport({
             <div className="space-y-6 p-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
                         Reporte Personalizado
                     </h1>
                 </div>
 
                 {/* Filtros */}
-                <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-                    <div className="border-b border-gray-200 p-6">
-                        <h3 className="flex items-center gap-2 text-lg font-semibold">
+                <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    <div className="border-b border-gray-200 p-6 dark:border-gray-700">
+                        <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
                             <Filter className="h-5 w-5" />
                             Filtros del Reporte
                         </h3>
@@ -187,7 +187,7 @@ export default function CustomReport({
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                             {/* Fecha Inicio */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Fecha Inicio
                                 </label>
                                 <input
@@ -199,13 +199,13 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 />
                             </div>
 
                             {/* Fecha Fin */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Fecha Fin
                                 </label>
                                 <input
@@ -217,13 +217,13 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 />
                             </div>
 
                             {/* Zona */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Zona
                                 </label>
                                 <select
@@ -234,7 +234,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todas las zonas</option>
                                     {zones.map((zone) => (
@@ -250,7 +250,7 @@ export default function CustomReport({
 
                             {/* Tipo */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Tipo
                                 </label>
                                 <select
@@ -261,7 +261,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todos los tipos</option>
                                     {types.map((type) => (
@@ -277,7 +277,7 @@ export default function CustomReport({
 
                             {/* Prioridad */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Prioridad
                                 </label>
                                 <select
@@ -288,7 +288,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">
                                         Todas las prioridades
@@ -306,7 +306,7 @@ export default function CustomReport({
 
                             {/* Usuario */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Usuario
                                 </label>
                                 <select
@@ -317,7 +317,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todos los usuarios</option>
                                     {users.map((user) => (
@@ -337,14 +337,14 @@ export default function CustomReport({
                             <button
                                 onClick={generateReport}
                                 disabled={isLoading}
-                                className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-700 dark:hover:bg-blue-600"
                             >
                                 <BarChart3 className="h-4 w-4" />
                                 {isLoading ? 'Generando...' : 'Generar Reporte'}
                             </button>
                             <button
                                 onClick={exportReport}
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                                 disabled={!reportData}
                             >
                                 <Download className="h-4 w-4" />
@@ -352,7 +352,7 @@ export default function CustomReport({
                             </button>
                             <button
                                 onClick={clearFilters}
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
+                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                             >
                                 <Filter className="h-4 w-4" />
                                 Limpiar Filtros
@@ -416,9 +416,9 @@ export default function CustomReport({
                         </div>
 
                         {/* Tabla Detallada */}
-                        <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-                            <div className="border-b border-gray-200 p-6">
-                                <h3 className="text-lg font-semibold">
+                        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="border-b border-gray-200 p-6 dark:border-gray-700">
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                                     Detalle de Tickets
                                 </h3>
                             </div>
@@ -426,26 +426,26 @@ export default function CustomReport({
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
                                         <thead>
-                                            <tr className="border-b">
-                                                <th className="p-2 text-left">
+                                            <tr className="border-b dark:border-gray-700">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Ticket
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Título
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Estado
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Zona
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Prioridad
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Usuario
                                                 </th>
-                                                <th className="p-2 text-left">
+                                                <th className="p-2 text-left text-gray-800 dark:text-gray-300">
                                                     Tiempo
                                                 </th>
                                             </tr>
@@ -455,12 +455,12 @@ export default function CustomReport({
                                                 (ticket) => (
                                                     <tr
                                                         key={ticket.id}
-                                                        className="border-b hover:bg-gray-50"
+                                                        className="border-b hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
                                                     >
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {ticket.ticket}
                                                         </td>
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {ticket.title}
                                                         </td>
                                                         <td className="p-2">
@@ -468,23 +468,23 @@ export default function CustomReport({
                                                                 className={`rounded px-2 py-1 text-xs ${
                                                                     ticket.status ===
                                                                     'Activo'
-                                                                        ? 'bg-orange-100 text-orange-800'
-                                                                        : 'bg-green-100 text-green-800'
+                                                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+                                                                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                                                                 }`}
                                                             >
                                                                 {ticket.status}
                                                             </span>
                                                         </td>
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {ticket.zone}
                                                         </td>
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {ticket.priority}
                                                         </td>
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {ticket.user}
                                                         </td>
-                                                        <td className="p-2">
+                                                        <td className="p-2 text-gray-800 dark:text-gray-300">
                                                             {
                                                                 ticket.resolution_time
                                                             }
@@ -504,7 +504,7 @@ export default function CustomReport({
     );
 }
 
-// Componente para métricas
+// Componente para métricas - ACTUALIZADO para modo oscuro
 function MetricCard({
     title,
     value,
@@ -515,14 +515,16 @@ function MetricCard({
     icon: React.ReactNode;
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm font-medium text-gray-600">
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                             {title}
                         </p>
-                        <p className="mt-1 text-2xl font-bold">{value}</p>
+                        <p className="mt-1 text-2xl font-bold text-gray-800 dark:text-white">
+                            {value}
+                        </p>
                     </div>
                     {icon}
                 </div>
@@ -531,7 +533,7 @@ function MetricCard({
     );
 }
 
-// Componente para distribuciones
+// Componente para distribuciones - ACTUALIZADO para modo oscuro
 function DistributionCard({
     title,
     data,
@@ -542,9 +544,9 @@ function DistributionCard({
     icon: React.ReactNode;
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div className="border-b border-gray-200 p-6">
-                <h3 className="flex items-center gap-2 text-lg font-semibold">
+        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="border-b border-gray-200 p-6 dark:border-gray-700">
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
                     {icon}
                     {title}
                 </h3>
@@ -556,12 +558,16 @@ function DistributionCard({
                             key={key}
                             className="flex items-center justify-between"
                         >
-                            <span className="text-sm">{key}</span>
-                            <span className="font-bold">{value}</span>
+                            <span className="text-sm text-gray-800 dark:text-gray-300">
+                                {key}
+                            </span>
+                            <span className="font-bold text-gray-800 dark:text-white">
+                                {value}
+                            </span>
                         </div>
                     ))}
                     {Object.keys(data).length === 0 && (
-                        <div className="py-2 text-center text-gray-500">
+                        <div className="py-2 text-center text-gray-500 dark:text-gray-400">
                             No hay datos
                         </div>
                     )}
