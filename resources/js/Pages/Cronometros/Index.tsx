@@ -7,7 +7,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import CronometroCard from '@/pages/Cronometros/CronometroCard';
+import CronometroCard from '@/Pages/Cronometros/CronometroCard';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 
@@ -89,10 +89,15 @@ export default function Index({
         priority_id: '',
     });
 
-    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const typeId = e.target.value;
+    // ✅ CORREGIDO: recibe solo el ID, no un evento
+    const handleTypeChange = (typeId: string) => {
         setSelectedType(typeId);
-        setForm({ ...form, type_id: typeId, priority_id: '' });
+
+        setForm((prev) => ({
+            ...prev,
+            type_id: typeId,
+            priority_id: '',
+        }));
 
         const type = types.find((t) => t.id.toString() === typeId);
         setAvailablePriorities(type?.priorities || []);
@@ -157,7 +162,7 @@ export default function Index({
         }
     };
 
-    // 🔄 Recarga automática cada 5 segundos
+    // Recarga cada 5s
     useEffect(() => {
         const intervalo = setInterval(() => {
             router.reload({ only: ['cronometros'] });
@@ -165,7 +170,6 @@ export default function Index({
         return () => clearInterval(intervalo);
     }, []);
 
-    // 🔍 Filtrar cronómetros según zonas seleccionadas
     const cronometrosFiltrados = cronometros.filter((c) => {
         const zoneId =
             c.place?.state?.zone?.id ??
@@ -178,9 +182,7 @@ export default function Index({
     return (
         <>
             {fullscreen ? (
-                /* 🔵 VISTA FULLSCREEN  */
                 <div className="flex flex-col gap-4 p-4">
-                    {/* Botón para salir de fullscreen */}
                     <div className="flex justify-end">
                         <Button
                             variant="outline"
@@ -193,7 +195,6 @@ export default function Index({
                         </Button>
                     </div>
 
-                    {/* Filtro de zonas */}
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                         {zonas.map((zona) => (
                             <Button
@@ -226,7 +227,6 @@ export default function Index({
                         </Button>
                     </div>
 
-                    {/* Grid fullscreen */}
                     <div className="mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
                         {cronometrosFiltrados.length > 0 ? (
                             cronometrosFiltrados.map((cron) => (
@@ -249,11 +249,9 @@ export default function Index({
                     </div>
                 </div>
             ) : (
-                /* 🟢 VISTA NORMAL CON LAYOUT */
                 <AppLayout breadcrumbs={breadcrumbs}>
                     <Head title="Cronómetros" />
                     <div className="flex flex-col gap-4 p-4">
-                        {/* Header */}
                         <div className="flex items-center justify-between">
                             <h1 className="text-3xl font-bold text-foreground">
                                 Cronómetros
@@ -305,7 +303,6 @@ export default function Index({
                             </div>
                         </div>
 
-                        {/* Formulario */}
                         <div
                             className={`overflow-hidden transition-all duration-300 ${
                                 mostrarFormulario
@@ -329,7 +326,6 @@ export default function Index({
                                         onSubmit={handleSubmit}
                                         className="space-y-4"
                                     >
-                                        {/* TÍTULO */}
                                         <div className="space-y-2">
                                             <Label htmlFor="title">
                                                 Título
@@ -344,7 +340,6 @@ export default function Index({
                                             />
                                         </div>
 
-                                        {/* TICKET */}
                                         <div className="space-y-2">
                                             <Label htmlFor="ticket">
                                                 Ticket
@@ -360,19 +355,14 @@ export default function Index({
                                             />
                                         </div>
 
-                                        {/* SELECTS */}
                                         <div className="grid gap-4 md:grid-cols-3">
-                                            {/* Tipo */}
+                                            {/* TIPO */}
                                             <div className="space-y-2">
                                                 <Label>Tipo</Label>
                                                 <Select
                                                     value={form.type_id}
-                                                    onValueChange={(val) =>
-                                                        handleTypeChange({
-                                                            target: {
-                                                                value: val,
-                                                            },
-                                                        })
+                                                    onValueChange={
+                                                        handleTypeChange
                                                     }
                                                 >
                                                     <SelectTrigger>
@@ -393,17 +383,16 @@ export default function Index({
                                                 </Select>
                                             </div>
 
-                                            {/* Prioridad */}
+                                            {/* PRIORIDAD */}
                                             <div className="space-y-2">
                                                 <Label>Prioridad</Label>
                                                 <Select
-                                                    disabled={!selectedType}
                                                     value={form.priority_id}
                                                     onValueChange={(val) =>
-                                                        setForm({
-                                                            ...form,
+                                                        setForm((prev) => ({
+                                                            ...prev,
                                                             priority_id: val,
-                                                        })
+                                                        }))
                                                     }
                                                 >
                                                     <SelectTrigger>
@@ -448,16 +437,16 @@ export default function Index({
                                                 </Select>
                                             </div>
 
-                                            {/* Plaza */}
+                                            {/* PLAZA */}
                                             <div className="space-y-2">
                                                 <Label>Plaza</Label>
                                                 <Select
                                                     value={form.place_id}
                                                     onValueChange={(val) =>
-                                                        setForm({
-                                                            ...form,
+                                                        setForm((prev) => ({
+                                                            ...prev,
                                                             place_id: val,
-                                                        })
+                                                        }))
                                                     }
                                                 >
                                                     <SelectTrigger>
@@ -490,7 +479,6 @@ export default function Index({
                             </Card>
                         </div>
 
-                        {/* Filtro de zonas */}
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                             {zonas.map((zona) => (
                                 <Button
@@ -523,7 +511,6 @@ export default function Index({
                             </Button>
                         </div>
 
-                        {/* Grid normal */}
                         <div className="mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
                             {cronometrosFiltrados.length > 0 ? (
                                 cronometrosFiltrados.map((cron) => (

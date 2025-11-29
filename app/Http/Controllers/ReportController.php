@@ -10,6 +10,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -25,6 +26,8 @@ class ReportController extends Controller
 
     public function generate(Request $request)
     {
+
+        Log::info('ENTRÓ A generate()', $request->all());
         // Validar los datos del request
         $validated = $request->validate([
             'startDate' => 'nullable|date',
@@ -84,8 +87,10 @@ class ReportController extends Controller
                     'type' => $ticket->type->name,
                     'priority' => $ticket->priority->level,
                     'user' => $ticket->user->name,
-                    'created_at' => $ticket->created_at->format('Y-m-d H:i'),
-                    'completed_at' => $ticket->completed_at?->format('Y-m-d H:i'),
+                    'created_at' => Carbon::parse($ticket->created_at)->format('Y-m-d H:i'),
+                    'completed_at' => $ticket->completed_at
+                         ? Carbon::parse($ticket->completed_at)->format('Y-m-d H:i')
+                         : null,
                     'resolution_time' => $ticket->completed_at ? 
                         Carbon::parse($ticket->start)->diffInHours($ticket->completed_at) . ' horas' : 'N/A'
                 ];

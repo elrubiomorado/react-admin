@@ -1,3 +1,4 @@
+console.log('ESTE ES EL COMPONENTE QUE SE ESTÁ EJECUTANDO');
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -80,75 +81,37 @@ export default function CustomReport({
         setFilters((prev) => ({ ...prev, [key]: value }));
     };
 
+    //generador de reporte dinámico
     const generateReport = async () => {
         setIsLoading(true);
+
         try {
-            // Simulación de datos para prueba
-            setTimeout(() => {
-                const mockData: ReportData = {
-                    totalTickets: 150,
-                    activeTickets: 45,
-                    resolvedTickets: 105,
-                    averageResolutionTime: 24.5,
-                    ticketsByPriority: {
-                        Alta: 30,
-                        Media: 75,
-                        Baja: 45,
-                    },
-                    ticketsByZone: {
-                        'Zona Norte': 50,
-                        'Zona Sur': 40,
-                        'Zona Este': 35,
-                        'Zona Oeste': 25,
-                    },
-                    ticketsByType: {
-                        Soporte: 60,
-                        Mantenimiento: 45,
-                        Incidente: 30,
-                        Requerimiento: 15,
-                    },
-                    detailedData: [
-                        {
-                            id: 1,
-                            title: 'Error en sistema',
-                            ticket: 'TICK-001',
-                            status: 'Activo',
-                            zone: 'Zona Norte',
-                            type: 'Incidente',
-                            priority: 'Alta',
-                            user: 'Juan Pérez',
-                            created_at: '2024-01-15',
-                            completed_at: '',
-                            resolution_time: '0h',
-                        },
-                        {
-                            id: 2,
-                            title: 'Solicitud de mantenimiento',
-                            ticket: 'TICK-002',
-                            status: 'Resuelto',
-                            zone: 'Zona Sur',
-                            type: 'Mantenimiento',
-                            priority: 'Media',
-                            user: 'María García',
-                            created_at: '2024-01-10',
-                            completed_at: '2024-01-12',
-                            resolution_time: '48h',
-                        },
-                    ],
-                };
-                setReportData(mockData);
-                setIsLoading(false);
-            }, 2000);
+            const response = await fetch('/reports/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': (
+                        document.querySelector(
+                            'meta[name="csrf-token"]',
+                        ) as HTMLMetaElement
+                    ).content,
+                },
+                body: JSON.stringify(filters),
+            });
+
+            const data = await response.json();
+            setReportData(data);
         } catch (error) {
             console.error('Error generando reporte:', error);
-            setIsLoading(false);
         }
+
+        setIsLoading(false);
     };
 
+    //Función para exportar los datos a Excel.
     const exportReport = () => {
-        alert(
-            'Funcionalidad de exportación - Aquí iría la lógica para exportar',
-        );
+        const params = new URLSearchParams(filters as any).toString();
+        window.open(`/reportes/export?${params}`, '_blank');
     };
 
     const clearFilters = () => {
