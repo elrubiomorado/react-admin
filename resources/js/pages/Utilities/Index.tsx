@@ -1,7 +1,6 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { GiMexico } from "react-icons/gi";
 import { Head, Link } from '@inertiajs/react';
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
@@ -70,7 +69,9 @@ export default function Index() {
                                 />
                             </svg>
                             {/* Texto */}
-                            <span className="text-lg font-bold">Equipos de trabajo</span>
+                            <span className="text-lg font-bold">
+                                Equipos de trabajo
+                            </span>
                         </div>
                     </Link>
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">

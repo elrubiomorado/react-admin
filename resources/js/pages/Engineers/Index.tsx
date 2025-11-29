@@ -62,7 +62,7 @@ export default function Index({
             <Head title="Ingenieros" />
 
             <div className="flex flex-col gap-4 p-4">
-                <h1 className="text-3xl font-bold text-gray-800">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
                     Lista de ingenieros
                 </h1>
 
