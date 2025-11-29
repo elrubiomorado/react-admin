@@ -47,7 +47,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                        Dashboard de Métricas
+                        Dashboard
                     </h1>
                     <div className="text-sm text-gray-500">
                         Semana: {new Date().toLocaleDateString()}
@@ -105,7 +105,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-3">
+                            <div className="space-y-3 dark:text-gray-600">
                                 {metrics.ticketsPorUsuario.map(
                                     (usuario, index) => (
                                         <UsuarioItem
@@ -134,7 +134,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-3">
+                            <div className="space-y-3 dark:text-gray-600">
                                 {metrics.topZonas.map((zona, index) => (
                                     <ZonaItem
                                         key={zona.nombre}
