@@ -109,9 +109,38 @@ export default function CustomReport({
     };
 
     //Función para exportar los datos a Excel.
-    const exportReport = () => {
-        const params = new URLSearchParams(filters as any).toString();
-        window.open(`/reportes/export?${params}`, '_blank');
+    const exportReport = async () => {
+        try {
+            const response = await fetch('/reports/export', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': (
+                        document.querySelector(
+                            'meta[name="csrf-token"]',
+                        ) as HTMLMetaElement
+                    ).content,
+                },
+                body: JSON.stringify(filters),
+            });
+
+            if (!response.ok) {
+                console.error('Error al exportar:', response.status);
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reporte.csv';
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error exportando:', error);
+        }
     };
 
     const clearFilters = () => {

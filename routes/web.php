@@ -86,9 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/engineers/{id}', [EngineerController::class, 'update'])->name('engineers.update');
     Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
 
-    Route::post('/reports/custom', [\App\Http\Controllers\ReportController::class, 'customReport'])
-    ->name('reports.custom');
-    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+   
 
 });
 require __DIR__ . '/settings.php';
