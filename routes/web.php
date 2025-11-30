@@ -86,7 +86,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/engineers/{id}', [EngineerController::class, 'update'])->name('engineers.update');
     Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
 
-   
+    // Edit Engineers:
+    Route::get('/engineers/{id}/edit', [EngineerController::class, 'edit'])->name('engineers.edit');
+    Route::put('/engineers/{engineer}', [EngineerController::class, 'update'])->name('engineers.update');
 
 });
 require __DIR__ . '/settings.php';
