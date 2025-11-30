@@ -125,21 +125,28 @@ export default function CronometroCard({
 
     /** AGREGAR INGENIERO */
     const handleAddEngineer = () => {
-        if (!selectedEngineer) return;
+        // Verifica que se haya seleccionado un ingeniero
+        if (!selectedEngineer) {
+            return alert('Selecciona un ingeniero antes de agregar.');
+        }
 
-        if (
-            engineerForms.some(
-                (f) =>
-                    f.note.trim() === '' &&
-                    Object.keys(f.responses).length === 0,
-            )
-        ) {
+        // Evita duplicados
+        if (engineerForms.some((e) => e.engineerId === selectedEngineer)) {
+            return alert('Este ingeniero ya ha sido agregado.');
+        }
+
+        // Verifica si hay algún formulario abierto incompleto
+        const incompleteForm = engineerForms.find(
+            (f) =>
+                f.note.trim() === '' && Object.keys(f.responses).length === 0,
+        );
+        if (incompleteForm) {
             return alert(
-                'Completa el ingeniero anterior antes de agregar uno nuevo',
+                'Completa el ingeniero anterior antes de agregar uno nuevo.',
             );
         }
-        if (engineerForms.some((e) => e.engineerId === selectedEngineer))
-            return;
+
+        // Agrega el nuevo ingeniero y cierra los anteriores
         setEngineerForms([
             ...engineerForms.map((f) => ({ ...f, open: false })),
             {
@@ -149,6 +156,8 @@ export default function CronometroCard({
                 open: true,
             },
         ]);
+
+        // Limpia la selección
         setSelectedEngineer('');
     };
 
@@ -574,11 +583,11 @@ Atentamente: *${user_name}*`;
                                             </option>
                                             {engineers
                                                 .filter(
-                                                    (e) =>
+                                                    (e: any) =>
                                                         e.place?.name ===
                                                         cron.place?.name,
                                                 )
-                                                .map((e) => (
+                                                .map((e: any) => (
                                                     <option
                                                         key={e.id}
                                                         value={e.id}

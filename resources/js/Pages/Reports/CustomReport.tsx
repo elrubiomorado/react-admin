@@ -18,6 +18,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Reportes', href: '/reportes' },
 ];
 
+// Función para calcular el tiempó promedio en horas y minutos
+function formatHoursToHHMM(hours: number | string | null | undefined) {
+    const hoursDecimal =
+        typeof hours === 'number'
+            ? hours
+            : typeof hours === 'string'
+              ? parseFloat(hours)
+              : NaN;
+
+    if (isNaN(hoursDecimal) || hoursDecimal < 0) return '00:00 hrs';
+
+    const totalMinutes = Math.floor(hoursDecimal * 60);
+    const hrs = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')} hrs`;
+}
+
 // Interfaces (mantener igual)
 interface CustomReportProps {
     zones: Array<{ id: number; name: string }>;
@@ -477,9 +495,9 @@ export default function CustomReport({
                                                             {ticket.user}
                                                         </td>
                                                         <td className="p-2 text-gray-800 dark:text-gray-300">
-                                                            {
-                                                                ticket.resolution_time
-                                                            }
+                                                            {formatHoursToHHMM(
+                                                                ticket.resolution_time,
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 ),
