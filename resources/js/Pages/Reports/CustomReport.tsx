@@ -1,4 +1,3 @@
-console.log('ESTE ES EL COMPONENTE QUE SE ESTÁ EJECUTANDO');
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -186,7 +185,7 @@ export default function CustomReport({
                 </div>
 
                 {/* Filtros */}
-                <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div className="bg-slade-100 rounded-lg border bg-slate-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div className="border-b border-gray-200 p-6 dark:border-gray-700">
                         <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
                             <Filter className="h-5 w-5" />
@@ -209,7 +208,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 />
                             </div>
 
@@ -227,7 +226,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 />
                             </div>
 
@@ -244,7 +243,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todas las zonas</option>
                                     {zones.map((zone) => (
@@ -271,7 +270,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todos los tipos</option>
                                     {types.map((type) => (
@@ -298,7 +297,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">
                                         Todas las prioridades
@@ -327,7 +326,7 @@ export default function CustomReport({
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                                 >
                                     <option value="">Todos los usuarios</option>
                                     {users.map((user) => (
@@ -525,7 +524,7 @@ function MetricCard({
     icon: React.ReactNode;
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="rounded-lg border border-gray-200 bg-slate-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -554,7 +553,7 @@ function DistributionCard({
     icon: React.ReactNode;
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="rounded-lg border border-gray-200 bg-slate-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="border-b border-gray-200 p-6 dark:border-gray-700">
                 <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
                     {icon}

@@ -54,7 +54,7 @@ export default function History({ cronometros }: HistoryProps) {
                             {cronometros.map((cron) => (
                                 <div
                                     key={cron.id}
-                                    className="rounded-lg border border-gray-200 p-4"
+                                    className="rounded-lg border border-gray-200 bg-slate-50 p-4"
                                 >
                                     <div className="flex items-start justify-between">
                                         <div>

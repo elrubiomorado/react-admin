@@ -69,25 +69,34 @@ export default function Index({ teams }: Props) {
                                 >
                                     <td className="px-6 py-4">{team.name}</td>
                                     <td className="px-6 py-4">Negocio</td>
-                                    <td className="flex justify-center gap-3 px-3 py-4">
-                                        <Link
-                                            href={`/utilities/teams/${team.id}/edit`}
-                                            className="flex items-center gap-1 text-green-600 hover:text-green-800"
+                                    <td className="flex justify-center gap-2 px-3 py-4">
+                                        {/* Botón Editar */}
+                                        <Button
+                                            size="sm"
+                                            className="flex items-center gap-2 bg-blue-600 text-white transition-shadow duration-200 hover:bg-blue-700 hover:shadow-md active:scale-95"
+                                            onClick={() =>
+                                                router.visit(
+                                                    `/utilities/teams/${team.id}/edit`,
+                                                )
+                                            }
                                             title="Editar"
                                         >
-                                            <PencilIcon className="h-5 w-5" />
-                                            Editar
-                                        </Link>
-                                        <button
+                                            <PencilIcon className="h-4 w-4 text-white" />
+                                            <span>Editar</span>
+                                        </Button>
+
+                                        {/* Botón Eliminar */}
+                                        <Button
+                                            size="sm"
+                                            className="flex items-center gap-2 bg-red-600 text-white transition-shadow duration-200 hover:bg-red-700 hover:shadow-md active:scale-95"
                                             onClick={() =>
                                                 handleDelete(team.id)
                                             }
-                                            className="flex items-center gap-1 text-red-600 hover:text-red-800"
                                             title="Eliminar"
                                         >
-                                            <TrashIcon className="h-5 w-5" />
-                                            Eliminar
-                                        </button>
+                                            <TrashIcon className="h-4 w-4 text-white" />
+                                            <span>Eliminar</span>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))

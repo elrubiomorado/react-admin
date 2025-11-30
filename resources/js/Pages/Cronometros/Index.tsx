@@ -337,6 +337,7 @@ export default function Index({
                                                 onChange={handleChange}
                                                 placeholder="Ingresa un título"
                                                 required
+                                                className="bg-white"
                                             />
                                         </div>
 
@@ -352,6 +353,7 @@ export default function Index({
                                                 onChange={handleChange}
                                                 placeholder="Número de ticket"
                                                 required
+                                                className="bg-white"
                                             />
                                         </div>
 
