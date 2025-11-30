@@ -65,7 +65,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={metrics.tendenciaTickets}
                         trendLabel="vs ayer"
                     />
-
                     {/* NUEVO: Tickets Creados Hoy */}
                     <MetricCard
                         title="Creados Hoy"
@@ -74,7 +73,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={8}
                         trendLabel="vs ayer"
                     />
-
                     <MetricCard
                         title="Resueltos Hoy"
                         value={metrics.ticketsResueltosHoy}
@@ -84,7 +82,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={5}
                         trendLabel="vs ayer"
                     />
-
                     <MetricCard
                         title="Tiempo Promedio"
                         value={`${metrics.tiempoPromedioResolucion}h`}
