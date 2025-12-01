@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { notify } from '@/utils/notify';
 import { router } from '@inertiajs/react';
-import { ChevronDown, ChevronUp, Copy, TrashIcon, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, TrashIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CronometroCardProps {
@@ -125,21 +125,28 @@ export default function CronometroCard({
 
     /** AGREGAR INGENIERO */
     const handleAddEngineer = () => {
-        if (!selectedEngineer) return;
+        // Verifica que se haya seleccionado un ingeniero
+        if (!selectedEngineer) {
+            return alert('Selecciona un ingeniero antes de agregar.');
+        }
 
-        if (
-            engineerForms.some(
-                (f) =>
-                    f.note.trim() === '' &&
-                    Object.keys(f.responses).length === 0,
-            )
-        ) {
+        // Evita duplicados
+        if (engineerForms.some((e) => e.engineerId === selectedEngineer)) {
+            return alert('Este ingeniero ya ha sido agregado.');
+        }
+
+        // Verifica si hay algún formulario abierto incompleto
+        const incompleteForm = engineerForms.find(
+            (f) =>
+                f.note.trim() === '' && Object.keys(f.responses).length === 0,
+        );
+        if (incompleteForm) {
             return alert(
-                'Completa el ingeniero anterior antes de agregar uno nuevo',
+                'Completa el ingeniero anterior antes de agregar uno nuevo.',
             );
         }
-        if (engineerForms.some((e) => e.engineerId === selectedEngineer))
-            return;
+
+        // Agrega el nuevo ingeniero y cierra los anteriores
         setEngineerForms([
             ...engineerForms.map((f) => ({ ...f, open: false })),
             {
@@ -149,6 +156,8 @@ export default function CronometroCard({
                 open: true,
             },
         ]);
+
+        // Limpia la selección
         setSelectedEngineer('');
     };
 
@@ -478,26 +487,29 @@ Atentamente: *${user_name}*`;
                 </div>
             </div>
 
+            {/* Aqui está el código del modal  */}
+
             {openModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="max-h-[85vh] w-[750px] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+                    <div className="max-h-[85vh] w-[750px] overflow-y-auto rounded-lg border border-gray-200 bg-white p-6 shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
+                        {/* Header */}
                         <div className="mb-5 flex items-center justify-between">
-                            <h2 className="text-2xl font-bold">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 Detalles del Cronómetro
                             </h2>
                             <button onClick={() => setOpenModal(false)}>
-                                <X className="h-6 w-6 text-gray-700 hover:text-black" />
+                                <X className="h-6 w-6 text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white" />
                             </button>
                         </div>
 
                         <div className="flex flex-col gap-6">
                             {/* Información general */}
-                            <section className="rounded-lg border bg-gray-50 p-4">
-                                <h3 className="mb-3 text-lg font-semibold text-gray-700">
+                            <section className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
+                                <h3 className="mb-3 text-lg font-semibold text-gray-700 dark:text-gray-200">
                                     Información general
                                 </h3>
 
-                                <div className="grid grid-cols-2 gap-3 text-sm">
+                                <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300">
                                     <p>
                                         <strong>Título:</strong> {cron.title}
                                     </p>
@@ -531,28 +543,27 @@ Atentamente: *${user_name}*`;
                                         {cron.place?.state?.zone?.name}
                                     </p>
 
-                                    <p className="col-span-2 text-xl font-bold">
+                                    <p className="col-span-2 text-xl font-bold text-gray-900 dark:text-white">
                                         <strong>Tiempo transcurrido:</strong>{' '}
                                         {formatTime(elapsedTime)}
                                     </p>
                                 </div>
                             </section>
 
-                            {/* Formulario escalación */}
-                            <section className="rounded-lg border bg-gray-50 p-4">
-                                <h3 className="mb-3 text-lg font-semibold text-gray-700">
-                                    {
-                                        stage === 0
-                                            ? 'Crear primer escala'
-                                            : stage === 2
-                                              ? 'Crear segunda escala'
-                                              : stage === 3
-                                                ? 'Crear tercer escala'
-                                                : stage === 4
-                                                  ? 'Avance quemado'
-                                                  : '' // valor por defecto si no coincide ningún stage
-                                    }{' '}
+                            {/* Formulario de escalación */}
+                            <section className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
+                                <h3 className="mb-3 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {stage === 0
+                                        ? 'Crear primer escala'
+                                        : stage === 2
+                                          ? 'Crear segunda escala'
+                                          : stage === 3
+                                            ? 'Crear tercer escala'
+                                            : stage === 4
+                                              ? 'Avance quemado'
+                                              : ''}
                                 </h3>
+
                                 <form
                                     className="flex flex-col gap-4"
                                     onSubmit={handleSubmit}
@@ -565,7 +576,7 @@ Atentamente: *${user_name}*`;
                                                     Number(e.target.value),
                                                 )
                                             }
-                                            className="rounded border p-2 text-sm"
+                                            className="rounded border border-gray-300 bg-white p-2 text-sm text-gray-800 dark:border-neutral-600 dark:bg-neutral-700 dark:text-gray-200"
                                         >
                                             <option value="">
                                                 Selecciona ingeniero
@@ -586,6 +597,7 @@ Atentamente: *${user_name}*`;
                                                     </option>
                                                 ))}
                                         </select>
+
                                         <Button
                                             type="button"
                                             onClick={handleAddEngineer}
@@ -594,13 +606,14 @@ Atentamente: *${user_name}*`;
                                         </Button>
                                     </div>
 
+                                    {/* Cada ingeniero */}
                                     {engineerForms.map((form) => (
                                         <div
                                             key={form.engineerId}
-                                            className="rounded border bg-gray-100"
+                                            className="rounded border border-gray-300 bg-gray-100 dark:border-neutral-600 dark:bg-neutral-700"
                                         >
                                             <div
-                                                className="flex cursor-pointer items-center justify-between p-2"
+                                                className="flex cursor-pointer items-center justify-between p-2 text-gray-900 dark:text-gray-200"
                                                 onClick={() =>
                                                     toggleOpenEngineer(
                                                         form.engineerId,
@@ -622,17 +635,17 @@ Atentamente: *${user_name}*`;
                                                                 e.id ===
                                                                 form.engineerId,
                                                         )?.job_title.title
-                                                    }{' '}
+                                                    }
                                                 </span>
                                                 {form.open ? (
-                                                    <ChevronUp />
+                                                    <ChevronUp className="text-gray-700 dark:text-gray-200" />
                                                 ) : (
-                                                    <ChevronDown />
+                                                    <ChevronDown className="text-gray-700 dark:text-gray-200" />
                                                 )}
                                             </div>
 
                                             {form.open && (
-                                                <div className="space-y-2 p-3">
+                                                <div className="space-y-2 p-3 text-gray-700 dark:text-gray-300">
                                                     {contactMethods.map(
                                                         (method) => (
                                                             <div
@@ -656,11 +669,9 @@ Atentamente: *${user_name}*`;
                                                                             handleResponseChange(
                                                                                 form.engineerId,
                                                                                 method.id,
-                                                                                e
+                                                                                !e
                                                                                     .target
-                                                                                    .checked
-                                                                                    ? false
-                                                                                    : (undefined as any),
+                                                                                    .checked, // ← esto SIEMPRE es boolean
                                                                             )
                                                                         }
                                                                     />
@@ -669,13 +680,15 @@ Atentamente: *${user_name}*`;
                                                                     }
                                                                 </label>
 
+                                                                {/* Zonas de WhatsApp / Tel / Teams */}
                                                                 {form.responses[
                                                                     method.id
                                                                 ] !==
                                                                     undefined && (
                                                                     <div className="mt-1 ml-6 space-y-4">
+                                                                        {/* WhatsApp */}
                                                                         {method.id ===
-                                                                        1 ? (
+                                                                            1 && (
                                                                             <div className="space-y-4">
                                                                                 {engineers
                                                                                     .find(
@@ -693,22 +706,17 @@ Atentamente: *${user_name}*`;
                                                                                                 key={
                                                                                                     p.id
                                                                                                 }
-                                                                                                className="space-y-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
+                                                                                                className="rounded-lg border border-gray-300 bg-gray-50 p-4 dark:border-neutral-600 dark:bg-neutral-800"
                                                                                             >
-                                                                                                <p
-                                                                                                    key={
-                                                                                                        p.id
-                                                                                                    }
-                                                                                                    className="text-lg font-bold"
-                                                                                                >
+                                                                                                <p className="text-lg font-bold text-gray-900 dark:text-white">
                                                                                                     {
                                                                                                         p.phone
                                                                                                     }
                                                                                                 </p>
 
-                                                                                                <hr className="border-gray-300" />
+                                                                                                <hr className="border-gray-300 dark:border-neutral-600" />
 
-                                                                                                <div className="text-sm leading-relaxed">
+                                                                                                <div className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                                                                                                     {buildWhatsappText(
                                                                                                         engineers.find(
                                                                                                             (
@@ -752,15 +760,6 @@ Atentamente: *${user_name}*`;
                                                                                                     </Button>
 
                                                                                                     <a
-                                                                                                        // href={`https://wa.me/${p.phone}?text=${encodeURIComponent(
-                                                                                                        //     buildWhatsappText(
-                                                                                                        //         engineers.find((e) => e.id === form.engineerId),
-                                                                                                        //         cron,
-                                                                                                        //         stage,
-                                                                                                        //         user.name
-                                                                                                        //     )
-                                                                                                        // )}`}
-                                                                                                        // href={`https://web.whatsapp.com/send/?phone=${p.phone}&text=${encodeURIComponent(buildWhatsappText(engineers.find((e) => e.id === form.engineerId),cron,stage,user.name))}&type=phone_number&app_absent=0`}
                                                                                                         href={`whatsapp://send?phone=${p.phone}&text=${encodeURIComponent(
                                                                                                             buildWhatsappText(
                                                                                                                 engineers.find(
@@ -775,18 +774,17 @@ Atentamente: *${user_name}*`;
                                                                                                                 user.name,
                                                                                                             ),
                                                                                                         )}`}
-                                                                                                        //https://web.whatsapp.com/send/?phone=3751226303&text=Hola+Buenos+d%C3%ADas%2C+Ing.+Edgar+Avila+Gonzalez+reportamos+el+ticket%3A+1234++la+primera+escalacion+en+GUADALAJARA+con+hora+y+fecha+de+inicio+aproximada%3A+2025-11-26+13%3A33%3A19.&type=phone_number&app_absent=0
                                                                                                         target="_blank"
                                                                                                         rel="noreferrer"
                                                                                                         onClick={(
                                                                                                             e,
                                                                                                         ) =>
                                                                                                             e.stopPropagation()
-                                                                                                        } // evita submit o eventos padres
+                                                                                                        }
                                                                                                     >
                                                                                                         <Button
-                                                                                                            type="button" // IMPORTANTE para evitar submit
-                                                                                                            className="bg-green-600 text-white"
+                                                                                                            type="button"
+                                                                                                            className="bg-green-600 text-white hover:bg-green-700"
                                                                                                         >
                                                                                                             Enviar
                                                                                                             WhatsApp
@@ -798,9 +796,12 @@ Atentamente: *${user_name}*`;
                                                                                     ) ||
                                                                                     'No tiene teléfonos'}
                                                                             </div>
-                                                                        ) : method.id ===
-                                                                          2 ? (
-                                                                            <div className="rounded-lg border bg-gray-50 p-2">
+                                                                        )}
+
+                                                                        {/* Teléfono */}
+                                                                        {method.id ===
+                                                                            2 && (
+                                                                            <div className="rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-gray-200">
                                                                                 {engineers
                                                                                     .find(
                                                                                         (
@@ -827,9 +828,12 @@ Atentamente: *${user_name}*`;
                                                                                     ) ||
                                                                                     'No tiene teléfonos'}
                                                                             </div>
-                                                                        ) : method.id ===
-                                                                          3 ? (
-                                                                            <div className="rounded-lg border bg-gray-50 p-2">
+                                                                        )}
+
+                                                                        {/* Teams */}
+                                                                        {method.id ===
+                                                                            3 && (
+                                                                            <div className="rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-gray-200">
                                                                                 <p className="font-semibold">
                                                                                     {engineers.find(
                                                                                         (
@@ -842,12 +846,11 @@ Atentamente: *${user_name}*`;
                                                                                         'No tiene teams'}
                                                                                 </p>
                                                                             </div>
-                                                                        ) : (
-                                                                            'Desconocido'
                                                                         )}
 
+                                                                        {/* Sí/No respuesta */}
                                                                         <div className="mb-2 flex items-center gap-4 pt-1">
-                                                                            <span className="text-sm font-medium">
+                                                                            <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                                                                 ¿Hubo
                                                                                 respuesta?
                                                                             </span>
@@ -903,9 +906,8 @@ Atentamente: *${user_name}*`;
                                                             </div>
                                                         ),
                                                     )}
-
                                                     <textarea
-                                                        className="w-full rounded border p-2 text-sm"
+                                                        className="w-full rounded border border-gray-300 bg-white p-2 text-sm text-gray-800 dark:border-neutral-600 dark:bg-neutral-700 dark:text-gray-200"
                                                         placeholder="Notas del ingeniero"
                                                         value={form.note}
                                                         onChange={(e) =>
@@ -918,7 +920,7 @@ Atentamente: *${user_name}*`;
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="mt-2"
+                                                        className="mt-2 text-red-600 dark:text-red-400"
                                                         onClick={() =>
                                                             handleRemoveEngineer(
                                                                 form.engineerId,
@@ -940,75 +942,14 @@ Atentamente: *${user_name}*`;
                                     </Button>
                                 </form>
                             </section>
-                            {/* Historial agrupado por stage */}
-                            <section className="relative rounded-lg border bg-gray-50 p-4">
-                                {/* 🔘 Botón copiar de shadcn */}
-                                {Object.entries(journalsByStage).length > 0 && (
-                                    <Button
-                                        size="icon"
-                                        variant="ghost"
-                                        className="absolute top-2 right-2"
-                                        onClick={() => {
-                                            let finalText = '';
 
-                                            Object.entries(
-                                                journalsByStage,
-                                            ).forEach(([stage, journals]) => {
-                                                finalText += `Escala ${stage}\n`;
+                            {/* Historial */}
+                            <section className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
+                                <h3 className="mb-3 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    Historial de escalación
+                                </h3>
 
-                                                journals.forEach((j) => {
-                                                    const engineerName =
-                                                        engineers.find(
-                                                            (e) =>
-                                                                e.id ===
-                                                                j.engineer_id,
-                                                        )?.name || 'N/A';
-
-                                                    const methodsText =
-                                                        j.journalContactMethods
-                                                            ?.map((m) => {
-                                                                const methodName =
-                                                                    contactMethods.find(
-                                                                        (c) =>
-                                                                            c.id ===
-                                                                            m.contact_method_id,
-                                                                    )?.name ||
-                                                                    '';
-
-                                                                const responded =
-                                                                    m.responded
-                                                                        ? 'Sí'
-                                                                        : 'No';
-                                                                const comment =
-                                                                    m.comment
-                                                                        ? ` (${m.comment})`
-                                                                        : '';
-
-                                                                return `${methodName}: ${responded}${comment}`;
-                                                            })
-                                                            .join(', ') || '-';
-
-                                                    finalText += `
-Ingeniero: ${engineerName}
-Hora notificación: ${formatDateTime(j.notified_at)}
-Notas: ${j.note || '-'}
-Métodos: ${methodsText}
-`;
-                                                });
-
-                                                finalText += '\n';
-                                            });
-
-                                            navigator.clipboard.writeText(
-                                                finalText,
-                                            );
-                                        }}
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
-                                )}
-
-                                <div className="max-h-48 overflow-y-auto rounded border bg-white p-3 text-sm">
+                                <div className="max-h-48 overflow-y-auto rounded border border-gray-300 bg-white p-3 text-sm text-gray-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-gray-300">
                                     {Object.entries(journalsByStage).length ? (
                                         Object.entries(journalsByStage).map(
                                             ([stage, journals]) => (
@@ -1016,14 +957,14 @@ Métodos: ${methodsText}
                                                     key={stage}
                                                     className="mb-3"
                                                 >
-                                                    <h4 className="mb-1 text-sm font-bold">
+                                                    <h4 className="mb-1 text-sm font-bold text-gray-900 dark:text-white">
                                                         Escala {stage}
                                                     </h4>
 
                                                     {journals.map((j) => (
                                                         <div
                                                             key={j.id}
-                                                            className="mb-1 border-b pb-1 text-sm"
+                                                            className="mb-1 border-b border-gray-300 pb-1 dark:border-neutral-600"
                                                         >
                                                             <p>
                                                                 <strong>
@@ -1092,13 +1033,14 @@ Métodos: ${methodsText}
                                             ),
                                         )
                                     ) : (
-                                        <p className="text-gray-500">
+                                        <p className="text-gray-500 dark:text-gray-400">
                                             No hay escalaciones registradas.
                                         </p>
                                     )}
                                 </div>
                             </section>
-                            {/* AQUI SI ES NECESARIO EL DE ONCOMPLETE PARA INDICAR EXPLICITAMENTE QUE LO MARCARA COMO COMPLETADO */}
+
+                            {/* Botón Final */}
                             <Button
                                 variant="default"
                                 className="flex w-full items-center gap-2"
@@ -1114,6 +1056,7 @@ Métodos: ${methodsText}
                     </div>
                 </div>
             )}
+            {/* Aqui termina el código del modal  */}
         </div>
     );
 }

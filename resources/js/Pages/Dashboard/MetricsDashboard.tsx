@@ -46,8 +46,8 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
             <div className="space-y-6 p-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Dashboard de Métricas
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                        Dashboard
                     </h1>
                     <div className="text-sm text-gray-500">
                         Semana: {new Date().toLocaleDateString()}
@@ -65,7 +65,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={metrics.tendenciaTickets}
                         trendLabel="vs ayer"
                     />
-
                     {/* NUEVO: Tickets Creados Hoy */}
                     <MetricCard
                         title="Creados Hoy"
@@ -74,7 +73,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={8}
                         trendLabel="vs ayer"
                     />
-
                     <MetricCard
                         title="Resueltos Hoy"
                         value={metrics.ticketsResueltosHoy}
@@ -84,7 +82,6 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                         trend={5}
                         trendLabel="vs ayer"
                     />
-
                     <MetricCard
                         title="Tiempo Promedio"
                         value={`${metrics.tiempoPromedioResolucion}h`}
@@ -105,7 +102,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-3">
+                            <div className="space-y-3 dark:text-gray-600">
                                 {metrics.ticketsPorUsuario.map(
                                     (usuario, index) => (
                                         <UsuarioItem
@@ -134,7 +131,7 @@ export default function MetricsDashboard({ metrics }: MetricsDashboardProps) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-3">
+                            <div className="space-y-3 dark:text-gray-600">
                                 {metrics.topZonas.map((zona, index) => (
                                     <ZonaItem
                                         key={zona.nombre}

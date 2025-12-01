@@ -46,29 +46,29 @@ export default function History({ cronometros }: HistoryProps) {
                     <DownloadIcon className="h-4 w-4" />
                 </Button>
             </div>
-
-            <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            {/**Aquí comienza el cuerpo del historial */}
+            <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-neutral-800">
                 <div className="p-6">
                     {cronometros.length > 0 ? (
                         <div className="space-y-4">
                             {cronometros.map((cron) => (
                                 <div
                                     key={cron.id}
-                                    className="rounded-lg border border-gray-200 p-4"
+                                    className="rounded-lg border border-gray-200 bg-slate-50 p-4"
                                 >
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h3 className="text-lg font-semibold">
                                                 {cron.title}
                                             </h3>
-                                            <p className="text-gray-600">
+                                            <p className="text-gray-600 dark:text-white">
                                                 Ticket: {cron.ticket}
                                             </p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-gray-500 dark:text-white">
                                                 Lugar: {cron.place?.name} -{' '}
                                                 {cron.place?.state?.name}
                                             </p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-gray-500 dark:text-white">
                                                 Terminado:{' '}
                                                 {new Date(
                                                     cron.end,

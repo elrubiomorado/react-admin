@@ -8,6 +8,7 @@ use App\Models\Priority;
 use App\Models\User;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -29,6 +30,9 @@ class DashboardController extends Controller
             'topZonas' => $this->getTopZones(),
         ];
 
+        // Debug temporal
+        Log::info('Métricas calculadas:', $metrics);
+
         return Inertia::render('Dashboard/MetricsDashboard', [
             'metrics' => $metrics
         ]);
@@ -46,16 +50,14 @@ class DashboardController extends Controller
 
     private function getResolvedToday()
     {
-        return Cronometro::where('user_id', 5)
-            ->whereDate('end', today())
-            ->count();
+        // REMOVER filtro user_id = 5
+        return Cronometro::whereDate('end', today())->count();
     }
 
     private function calculateAverageResolutionTime()
     {
-        $resolvedTickets = Cronometro::where('user_id', 5)
-            ->whereNotNull('end')
-            ->get();
+        // REMOVER filtro user_id = 5
+        $resolvedTickets = Cronometro::whereNotNull('end')->get();
 
         if ($resolvedTickets->isEmpty()) {
             return 0;
@@ -84,9 +86,8 @@ class DashboardController extends Controller
 
     private function calculateTimeTrend()
     {
-        // Comparar tiempo promedio de esta semana vs semana anterior
-        $currentWeekAvg = $this->getWeeklyAverageTime(0); // Semana actual
-        $lastWeekAvg = $this->getWeeklyAverageTime(1); // Semana anterior
+        $currentWeekAvg = $this->getWeeklyAverageTime(0);
+        $lastWeekAvg = $this->getWeeklyAverageTime(1);
 
         if ($lastWeekAvg === 0) {
             return 0;
@@ -100,8 +101,8 @@ class DashboardController extends Controller
         $startDate = now()->subWeeks($weeksAgo)->startOfWeek();
         $endDate = now()->subWeeks($weeksAgo)->endOfWeek();
 
-        $tickets = Cronometro::where('user_id', 5)
-            ->whereNotNull('end')
+        // REMOVER filtro user_id = 5
+        $tickets = Cronometro::whereNotNull('end')
             ->whereBetween('end', [$startDate, $endDate])
             ->get();
 
@@ -123,10 +124,9 @@ class DashboardController extends Controller
         $startOfWeek = now()->startOfWeek();
         $endOfWeek = now()->endOfWeek();
 
-        // Método alternativo que funciona sin la relación en el modelo User
         $usersWithTickets = Cronometro::whereBetween('start', [$startOfWeek, $endOfWeek])
             ->selectRaw('user_id, COUNT(*) as tickets_count')
-            ->with('user:id,name') // Cargar relación user desde Cronometro
+            ->with('user:id,name')
             ->groupBy('user_id')
             ->orderByDesc('tickets_count')
             ->limit($limit)
@@ -145,11 +145,8 @@ class DashboardController extends Controller
 
     private function getTopZones($limit = 5)
     {
-        return Place::withCount([
-            'cronometros as active_tickets' => function ($query) {
-                $query->where('user_id', 5);
-            }
-        ])
+        // REMOVER filtro user_id = 5
+        return Place::withCount('cronometros as active_tickets')
             ->orderByDesc('active_tickets')
             ->limit($limit)
             ->get()
@@ -157,7 +154,7 @@ class DashboardController extends Controller
                 return [
                     'nombre' => $place->name,
                     'tickets' => $place->active_tickets,
-                    'tendencia' => rand(-15, 15) // Por ahora aleatorio, luego podemos calcular tendencia real
+                    'tendencia' => rand(-15, 15)
                 ];
             })
             ->toArray();

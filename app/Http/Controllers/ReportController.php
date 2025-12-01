@@ -10,6 +10,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -25,7 +26,8 @@ class ReportController extends Controller
 
     public function generate(Request $request)
     {
-        // Validar los datos del request
+        Log::info('ENTRÓ A generate()', $request->all());
+
         $validated = $request->validate([
             'startDate' => 'nullable|date',
             'endDate' => 'nullable|date|after_or_equal:startDate',
@@ -37,16 +39,14 @@ class ReportController extends Controller
 
         $query = Cronometro::with(['user', 'place', 'type', 'priority']);
 
-        // Aplicar filtros de fecha
         if ($request->startDate) {
             $query->whereDate('created_at', '>=', $request->startDate);
         }
-        
+
         if ($request->endDate) {
             $query->whereDate('created_at', '<=', $request->endDate);
         }
 
-        // Aplicar filtros adicionales
         if ($request->zoneId) {
             $query->where('place_id', $request->zoneId);
         }
@@ -65,7 +65,6 @@ class ReportController extends Controller
 
         $tickets = $query->get();
 
-        // Calcular métricas del reporte
         $reportData = [
             'totalTickets' => $tickets->count(),
             'activeTickets' => $tickets->where('is_active', true)->count(),
@@ -80,14 +79,18 @@ class ReportController extends Controller
                     'title' => $ticket->title,
                     'ticket' => $ticket->ticket,
                     'status' => $ticket->is_active ? 'Activo' : 'Resuelto',
-                    'zone' => $ticket->place->name,
-                    'type' => $ticket->type->name,
-                    'priority' => $ticket->priority->level,
-                    'user' => $ticket->user->name,
-                    'created_at' => $ticket->created_at->format('Y-m-d H:i'),
-                    'completed_at' => $ticket->completed_at?->format('Y-m-d H:i'),
-                    'resolution_time' => $ticket->completed_at ? 
-                        Carbon::parse($ticket->start)->diffInHours($ticket->completed_at) . ' horas' : 'N/A'
+                    'zone' => $ticket->place->name ?? '',
+                    'type' => $ticket->type->name ?? '',
+                    'priority' => $ticket->priority->level ?? '',
+                    'user' => $ticket->user->name ?? '',
+                    'created_at' => Carbon::parse($ticket->created_at)->format('Y-m-d H:i'),
+                    'completed_at' => $ticket->completed_at
+                        ? Carbon::parse($ticket->completed_at)->format('Y-m-d H:i')
+                        : null,
+                    'resolution_time' =>
+                        ($ticket->completed_at && $ticket->start)
+                            ? Carbon::parse($ticket->start)->diffInHours($ticket->completed_at) . ' horas'
+                            : 'N/A'
                 ];
             })
         ];
@@ -99,16 +102,14 @@ class ReportController extends Controller
     {
         $query = Cronometro::with(['user', 'place', 'type', 'priority']);
 
-        // Aplicar filtros de fecha
         if ($request->startDate) {
             $query->whereDate('created_at', '>=', $request->startDate);
         }
-        
+
         if ($request->endDate) {
             $query->whereDate('created_at', '<=', $request->endDate);
         }
 
-        // Aplicar filtros adicionales
         if ($request->zoneId) {
             $query->where('place_id', $request->zoneId);
         }
@@ -128,40 +129,50 @@ class ReportController extends Controller
         $tickets = $query->get();
 
         $filename = 'reporte-personalizado-' . now()->format('Y-m-d') . '.csv';
-        
+
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($tickets) {
+        // 🔥 CALLBACK CORREGIDO 🔥
+        $callback = function () use ($tickets) {
             $file = fopen('php://output', 'w');
             fwrite($file, "\xEF\xBB\xBF");
-            
-            // Headers
+
             fputcsv($file, [
-                'ID', 'Título', 'Ticket', 'Estado', 'Zona', 'Tipo', 
+                'ID', 'Título', 'Ticket', 'Estado', 'Zona', 'Tipo',
                 'Prioridad', 'Usuario', 'Fecha Creación', 'Fecha Término', 'Tiempo Resolución'
             ], ';');
 
-            // Data
             foreach ($tickets as $ticket) {
+                $createdAt = $ticket->created_at
+                    ? Carbon::parse($ticket->created_at)->format('Y-m-d H:i')
+                    : '';
+
+                $completedAt = $ticket->completed_at
+                    ? Carbon::parse($ticket->completed_at)->format('Y-m-d H:i')
+                    : '';
+
+                $resolutionTime = ($ticket->completed_at && $ticket->start)
+                    ? Carbon::parse($ticket->start)->diffInHours(Carbon::parse($ticket->completed_at)) . ' horas'
+                    : 'N/A';
+
                 fputcsv($file, [
                     $ticket->id,
                     $ticket->title,
                     $ticket->ticket,
                     $ticket->is_active ? 'Activo' : 'Resuelto',
-                    $ticket->place->name,
-                    $ticket->type->name,
-                    $ticket->priority->level,
-                    $ticket->user->name,
-                    $ticket->created_at->format('Y-m-d H:i'),
-                    $ticket->completed_at?->format('Y-m-d H:i'),
-                    $ticket->completed_at ? 
-                        Carbon::parse($ticket->start)->diffInHours($ticket->completed_at) . ' horas' : 'N/A'
+                    $ticket->place->name ?? '',
+                    $ticket->type->name ?? '',
+                    $ticket->priority->level ?? '',
+                    $ticket->user->name ?? '',
+                    $createdAt,
+                    $completedAt,
+                    $resolutionTime
                 ], ';');
             }
-            
+
             fclose($file);
         };
 

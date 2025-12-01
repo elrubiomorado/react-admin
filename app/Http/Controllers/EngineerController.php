@@ -28,20 +28,17 @@ class EngineerController extends Controller
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('teams_user', 'like', "%{$search}%")
                     ->orWhereHas('jobTitle', fn ($jt) => $jt->where('title', 'like', "%{$search}%")
-                        ->orWhereHas('team', fn ($t) => $t->where('name', 'like', "%{$search}%")
-                        )
+                        ->orWhereHas('team', fn ($t) => $t->where('name', 'like', "%{$search}%"))
                     )
                     ->orWhereHas('place', fn ($p) => $p->where('name', 'like', "%{$search}%")
                         ->orWhere('short_name', 'like', "%{$search}%")
                     )
-                    ->orWhereHas('phones', fn ($ph) => $ph->where('phone', 'like', "%{$search}%")
-                    );
-            })
-            )
+                    ->orWhereHas('phones', fn ($ph) => $ph->where('phone', 'like', "%{$search}%"));
+            }))
             ->orderBy('name')
             ->get();
 
-        return inertia('Engineers/Index', compact('engineers', 'search'));
+        return Inertia::render('Engineers/Index', compact('engineers', 'search'));
     }
 
     /**
@@ -49,14 +46,10 @@ class EngineerController extends Controller
      */
     public function create()
     {
-
-        // regresar job_titles_places
-
         $job_titles = JobTitle::all();
         $places = Place::all();
 
         return Inertia::render('Engineers/Create', compact('job_titles', 'places'));
-
     }
 
     /**
@@ -64,7 +57,6 @@ class EngineerController extends Controller
      */
     public function store(Request $request)
     {
-        // ✅ Validaciones
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:engineers,name',
             'engineer_phones' => 'required|array|min:1',
@@ -75,7 +67,6 @@ class EngineerController extends Controller
             'place_id' => 'nullable|integer|exists:places,id',
         ]);
 
-        // ✅ Crear ingeniero con los campos validados
         $engineer = Engineer::create([
             'name' => $validated['name'],
             'email' => $validated['email'] ?? null,
@@ -84,11 +75,10 @@ class EngineerController extends Controller
             'place_id' => $validated['place_id'] ?? null,
         ]);
 
-        // ✅ Guardar teléfonos asociados (si hay)
         if (! empty($validated['engineer_phones'])) {
             foreach ($validated['engineer_phones'] as $phone) {
                 $engineer->phones()->create([
-                    'phone' => (string) $phone, // forzamos a string
+                    'phone' => (string) $phone,
                 ]);
             }
         }
@@ -99,27 +89,55 @@ class EngineerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        //
-    }
+{
+    $engineer = Engineer::with(['phones'])->findOrFail($id);
+    $job_titles = JobTitle::all();
+    $places = Place::all();
+
+    return Inertia::render('Engineers/EditEngineer', compact('engineer', 'job_titles', 'places'));
+}
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $engineer = Engineer::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:engineers,name,' . $engineer->id,
+            'engineer_phones' => 'nullable|array',
+            'engineer_phones.*' => 'required|string|max:10|unique:engineer_phones,phone,' . $engineer->id . ',engineer_id',
+            'email' => 'nullable|email|max:60|unique:engineers,email,' . $engineer->id,
+            'teams_user' => 'nullable|string|max:255|unique:engineers,teams_user,' . $engineer->id,
+            'job_title_id' => 'nullable|integer|exists:job_titles,id',
+            'place_id' => 'nullable|integer|exists:places,id',
+        ]);
+
+        $engineer->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
+            'teams_user' => $validated['teams_user'] ?? null,
+            'job_title_id' => $validated['job_title_id'] ?? null,
+            'place_id' => $validated['place_id'] ?? null,
+        ]);
+
+        // Actualizar teléfonos
+        $engineer->phones()->delete(); // borramos los antiguos
+        if (! empty($validated['engineer_phones'])) {
+            foreach ($validated['engineer_phones'] as $phone) {
+                $engineer->phones()->create([
+                    'phone' => (string) $phone,
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('engineers.index')
+            ->with('success', 'Ingeniero actualizado correctamente');
     }
 
     /**
@@ -127,11 +145,10 @@ class EngineerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
         $engineer = Engineer::findOrFail($id);
         $engineer->delete();
 
         return redirect()->route('engineers.index')
-                         ->with('success', 'Engineer eliminada correctamente.');
+                         ->with('success', 'Ingeniero eliminado correctamente.');
     }
 }

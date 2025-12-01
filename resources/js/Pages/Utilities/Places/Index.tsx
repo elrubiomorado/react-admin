@@ -31,7 +31,7 @@ export default function Index({
             router.get(
                 '/utilities/places',
                 { search: searchText, zone_id: zoneFilter },
-                { preserveState: true, replace: true }
+                { preserveState: true, replace: true },
             );
         }, 300);
         return () => clearTimeout(timeout);
@@ -54,8 +54,8 @@ export default function Index({
             <Head title="Plazas" />
 
             <div className="flex flex-col gap-4 p-4">
-                <h1 className="text-3xl font-bold text-gray-800">
-                Plazas
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                    Plazas
                 </h1>
 
                 <div className="flex justify-start">
@@ -95,44 +95,77 @@ export default function Index({
                 <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-4 text-left text-gray-700">Nombre</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Abreviatura</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Estado</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Zona</th>
-                            <th className="px-3 py-4 text-center text-gray-700">Acciones</th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Nombre
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Abreviatura
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Estado
+                            </th>
+                            <th className="px-6 py-4 text-left text-gray-700">
+                                Zona
+                            </th>
+                            <th className="px-3 py-4 text-center text-gray-700">
+                                Acciones
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {places.length > 0 ? (
                             places.map((place) => (
-                                <tr key={place.id} className="transition hover:bg-gray-50">
+                                <tr
+                                    key={place.id}
+                                    className="transition hover:bg-gray-50"
+                                >
                                     <td className="px-6 py-4">{place.name}</td>
-                                    <td className="px-6 py-4">{place.short_name}</td>
-                                    <td className="px-6 py-4">{place.state?.name ?? '—'}</td>
-                                    <td className="px-6 py-4">{place.state?.zone?.name ?? '—'}</td>
-                                    <td className="flex justify-center gap-3 px-3 py-4">
-                                        <Link
-                                            href={`/utilities/places/${place.id}/edit`}
-                                            className="flex items-center gap-1 text-green-600 hover:text-green-800"
+                                    <td className="px-6 py-4">
+                                        {place.short_name}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {place.state?.name ?? '—'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {place.state?.zone?.name ?? '—'}
+                                    </td>
+                                    <td className="flex justify-center gap-2 px-3 py-4">
+                                        {/* Botón Editar */}
+                                        <Button
+                                            size="sm"
+                                            className="flex items-center gap-2 bg-blue-600 text-white transition-shadow duration-200 hover:bg-blue-700 hover:shadow-md active:scale-95"
+                                            onClick={() =>
+                                                router.visit(
+                                                    `/utilities/places/${place.id}/edit`,
+                                                )
+                                            }
                                             title="Editar"
                                         >
-                                            <PencilIcon className="h-5 w-5" />
-                                            Editar
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDelete(place.id)}
-                                            className="flex items-center gap-1 text-red-600 hover:text-red-800"
+                                            <PencilIcon className="h-4 w-4 text-white" />
+                                            <span>Editar</span>
+                                        </Button>
+
+                                        {/* Botón Eliminar */}
+                                        <Button
+                                            size="sm"
+                                            className="flex items-center gap-2 bg-red-600 text-white transition-shadow duration-200 hover:bg-red-700 hover:shadow-md active:scale-95"
+                                            onClick={() =>
+                                                handleDelete(place.id)
+                                            }
                                             title="Eliminar"
                                         >
-                                            <TrashIcon className="h-5 w-5" />
-                                            Eliminar
-                                        </button>
+                                            <TrashIcon className="h-4 w-4 text-white" />
+                                            <span>Eliminar</span>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-6 text-center text-gray-500">
+                                <td
+                                    colSpan={5}
+                                    className="px-6 py-6 text-center text-gray-500"
+                                >
                                     No hay plazas registradas
                                 </td>
                             </tr>
