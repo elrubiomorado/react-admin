@@ -49,4 +49,12 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    /**
+     * Relación con los cronómetros creados por el usuario
+     */
+    public function cronometros()
+    {
+        return $this->hasMany(Cronometro::class);
+    }
 }

@@ -13,17 +13,30 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, AlarmClock, NotepadText, Contact } from 'lucide-react';
+import {
+    AlarmClock,
+    BarChart3,
+    BookOpen,
+    Contact,
+    FileText,
+    Folder,
+    NotepadText,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        title: 'Dasboard',
+        href: '/dashboard/metrics',
+        icon: BarChart3,
     },
     {
-        title: 'Escalas',
+        title: 'Reportes',
+        href: '/reports/custom',
+        icon: FileText,
+    },
+    {
+        title: 'Cronómetros',
         href: '/cronometros',
         icon: AlarmClock,
     },
