@@ -3,22 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+//use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Calendar extends Model
 {
 
-    use HasFactory;
+ //   use HasFactory;
     //Calender
+    protected $table = 'calendars';
+
     protected $fillable = [
+        'user_id',
         'note',
         'date',
-        'user_id',
+        'start_date',
+        'shift_pattern',
+        'shift_type',
+        'color',
     ];
 
     // Relacion: un calendario pertenee a un usuario
-    /*public function user()
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class);
+    // }
+
+    public function days()
     {
-        return $this->belongsTo(User::class);
-    }*/
+        return $this->hasMany(CalendarDay::class);
+    }
 }

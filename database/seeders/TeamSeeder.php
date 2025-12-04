@@ -12,7 +12,9 @@ class TeamSeeder extends Seeder
      */
     public function run(): void
     {
-        $teams = ['CTC', 'Acceso', 'Core', 'NOC'];
+       $teams = ['CTC', 'Acceso', 'Core', 'NOC', 'Infraestructura', 'RNOC', 'MCA', 'Gerencia', 'Ingenieria', 'Redes',
+         'Servicios Tecnicos', 'Planta Interna', 'Planta Externa', 'Analisis', 'Mantenimiento', 'Sistema', 'Operaciones', 'Corporativo',
+         'Administrativo', ];
 
         foreach ($teams as $name) {
             Team::firstOrCreate(['name' => $name]);

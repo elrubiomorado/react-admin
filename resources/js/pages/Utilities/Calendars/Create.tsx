@@ -1,77 +1,98 @@
-import AppLayout from '@/layouts/app-layout';
-import { Button } from '@/components/ui/button';
-import { type BreadcrumbItem } from '@/types';
-import { Head, useForm, Link } from '@inertiajs/react';
-import { route } from 'ziggy-js';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilidades', href: '/utilities' },
-    { title: 'Calendarios', href: '/utilities/calendars' },
-    { title: 'Crear', href: '/utilities/calendars/create' },
-];
+import { useState } from "react";
+import { router } from "@inertiajs/react";
+import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 
 export default function Create() {
-    const { data, setData, post, processing, errors } = useForm({
-        note: '',
-        date: '',
-    });
+    const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
+    const [shiftPattern, setShiftPattern] = useState("day");
+    const [note, setNote] = useState("");
 
-    const submit = (e: any) => {
+    const generateDays = () => {
+        const days = [];
+        const start = dayjs(startDate);
+
+        // 1 año completo
+        const end = start.add(1, "year");
+
+        let current = start;
+
+        while (current.isBefore(end)) {
+            days.push({
+                date: current.format("YYYY-MM-DD"),
+                shift_type: shiftPattern,
+                color:
+                    shiftPattern === "day"
+                        ? "#FFE680" // amarillo suave
+                        : shiftPattern === "night"
+                        ? "#9FA8DA" // morado suave SINO CAMBIAR A 4626A0
+                        : "#F1F1F1", // gris para "off"
+                note: note || null,
+            });
+
+            current = current.add(1, "day");
+        }
+
+        return days;
+    };
+
+    const handleSubmit = (e: any) => {
         e.preventDefault();
-        post(route('utilities.calendars.store'));
+
+        const days = generateDays();
+
+        router.post("/utilities/calendars", {
+            days: days,
+            start_date: startDate,
+            shift_pattern: shiftPattern,
+            note: note,
+        });
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Crear Calendario" />
+        <div className="p-6 space-y-6">
+            <h1 className="text-2xl font-bold">Crear Calendario</h1>
 
-            <div className="p-6 space-y-6">
-                <h1 className="text-3xl font-bold text-gray-800">Crear evento en Calendario</h1>
+            <form onSubmit={handleSubmit} className="space-y-4">
 
-                <form onSubmit={submit} className="space-y-6 bg-white p-6 rounded-xl shadow">
-                    {/* Note */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Nota</label>
-                        <input
-                            type="text"
-                            value={data.note}
-                            onChange={(e) => setData('note', e.target.value)}
-                            className="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                        />
-                        {errors.note && (
-                            <p className="text-red-600 text-sm">{errors.note}</p>
-                        )}
-                    </div>
+                <div>
+                    <label className="font-semibold">Fecha de inicio</label>
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="border p-2 rounded w-full"
+                        required
+                    />
+                </div>
 
-                    {/* Date */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Fecha</label>
-                        <input
-                            type="date"
-                            value={data.date}
-                            onChange={(e) => setData('date', e.target.value)}
-                            className="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                        />
-                    </div>
+                <div>
+                    <label className="font-semibold">Tipo de turno</label>
+                    <select
+                        value={shiftPattern}
+                        onChange={(e) => setShiftPattern(e.target.value)}
+                        className="border p-2 rounded w-full"
+                    >
+                        <option value="day">Día</option>
+                        <option value="night">Noche</option>
+                        <option value="off">Descanso</option>
+                    </select>
+                </div>
 
-                    {/* Buttons */}
-                    <div className="flex items-center justify-between pt-4">
-                        <Link href="/utilities/calendars">
-                            <Button variant="secondary" className="text-gray-700 border border-gray-300 hover:bg-gray-100">
-                                Cancelar
-                            </Button>
-                        </Link>
+                <div>
+                    <label className="font-semibold">Nota opcional</label>
+                    <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        className="border p-2 rounded w-full"
+                        rows={3}
+                    />
+                </div>
 
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="text-white shadow-md hover:bg-gray-900"
-                        >
-                            Guardar
-                        </Button>
-                    </div>
-                </form>
-            </div>
-        </AppLayout>
+                <Button type="submit" className="text-white bg-black hover:bg-gray-900">
+                    Generar Calendario
+                </Button>
+            </form>
+        </div>
     );
 }

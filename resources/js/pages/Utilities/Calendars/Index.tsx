@@ -1,97 +1,127 @@
-import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { Head, Link, router } from '@inertiajs/react';
+import AppLayout from "@/layouts/app-layout";
+import { Head, Link } from "@inertiajs/react";
+import { type BreadcrumbItem } from "@/types";
+import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Utilidades', href: '/utilities' },
-    { title: 'Calendarios', href: '/utilities/calendars' },
+    { title: "Utilidades", href: "/utilities" },
+    { title: "Calendarios", href: "/utilities/calendars" },
 ];
 
+interface CalendarItem {
+    id: number;
+    date: string;
+    note: string | null;
+    shift_type: string | null;
+    color: string | null;
+}
+
 interface Props {
-    calendars: any[];
+    calendars: CalendarItem[];
 }
 
 export default function Index({ calendars }: Props) {
-    const handleDelete = (id: number) => {
-        if (confirm('¿Estás seguro de eliminar este evento de calendario?')) {
-            router.delete(`/utilities/calendars/${id}`, {
-                onSuccess: () => router.reload(),
-                onError: (errors) => {
-                    console.error('Error al eliminar:', errors);
-                    alert('Error al eliminar el calendario');
-                },
-            });
-        }
-    };
+
+    // ------- 1. OBTENER DATOS DEL MES -------
+    const firstDate = calendars.length > 0 ? dayjs(calendars[0].date) : dayjs();
+    const year = firstDate.year();
+    const month = firstDate.month();
+    const monthName = firstDate.format("MMMM");
+
+    // Días del mes
+    const daysInMonth = firstDate.daysInMonth();
+
+    // Día de la semana en que inicia (0 = domingo)
+    const startWeekDay = firstDate.startOf("month").day();
+
+    // ------- 2. AGREGAR ESPACIOS VACÍOS AL INICIO -------
+    const calendarCells: any[] = [];
+
+    for (let i = 0; i < startWeekDay; i++) {
+        calendarCells.push({ empty: true });
+    }
+
+    // ------- 3. AGREGAR LOS DÍAS reales -------
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = dayjs(`${year}-${month + 1}-${day}`).format("YYYY-MM-DD");
+
+        const data = calendars.find((c) => c.date === dateStr);
+
+        calendarCells.push({
+            date: dateStr,
+            day,
+            color: data?.color ?? "#FFFFFF",
+            shift_type: data?.shift_type ?? null,
+            note: data?.note ?? null,
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Calendarios" />
+            <Head title="Calendario" />
 
-            <div className="flex flex-col gap-4 p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Calendarios
+            <div className="p-6 space-y-6">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-3xl font-bold capitalize">
+                        Calendario — {monthName} {year}
                     </h1>
 
                     <Link href="/utilities/calendars/create">
-                        <Button className="flex items-center gap-2 text-white shadow-md hover:bg-gray-900">
-                            Crear nuevo evento
+                        <Button className="text-white shadow-md hover:bg-gray-900">
+                            Crear nuevo horario
                         </Button>
                     </Link>
                 </div>
-            </div>
 
-            {/* Tabla */}
-            <div className="p-4">
-                <table className="w-full border-collapse overflow-hidden rounded-lg border border-gray-200 shadow">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-gray-700">Nota</th>
-                            <th className="px-6 py-4 text-left text-gray-700">Fecha</th>
-                            <th className="px-3 py-4 text-center text-gray-700">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {calendars.length > 0 ? (
-                            calendars.map((calendar) => (
-                                <tr key={calendar.id} className="transition hover:bg-gray-50">
-                                    <td className="px-6 py-4">{calendar.note}</td>
-                                    <td className="px-6 py-4">
-                                        {calendar.date ?? 'Sin fecha'}
-                                    </td>
-                                    <td className="flex justify-center gap-3 px-3 py-4">
-                                        <Link
-                                            href={`/utilities/calendars/${calendar.id}/edit`}
-                                            className="flex items-center gap-1 text-green-600 hover:text-green-800"
-                                            title="Editar"
-                                        >
-                                            <PencilIcon className="h-5 w-5" />
-                                            Editar
-                                        </Link>
+                {/* ------- GRID DEL CALENDARIO ------- */}
+                <div className="grid grid-cols-7 text-center font-semibold bg-gray-100 py-2 rounded-lg">
+                    <div>Dom</div>
+                    <div>Lun</div>
+                    <div>Mar</div>
+                    <div>Mié</div>
+                    <div>Jue</div>
+                    <div>Vie</div>
+                    <div>Sáb</div>
+                </div>
 
-                                        <button
-                                            onClick={() => handleDelete(calendar.id)}
-                                            className="flex items-center gap-1 text-red-600 hover:text-red-800"
-                                            title="Eliminar"
-                                        >
-                                            <TrashIcon className="h-5 w-5" />
-                                            Eliminar
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={3} className="px-6 py-6 text-center text-gray-500">
-                                    No hay eventos registrados
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                <div className="grid grid-cols-7 gap-2 mt-2">
+                    {calendarCells.map((cell, index) => (
+                        <div
+                            key={index}
+                            className={`min-h-[90px] border rounded-lg p-2 text-sm relative ${
+                                cell.empty ? "bg-transparent border-none" : ""
+                            }`}
+                            style={{ backgroundColor: cell.color }}
+                        >
+                            {!cell.empty && (
+                                <>
+                                    {/* Número del día */}
+                                    <div className="font-bold">{cell.day}</div>
+
+                                    {/* Icono según el tipo */}
+                                    {cell.shift_type === "day" && (
+                                        <div className="text-yellow-600 text-xl">☀️</div>
+                                    )}
+                                    {cell.shift_type === "night" && (
+                                        <div className="text-indigo-700 text-xl">🌙</div>
+                                    )}
+                                    {cell.shift_type === "off" && (
+                                        <div className="text-gray-500 text-lg">⛱️</div>
+                                    )}
+
+                                    {/* Nota */}
+                                    {cell.note && (
+                                        <div className="text-xs mt-1 text-gray-700">
+                                            {cell.note}
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
             </div>
         </AppLayout>
     );

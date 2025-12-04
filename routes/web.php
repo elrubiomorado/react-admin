@@ -85,12 +85,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/engineers/{id}', [EngineerController::class, 'destroy'])->name('engineers.destroy');
 
     //Calendarios
-    Route::get('/utilities/calendars', [CalendarController::class, 'index'])->name('utilities.calendars.index');
-    Route::get('/utilities/calendars/create', [CalendarController::class, 'create'])->name('utilities.calendars.create');
-    Route::post('utilities/calendars', [CalendarController::class, 'store'])->name('utilities.teams.calendars');
-    Route::delete('/utilities/calendars/{id}', [CalendarController::class, 'destroy'])->name('utilities.calendars.destroy');
-    Route::get('/utilities/calendars/{id}/edit', [CalendarController::class, 'edit'])->name('utilities.calendars.edit');
-    Route::put('/utilities/calendars/{id}', [CalendarController::class, 'update'])->name('utilities.calendars.update');
+    Route::prefix('utilities')->name('utilities.')->group(function () {
+
+    Route::prefix('calendars')->name('calendars.')->group(function () {
+
+        Route::get('/', [CalendarController::class, 'index'])->name('index');
+        Route::get('/create', [CalendarController::class, 'create'])->name('create');
+        Route::post('/', [CalendarController::class, 'store'])->name('store');
+
+    });
+
+});
+
+    // Route::get('/utilities/calendars', [CalendarController::class, 'index'])->name('utilities.calendars.index');
+    // Route::get('/utilities/calendars/create', [CalendarController::class, 'create'])->name('utilities.calendars.create');
+    // Route::post('utilities/calendars', [CalendarController::class, 'store'])->name('utilities.calendars.store');
+    // Route::delete('/utilities/calendars/{id}', [CalendarController::class, 'destroy'])->name('utilities.calendars.destroy');
+    // Route::get('/utilities/calendars/{id}/edit', [CalendarController::class, 'edit'])->name('utilities.calendars.edit');
+    // Route::put('/utilities/calendars/{id}', [CalendarController::class, 'update'])->name('utilities.calendars.update');
 
 });
 require __DIR__ . '/settings.php';

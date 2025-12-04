@@ -2,6 +2,8 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { GiMexico } from "react-icons/gi";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { FaUsers } from "react-icons/fa";
 import { Head, Link } from '@inertiajs/react';
 // Breadcrumbs para la navegación (migas de pan)
 const breadcrumbs: BreadcrumbItem[] = [
@@ -24,27 +26,14 @@ export default function Index() {
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {/* Primer recuadro: va a Places */}
-                    {/* Primer recuadro: va a Places */}
+
                     <Link
                         href="/utilities/places" // O route('utilities.places.index')
                         className="relative flex aspect-video transform items-center justify-center overflow-hidden rounded-xl border border-sidebar-border/70 bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl dark:border-sidebar-border"
                     >
                         {/* Icono grande */}
                         <div className="flex flex-col items-center gap-2">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-12 w-12"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 7h18M3 12h18M3 17h18"
-                                />
-                            </svg>
+                            <GiMexico className="h-12 w-12"> </GiMexico>
                             {/* Texto */}
                             <span className="text-lg font-bold">Plazas</span>
                         </div>
@@ -55,20 +44,7 @@ export default function Index() {
                     >
                         {/* Icono grande */}
                         <div className="flex flex-col items-center gap-2">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-12 w-12"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 7h18M3 12h18M3 17h18"
-                                />
-                            </svg>
+                            <FaUsers className="h-12 w-12"> </FaUsers>
                             {/* Texto */}
                             <span className="text-lg font-bold">Equipos de trabajo</span>
                         </div>
@@ -79,29 +55,16 @@ export default function Index() {
                     >
                         {/* Icono grande */}
                         <div className="flex flex-col items-center gap-2">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-12 w-12"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 7h18M3 12h18M3 17h18"
-                                />
-                            </svg>
+                            <AiOutlineCalendar className="h-12 w-12"> </AiOutlineCalendar>
                             {/* Texto */}
-                            <span className="text-lg font-bold">Equipos de trabajo</span>
+                            <span className="text-lg font-bold">Calendarios</span>
                         </div>
                     </Link>
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+                <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div>
             </div>
